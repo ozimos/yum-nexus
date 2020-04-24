@@ -9,6 +9,6 @@
     "rootDir": "api"
   },
   "include": [
-    "api"
+    "api", "prisma/migrate.ts", "prisma/seedGenerator.ts"
   ]
 }
