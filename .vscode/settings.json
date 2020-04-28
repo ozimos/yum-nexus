@@ -1,0 +1,9 @@
+{
+    "sqltools.connections": [
+        {
+            "connectString": "postgresql://ozimos:root@localhost:5432/yum_graphql",
+            "dialect": "PostgreSQL",
+            "name": "yum_graphql"
+        }
+    ]
+}

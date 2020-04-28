@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-  
+
 const db = new PrismaClient()
 
 main()
@@ -15,7 +15,7 @@ async function main() {
         name: 'Mars',
         population: 0,
       },
-    ].map(data => db.world.create({ data })),
+    ].map((data) => db.world.create({ data })),
   )
 
   console.log('Seeded: %j', results)

@@ -1,14 +1,12 @@
 {
   "compilerOptions": {
-    "target": "es2016",
+    "target": "ES2019",
+    "esModuleInterop": true,
     "module": "commonjs",
-    "lib": [
-      "esnext"
-    ],
-    "strict": true,
-    "rootDir": "api"
+    "lib": ["ESNEXT"],
+    "strict": false,
+    "rootDir": "api",
+    "moduleResolution": "node"
   },
-  "include": [
-    "api", "prisma/migrate.ts", "prisma/seedGenerator.ts"
-  ]
+  "include": ["api", "prisma/migrate.js", "prisma/seedGenerator.ts"]
 }

@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS "User" (
     "firstName" VARCHAR(255) NOT NULL,
     "lastName" VARCHAR(255) NOT NULL,
     "password" VARCHAR(255) NOT NULL,
-    "role" "Role" DEFAULT 'USER',
+    "role" "Role" NOT NULL DEFAULT 'USER',
     "createdAt" timestamptz NOT NULL DEFAULT NOW(),
     "updatedAt" timestamptz NOT NULL DEFAULT NOW()
 );
