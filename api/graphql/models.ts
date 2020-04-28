@@ -1,17 +1,10 @@
 import { schema } from 'nexus'
 
-schema.inputObjectType({
-  name: 'UserCreateOneWithoutMealsInput',
-  definition(t) {
-    t.field('connect', {
-      type: 'UserWhereUniqueInput',
-    })
-  },
-})
-
 schema.objectType({
   name: 'User',
   definition(t) {
+    t.model.createdAt()
+    t.model.updatedAt()
     t.model.id()
     t.model.firstName()
     t.model.lastName()
@@ -27,18 +20,22 @@ schema.objectType({
 schema.objectType({
   name: 'Meal',
   definition(t) {
+    t.model.createdAt()
+    t.model.updatedAt()
     t.model.id()
     t.model.title()
     t.model.description()
     t.model.price()
-    t.model.caterer()
+    t.model.user()
   },
 })
 
 schema.objectType({
   name: 'Menu',
   definition(t) {
-    t.model.caterer()
+    t.model.createdAt()
+    t.model.updatedAt()
+    t.model.user()
     t.model.id()
     t.model.menuDate()
     t.model.userId()
@@ -46,8 +43,45 @@ schema.objectType({
 })
 
 schema.objectType({
+  name: 'MealMenu',
+  definition(t) {
+    t.model.id()
+    t.model.meal()
+    t.model.menu()
+    t.model.mealId()
+    t.model.menuId()
+  },
+})
+
+schema.objectType({
+  name: 'MealOrder',
+  definition(t) {
+    t.model.id()
+    t.model.meal()
+    t.model.order()
+    t.model.orderId()
+    t.model.mealId()
+  },
+})
+
+schema.objectType({
+  name: 'Order',
+  definition(t) {
+    t.model.createdAt()
+    t.model.updatedAt()
+    t.model.id()
+    t.model.userId()
+    t.model.user()
+    t.model.status()
+    t.model.mealOrders({ pagination: true })
+  },
+})
+
+schema.objectType({
   name: 'Address',
   definition(t) {
+    t.model.createdAt()
+    t.model.updatedAt()
     t.model.id()
     t.model.lga()
     t.model.state()

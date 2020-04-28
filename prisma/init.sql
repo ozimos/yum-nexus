@@ -30,9 +30,10 @@ CREATE TABLE IF NOT EXISTS "Meal" (
 CREATE TABLE IF NOT EXISTS "Menu" (
     "id" VARCHAR(25) PRIMARY KEY,
     "userId" VARCHAR(255) NOT NULL REFERENCES "User" ON DELETE CASCADE,
-    "menuDate" date NOT NULL DEFAULT CURRENT_DATE,
+    "menuDate" DATE NOT NULL DEFAULT CURRENT_DATE,
     "createdAt" timestamptz NOT NULL DEFAULT NOW(),
-    "updatedAt" timestamptz NOT NULL DEFAULT NOW()
+    "updatedAt" timestamptz NOT NULL DEFAULT NOW(),
+    CONSTRAINT "userDate" UNIQUE("menuDate", "userId")
 );
 CREATE TABLE IF NOT EXISTS "MealMenu" (
     "id" VARCHAR(25) PRIMARY KEY,

@@ -7,12 +7,26 @@ schema.mutationType({
   definition(t) {
     t.crud.createOneMeal()
     t.crud.createOneMenu()
+    t.crud.createOneOrder()
     t.crud.createOneMeal({ alias: 'createOneOwnMeal' })
+    t.crud.createOneMenu({ alias: 'createOneOwnMenu' })
+    t.crud.createOneOrder({ alias: 'createOneOwnOrder' })
+    t.crud.updateOneUser()
     t.crud.updateOneMeal()
+    t.crud.updateOneMenu()
+    t.crud.updateOneOrder()
+    t.crud.updateOneUser({ alias: 'updateOneOwnUser' })
     t.crud.updateOneMeal({ alias: 'updateOneOwnMeal' })
+    t.crud.updateOneMenu({ alias: 'updateOneOwnMenu' })
+    t.crud.updateOneOrder({ alias: 'updateOneOwnOrder' })
     t.crud.deleteOneUser()
     t.crud.deleteOneMeal()
+    t.crud.deleteOneMenu()
+    t.crud.deleteOneOrder()
+    t.crud.deleteOneUser({ alias: 'deleteOneOwnUser' })
     t.crud.deleteOneMeal({ alias: 'deleteOneOwnMeal' })
+    t.crud.deleteOneMenu({ alias: 'deleteOneOwnMenu' })
+    t.crud.deleteOneOrder({ alias: 'deleteOneOwnOrder' })
 
     t.field('signup', {
       type: 'AuthPayload',

@@ -3,7 +3,7 @@ import { TOKEN_PASSWORD, tokens } from './constants'
 import errors from './errors'
 
 export interface TokenPayload {
-  userId: string
+  id: string
   role: string
   type: string
   timestamp: number
@@ -20,10 +20,10 @@ interface CreateTokenInput {
   id: string
   role: string
 }
-export const generateAccessToken = ({ id: userId, role }: CreateTokenInput) => {
+export const generateAccessToken = ({ id, role }: CreateTokenInput) => {
   const accessToken = sign(
     {
-      userId,
+      id,
       role,
       type: tokens.access.name,
       timestamp: Date.now(),
@@ -38,7 +38,7 @@ export const generateAccessToken = ({ id: userId, role }: CreateTokenInput) => {
 
 export function authGuard(context) {
   const { tokenPayload, tokenError } = context
-  if (tokenPayload?.userId && tokenPayload?.type === tokens.access.name) {
+  if (tokenPayload?.id && tokenPayload?.type === tokens.access.name) {
     return tokenPayload
   }
   const error = tokenError ? errors.invalidToken : errors.notAuthenticated

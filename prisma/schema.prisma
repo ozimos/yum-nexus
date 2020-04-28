@@ -19,6 +19,7 @@ model Address {
   updatedAt      DateTime @default(now())
   userId         String
   customer       User     @relation(fields: [userId], references: [id])
+  @@unique([id, userId], name: "myOwn")
 }
 
 model Meal {
@@ -32,10 +33,11 @@ model Meal {
   title       String
   updatedAt   DateTime    @default(now())
   userId      String
-  caterer     User        @relation(fields: [userId], references: [id])
+  user     User        @relation(fields: [userId], references: [id])
   mealMenus   MealMenu[]
   mealOrders  MealOrder[]
 
+  @@unique([id, userId], name: "myOwn")
   @@unique([title, userId], name: "userTitle")
   @@unique([title, userId, deletedAt], name: "userTitle2")
 }
@@ -63,8 +65,11 @@ model Menu {
   menuDate  DateTime?   
   updatedAt DateTime   @default(now())
   userId    String
-  caterer   User       @relation(fields: [userId], references: [id])
+  user   User       @relation(fields: [userId], references: [id])
   mealMenus MealMenu[]
+  
+  @@unique([menuDate, userId], name: "userDate")
+  @@unique([id, userId], name: "myOwn")
 }
 
 model Order {
@@ -73,8 +78,9 @@ model Order {
   status    Status?      
   updatedAt DateTime    @default(now())
   userId    String
-  customer  User        @relation(fields: [userId], references: [id])
+  user  User        @relation(fields: [userId], references: [id])
   mealOrders MealOrder[]
+  @@unique([id, userId], name: "myOwn")
 }
 
 model User {
@@ -94,7 +100,7 @@ model User {
 
 enum Role {
   ADMIN
-  CATERER
+  user
   USER
 }
 

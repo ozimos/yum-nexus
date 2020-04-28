@@ -7,19 +7,13 @@ schema.queryType({
   definition(t) {
     t.crud.user()
     t.crud.users({ ordering: true })
-    t.crud.meal({
-      alias: 'meal',
-    })
+    t.crud.meal()
     t.crud.meals({ filtering: true })
     t.field('me', {
       type: 'User',
       resolve(_parent, _args, ctx) {
-        const { userId } = authGuard(ctx)
-        return ctx.db.user.findOne({
-          where: {
-            id: userId,
-          },
-        })
+        const { id } = authGuard(ctx)
+        return ctx.db.user.findOne({ where: { id } })
       },
     })
     t.field('login', {
