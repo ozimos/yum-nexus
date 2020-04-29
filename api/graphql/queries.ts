@@ -6,9 +6,13 @@ import { compare } from 'bcrypt'
 schema.queryType({
   definition(t) {
     t.crud.user()
-    t.crud.users({ ordering: true })
     t.crud.meal()
+    t.crud.menu()
+    t.crud.order()
+    t.crud.users({ ordering: true })
     t.crud.meals({ filtering: true })
+    t.crud.menus({ filtering: true })
+    t.crud.orders({ filtering: true })
     t.field('me', {
       type: 'User',
       resolve(_parent, _args, ctx) {

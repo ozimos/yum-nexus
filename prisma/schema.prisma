@@ -18,69 +18,66 @@ model Address {
   street2        String
   updatedAt      DateTime @default(now())
   userId         String
-  customer       User     @relation(fields: [userId], references: [id])
-  @@unique([id, userId], name: "myOwn")
+  user           User     @relation(fields: [userId], references: [id])
+
+  @@unique([id, userId], name: "addressMine")
 }
 
 model Meal {
-  createdAt   DateTime    @default(now())
-  deletedAt   DateTime?
-  description String
-  id          String       @id @default(cuid())
-  imageUrl    String
-  price       Int
-  tags        String[]
-  title       String
-  updatedAt   DateTime    @default(now())
-  userId      String
-  user     User        @relation(fields: [userId], references: [id])
-  mealMenus   MealMenu[]
-  mealOrders  MealOrder[]
+  createdAt     DateTime        @default(now())
+  deletedAt     DateTime?
+  description   String
+  id            String          @id @default(cuid())
+  imageUrl      String
+  price         Int
+  tags          String[]
+  title         String
+  updatedAt     DateTime        @default(now())
+  userId        String
+  user          User            @relation(fields: [userId], references: [id])
+  orders        MealsOnOrders[]    
+  menus         Menu[]          @relation("MealMenu", references: [id])
 
-  @@unique([id, userId], name: "myOwn")
+  @@unique([id, userId], name: "mealMine")
   @@unique([title, userId], name: "userTitle")
-  @@unique([title, userId, deletedAt], name: "userTitle2")
+  @@unique([title, userId, deletedAt], name: "userTitleDeletedAt")
 }
 
-model MealMenu {
-  id     String @id  @default(cuid())
-  mealId String
-  menuId String
-  meal   Meal   @relation(fields: [mealId], references: [id])
-  menu   Menu   @relation(fields: [menuId], references: [id])
-}
+model MealsOnOrders {
+  createdAt DateTime @default(now())
+  id        String   @id   @default(cuid())
+  mealId    String
+  orderId   String
+  quantity  Int      @default(1)
+  updatedAt DateTime @default(now())
+  meal      Meal     @relation(fields: [mealId], references: [id])
+  order     Order    @relation(fields: [orderId], references: [id])
 
-model MealOrder {
-  id       String @id  @default(cuid())
-  mealId   String
-  orderId  String
-  quantity Int?
-  meal     Meal   @relation(fields: [mealId], references: [id])
-  order    Order  @relation(fields: [orderId], references: [id])
+  @@unique([mealId, orderId], name: "mealsOnOrders")
 }
 
 model Menu {
-  createdAt DateTime   @default(now())
-  id        String     @id   @default(cuid())
-  menuDate  DateTime?   
-  updatedAt DateTime   @default(now())
+  createdAt DateTime @default(now())
+  id        String   @id   @default(cuid())
+  menuDate  DateTime
+  updatedAt DateTime @default(now())
   userId    String
-  user   User       @relation(fields: [userId], references: [id])
-  mealMenus MealMenu[]
+  user      User     @relation(fields: [userId], references: [id])
+  meals     Meal[]   @relation("MealMenu", references: [id])
   
-  @@unique([menuDate, userId], name: "userDate")
-  @@unique([id, userId], name: "myOwn")
+  @@unique([menuDate, userId], name: "menuMine")
 }
 
 model Order {
-  createdAt DateTime    @default(now())
-  id        String      @id  @default(cuid())
-  status    Status?      
-  updatedAt DateTime    @default(now())
-  userId    String
-  user  User        @relation(fields: [userId], references: [id])
-  mealOrders MealOrder[]
-  @@unique([id, userId], name: "myOwn")
+  createdAt     DateTime        @default(now())
+  id            String          @id  @default(cuid())
+  status        Status          @default(PENDING)
+  updatedAt     DateTime        @default(now())
+  userId        String
+  user          User            @relation(fields: [userId], references: [id])
+  meals         MealsOnOrders[]    
+
+  @@unique([id, userId], name: "orderMine")
 }
 
 model User {
@@ -90,17 +87,17 @@ model User {
   id        String    @id  @default(cuid())
   lastName  String
   password  String
-  role      Role?     
+  role      Role      @default(USER)
   updatedAt DateTime  @default(now())
-  addresses   Address[]
-  meals      Meal[]
-  menus      Menu[]
-  orders     Order[]
+  addresses Address[]
+  meals     Meal[]
+  menus     Menu[]
+  orders    Order[]
 }
 
 enum Role {
   ADMIN
-  user
+  CATERER
   USER
 }
 
@@ -110,4 +107,3 @@ enum Status {
   PENDING
   PROCESSING
 }
-

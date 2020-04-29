@@ -1,4 +1,5 @@
 DO $$ BEGIN
+    DROP TYPE "Role" CASCADE;
     CREATE TYPE "Role" AS ENUM ('USER', 'CATERER', 'ADMIN');
 EXCEPTION
     WHEN duplicate_object THEN null;
@@ -24,23 +25,36 @@ CREATE TABLE IF NOT EXISTS "Meal" (
     "createdAt" timestamptz NOT NULL DEFAULT NOW(),
     "updatedAt" timestamptz NOT NULL DEFAULT NOW(),
     "deletedAt" timestamptz,
-    CONSTRAINT "userTitle" UNIQUE("title", "userId"),
-    CONSTRAINT "userTitle2" UNIQUE("title", "userId", "deletedAt")
+
+    CONSTRAINT "mealMine" UNIQUE("id", "userId")
 );
+
+CREATE UNIQUE INDEX  IF NOT EXISTS "userTitle" ON "Meal" ("title", "userId")
+WHERE "deletedAt" IS NULL;
+
+CREATE UNIQUE INDEX  IF NOT EXISTS "userTitleDeletedAt" ON "Meal" ("title", "userId", "deletedAt")
+WHERE "deletedAt" IS NOT NULL;
+
 CREATE TABLE IF NOT EXISTS "Menu" (
     "id" VARCHAR(25) PRIMARY KEY,
     "userId" VARCHAR(255) NOT NULL REFERENCES "User" ON DELETE CASCADE,
     "menuDate" DATE NOT NULL DEFAULT CURRENT_DATE,
     "createdAt" timestamptz NOT NULL DEFAULT NOW(),
     "updatedAt" timestamptz NOT NULL DEFAULT NOW(),
-    CONSTRAINT "userDate" UNIQUE("menuDate", "userId")
+
+    CONSTRAINT "menuMine" UNIQUE("menuDate", "userId")
 );
-CREATE TABLE IF NOT EXISTS "MealMenu" (
-    "id" VARCHAR(25) PRIMARY KEY,
-    "mealId" VARCHAR(255) NOT NULL REFERENCES "Meal" ON DELETE CASCADE,
-    "menuId" VARCHAR(255) NOT NULL REFERENCES "Menu" ON DELETE CASCADE
+
+CREATE TABLE IF NOT EXISTS "_MealMenu" (
+    "A" VARCHAR(255) NOT NULL REFERENCES "Meal" ON DELETE CASCADE,
+    "B" VARCHAR(255) NOT NULL REFERENCES "Menu" ON DELETE CASCADE
 );
+
+CREATE UNIQUE INDEX IF NOT EXISTS "mealMenu" ON "_MealMenu" ("A", "B");
+CREATE INDEX IF NOT EXISTS "mealMenuB" ON "_MealMenu" ("B");
+
 DO $$ BEGIN
+    DROP TYPE "Status" CASCADE;
     CREATE TYPE "Status" AS ENUM ('PENDING', 'PROCESSING', 'DISPATCHED', 'FULFILLED');
 EXCEPTION
     WHEN duplicate_object THEN null;
@@ -50,14 +64,22 @@ CREATE TABLE IF NOT EXISTS "Order" (
     "userId" VARCHAR(255) NOT NULL REFERENCES "User" ON DELETE CASCADE,
     "status" "Status" NOT NULL DEFAULT 'PENDING',
     "createdAt" timestamptz NOT NULL DEFAULT NOW(),
-    "updatedAt" timestamptz NOT NULL DEFAULT NOW()
+    "updatedAt" timestamptz NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT "orderMine" UNIQUE("id", "userId")
 );
-CREATE TABLE IF NOT EXISTS "MealOrder" (
+
+CREATE TABLE IF NOT EXISTS "MealsOnOrders" (
     "id" VARCHAR(25) PRIMARY KEY,
     "mealId" VARCHAR(255) NOT NULL REFERENCES "Meal" ON DELETE CASCADE,
     "orderId" VARCHAR(255) NOT NULL REFERENCES "Order" ON DELETE CASCADE,
-    "quantity" INT4
+    "quantity" INT4 NOT NULL DEFAULT 1,
+    "createdAt" timestamptz NOT NULL DEFAULT NOW(),
+    "updatedAt" timestamptz NOT NULL DEFAULT NOW()
 );
+
+CREATE UNIQUE INDEX IF NOT EXISTS "mealsOnOrders" ON "MealsOnOrders" ("mealId", "orderId");
+
 CREATE TABLE IF NOT EXISTS "Address" (
     "id" VARCHAR(25) PRIMARY KEY,
     "userId" VARCHAR(255) NOT NULL REFERENCES "User" ON DELETE CASCADE,
@@ -68,7 +90,9 @@ CREATE TABLE IF NOT EXISTS "Address" (
     "state" VARCHAR(255) NOT NULL,
     "defaultAddress" bool DEFAULT false,
     "createdAt" timestamptz NOT NULL DEFAULT NOW(),
-    "updatedAt" timestamptz NOT NULL DEFAULT NOW()
+    "updatedAt" timestamptz NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT "addressMine" UNIQUE("id", "userId")
 );
 CREATE OR REPLACE FUNCTION mealmenufunc()
  RETURNS trigger
@@ -87,8 +111,8 @@ AS $function$
     END;
     $function$;
 DROP TRIGGER IF EXISTS every_menu_meals
-    ON "MealMenu";
+    ON "_MealMenu";
 CREATE TRIGGER every_menu_meals 
     BEFORE INSERT OR UPDATE OR DELETE
-    ON "MealMenu" 
+    ON "_MealMenu" 
     FOR EACH ROW EXECUTE PROCEDURE mealmenufunc();

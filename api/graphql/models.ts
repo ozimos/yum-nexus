@@ -39,28 +39,7 @@ schema.objectType({
     t.model.id()
     t.model.menuDate()
     t.model.userId()
-  },
-})
-
-schema.objectType({
-  name: 'MealMenu',
-  definition(t) {
-    t.model.id()
-    t.model.meal()
-    t.model.menu()
-    t.model.mealId()
-    t.model.menuId()
-  },
-})
-
-schema.objectType({
-  name: 'MealOrder',
-  definition(t) {
-    t.model.id()
-    t.model.meal()
-    t.model.order()
-    t.model.orderId()
-    t.model.mealId()
+    t.model.meals()
   },
 })
 
@@ -73,10 +52,20 @@ schema.objectType({
     t.model.userId()
     t.model.user()
     t.model.status()
-    t.model.mealOrders({ pagination: true })
+    t.model.meals()
   },
 })
 
+schema.objectType({
+  name: 'MealsOnOrders',
+  definition(t) {
+    t.model.id()
+    t.model.meal()
+    t.model.order()
+    t.model.orderId()
+    t.model.mealId()
+  },
+})
 schema.objectType({
   name: 'Address',
   definition(t) {
