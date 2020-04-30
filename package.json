@@ -16,6 +16,9 @@
     "format": "npx prettier --write './**/*.{ts,md}'",
     "dev": "nexus dev",
     "migrate": "dotenv -e prisma/.env -- node -r esm prisma/migrate",
+    "migrate:save": "prisma migrate save --experimental",
+    "migrate:reset": "reset && migrate",
+    "reset": "dotenv -e prisma/.env -- node -r esm prisma/reset",
     "build": "nexus build",
     "start": "node node_modules/.build"
   },

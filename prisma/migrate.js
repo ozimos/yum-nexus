@@ -1,16 +1,4 @@
-import { exec } from 'child_process';
-import { debuglog } from 'util';
+import migrate from './base';
 
-const log = debuglog('app');
 const query = `psql ${process.env.DATABASE_URL} -f prisma/init.sql`;
-migrate()
-function migrate(){
-
-    exec(query, (err, stdout) => {
-        if (err) {
-            log(`exec error: ${err}`);
-            return;
-        }
-        log(stdout);
-    });
-}
+migrate(query)

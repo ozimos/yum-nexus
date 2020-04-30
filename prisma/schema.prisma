@@ -10,7 +10,6 @@ datasource db {
 model Address {
   areaCode       Int
   createdAt      DateTime @default(now())
-  defaultAddress Boolean? @default(false)
   id             String   @id @default(cuid())
   lga            String
   state          String
@@ -20,8 +19,17 @@ model Address {
   userId         String
   user           User     @relation(fields: [userId], references: [id])
 
-  @@unique([defaultAddress, userId], name: "defaultAddress")
   @@unique([id, userId], name: "addressMine")
+}
+
+model DefaultAddress {
+  id        String   @default(cuid()) @id
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  addressId String
+  address   Address  @relation(fields: [addressId, userId], references: [id, userId])
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model Meal {
@@ -90,6 +98,7 @@ model User {
   password  String
   role      Role      @default(USER)
   updatedAt DateTime  @default(now())
+  defaultAddress DefaultAddress?
   addresses Address[]
   meals     Meal[]
   menus     Menu[]
