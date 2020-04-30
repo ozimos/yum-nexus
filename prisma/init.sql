@@ -88,12 +88,38 @@ CREATE TABLE IF NOT EXISTS "Address" (
     "lga" VARCHAR(255) NOT NULL,
     "areaCode" INT4 NOT NULL,
     "state" VARCHAR(255) NOT NULL,
-    "defaultAddress" bool DEFAULT false,
+    "defaultAddress" BOOL DEFAULT false,
     "createdAt" timestamptz NOT NULL DEFAULT NOW(),
     "updatedAt" timestamptz NOT NULL DEFAULT NOW(),
 
     CONSTRAINT "addressMine" UNIQUE("id", "userId")
 );
+
+CREATE UNIQUE INDEX IF NOT EXISTS "defaultAddress" ON "Address" ("defaultAddress", "userId")
+WHERE "defaultAddress" = TRUE;
+
+CREATE OR REPLACE FUNCTION defaultaddressfunc()
+ RETURNS trigger
+ LANGUAGE plpgsql
+AS $function$
+    DECLARE
+   "oldBool" BOOL DEFAULT FALSE;
+   "oldId" VARCHAR(25);
+    BEGIN
+    SELECT "id", "defaultAddress" INTO "oldId", "oldBool" FROM "Address" WHERE ("userId" = OLD."userId" AND (OLD."defaultAddress" = TRUE));
+       IF ("oldBool" AND NEW."defaultAddress")  THEN
+            UPDATE "Address" SET "defaultAddress" = FALSE WHERE id = "oldId";
+      END IF;
+      RETURN NEW;
+    END;
+    $function$;
+DROP TRIGGER IF EXISTS onedefaultaddress
+    ON "Address";
+CREATE TRIGGER onedefaultaddress 
+    BEFORE INSERT OR UPDATE
+    ON "Address" 
+    FOR EACH ROW EXECUTE PROCEDURE defaultaddressfunc();
+
 CREATE OR REPLACE FUNCTION mealmenufunc()
  RETURNS trigger
  LANGUAGE plpgsql

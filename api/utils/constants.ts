@@ -5,8 +5,9 @@ export const tokens = {
     expiry: TOKEN_EXPIRY || '1d',
   },
 }
-export const roles = {
-  ADMIN: 'ADMIN',
-  CATERER: 'CATERER',
-  USER: 'USER',
+
+export enum roles {
+  ADMIN = 'ADMIN',
+  CATERER = 'CATERER',
+  USER = 'USER',
 }

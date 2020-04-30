@@ -20,6 +20,7 @@ model Address {
   userId         String
   user           User     @relation(fields: [userId], references: [id])
 
+  @@unique([defaultAddress, userId], name: "defaultAddress")
   @@unique([id, userId], name: "addressMine")
 }
 
