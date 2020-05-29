@@ -8,16 +8,16 @@ datasource db {
 }
 
 model Address {
-  areaCode         Int
-  createdAt        DateTime         @default(now())
-  id               String           @default(cuid()) @id
-  lga              String
-  state            String
-  street1          String
-  street2          String
-  updatedAt        DateTime         @default(now())
-  userId           String
-  user             User             @relation(fields: [userId], references: [id])
+  areaCode  Int
+  createdAt DateTime @default(now())
+  id        String   @default(cuid()) @id
+  lga       String
+  state     String
+  street1   String
+  street2   String
+  updatedAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
 
   @@unique([id, userId], name: "addressMine")
 }
@@ -90,10 +90,14 @@ model Order {
 model User {
   createdAt      DateTime        @default(now())
   email          String          @unique
-  firstName      String
+  firstName      String?
   id             String          @default(cuid()) @id
-  lastName       String
-  password       String
+  facebookId     String?         @unique
+  googleId       String?         @unique
+  lastName       String?
+  tokenVersion   String          @default(cuid())
+  picture        Json?
+  password       String?
   role           Role            @default(USER)
   updatedAt      DateTime        @default(now())
   defaultAddress DefaultAddress?

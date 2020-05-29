@@ -1,12 +1,8 @@
+-- Enable foreign key CASCADE
+
 ALTER TABLE IF EXISTS "Meal"
 DROP CONSTRAINT "Meal_userId_fkey" IF EXISTS,
 ADD CONSTRAINT "Meal_userId_fkey"  FOREIGN KEY("userId") REFERENCES "User" ON DELETE CASCADE;
-
-CREATE UNIQUE INDEX  IF NOT EXISTS "userTitle" ON "Meal" ("title", "userId")
-WHERE "deletedAt" IS NULL;
-
-CREATE UNIQUE INDEX  IF NOT EXISTS "userTitleDeletedAt" ON "Meal" ("title", "userId", "deletedAt")
-WHERE "deletedAt" IS NOT NULL;
 
 ALTER TABLE IF EXISTS "Menu"
 DROP CONSTRAINT "Menu_userId_fkey" IF EXISTS,
@@ -33,6 +29,15 @@ ADD CONSTRAINT "DefaultAddress_userId_fkey"  FOREIGN KEY("userId") REFERENCES "U
 DROP CONSTRAINT "DefaultAddress_addressId_userId_fkey" IF EXISTS,
 ADD CONSTRAINT "DefaultAddress_addressId_userId_fkey"  FOREIGN KEY("addressId", "userId") REFERENCES "User" ON DELETE CASCADE;
 
+-- Add partial unique index
+
+CREATE UNIQUE INDEX  IF NOT EXISTS "userTitle" ON "Meal" ("title", "userId")
+WHERE "deletedAt" IS NULL;
+
+CREATE UNIQUE INDEX  IF NOT EXISTS "userTitleDeletedAt" ON "Meal" ("title", "userId", "deletedAt")
+WHERE "deletedAt" IS NOT NULL;
+
+-- Add trigger function
 
 CREATE OR REPLACE FUNCTION mealmenufunc()
  RETURNS trigger

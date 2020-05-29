@@ -1,7 +1,7 @@
-import { shield, or } from 'graphql-shield'
+import { shield, or } from 'nexus-plugin-shield'
 import rules from './rules'
 
-import { roles } from '../utils/constants'
+import { roles } from '../../utils/constants'
 const { USER, ADMIN } = roles
 const {
   isAuthenticated,
@@ -16,8 +16,8 @@ const defaultEditRule = or(hasValidRoles([ADMIN]), canEditOnlyOwnRecord)
 
 const adminRule = hasValidRoles([ADMIN])
 
-export default shield(
-  {
+export default shield({
+  rules: {
     Query: {
       me: isAuthenticated,
       meal: isAuthenticated,
@@ -28,5 +28,5 @@ export default shield(
       deleteOneMeal: defaultEditRule,
     },
   },
-  { allowExternalErrors: true, debug: true },
-)
+  options: { allowExternalErrors: true, debug: true },
+})

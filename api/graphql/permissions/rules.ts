@@ -1,6 +1,6 @@
-import { rule } from 'graphql-shield'
-import { authGuard } from '../utils/helpers'
-import { roles } from '../utils/constants'
+import { rule } from 'nexus-plugin-shield'
+import { authGuard } from '../../utils/helpers'
+import { roles } from '../../utils/constants'
 
 export default {
   isAuthenticated: rule({ cache: 'contextual' })((_parent, _args, ctx) => {
