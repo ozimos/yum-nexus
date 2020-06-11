@@ -8,6 +8,7 @@ schema.objectType({
     t.model.id()
     t.model.firstName()
     t.model.lastName()
+    t.model.tokenVersion()
     t.model.role()
     t.model.email()
     t.model.meals()
@@ -75,6 +76,28 @@ schema.objectType({
     t.model.lga()
     t.model.state()
     t.model.areaCode()
+  },
+})
+
+schema.objectType({
+  name: 'TokenUser',
+  // @ts-ignore
+  rootTyping: 'User',
+  definition(t) {
+    t.string('id')
+    t.string('role')
+    t.string('tokenVersion')
+  },
+})
+
+schema.objectType({
+  name: 'LogoutResponse',
+  definition(t) {
+    t.string('accessToken', {
+      resolve() {
+        return ''
+      },
+    })
   },
 })
 

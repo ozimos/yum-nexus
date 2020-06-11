@@ -1,27 +1,35 @@
-CREATE TABLE IF NOT EXISTS "User" (
-    "id" VARCHAR(25) PRIMARY KEY,
-    "email" VARCHAR(255) UNIQUE NOT NULL,
-    "firstName" VARCHAR(255) NOT NULL,
-    "lastName" VARCHAR(255) NOT NULL,
-    "password" VARCHAR(255) NOT NULL,
-    "role" "Role" NOT NULL DEFAULT 'USER',
-    "createdAt" timestamptz NOT NULL DEFAULT NOW(),
-    "updatedAt" timestamptz NOT NULL DEFAULT NOW()
-);
-CREATE TABLE IF NOT EXISTS "Meal" (
-    "id" VARCHAR(25) PRIMARY KEY,
-    "userId" VARCHAR(25) NOT NULL REFERENCES "User" ON DELETE CASCADE,
-    "title" VARCHAR(255) NOT NULL,
-    "tags" _VARCHAR(255),
-    "description" VARCHAR(255) NOT NULL,
-    "imageUrl" VARCHAR(255) NOT NULL,
-    "price" INT4 NOT NULL,
-    "createdAt" timestamptz NOT NULL DEFAULT NOW(),
-    "updatedAt" timestamptz NOT NULL DEFAULT NOW(),
-    "deletedAt" timestamptz,
+-- Enable foreign key CASCADE
 
-    CONSTRAINT "mealMine" UNIQUE("id", "userId")
-);
+ALTER TABLE IF EXISTS "Meal"
+DROP CONSTRAINT "Meal_userId_fkey" IF EXISTS,
+ADD CONSTRAINT "Meal_userId_fkey"  FOREIGN KEY("userId") REFERENCES "User" ON DELETE CASCADE;
+
+ALTER TABLE IF EXISTS "Menu"
+DROP CONSTRAINT "Menu_userId_fkey" IF EXISTS,
+ADD CONSTRAINT "Menu_userId_fkey"  FOREIGN KEY("userId") REFERENCES "User" ON DELETE CASCADE;
+
+
+ALTER TABLE IF EXISTS "Order"
+DROP CONSTRAINT "Order_userId_fkey" IF EXISTS,
+ADD CONSTRAINT "Order_userId_fkey"  FOREIGN KEY("userId") REFERENCES "User" ON DELETE CASCADE;
+
+ALTER TABLE IF EXISTS "MealsOnOrders"
+DROP CONSTRAINT "MealsOnOrders_mealId_fkey" IF EXISTS,
+ADD CONSTRAINT "MealsOnOrders_mealId_fkey"  FOREIGN KEY("mealId") REFERENCES "Meal" ON DELETE CASCADE,
+DROP CONSTRAINT "MealsOnOrders_orderId_fkey" IF EXISTS,
+ADD CONSTRAINT "MealsOnOrders_orderId_fkey"  FOREIGN KEY("orderId") REFERENCES "Order" ON DELETE CASCADE;
+
+ALTER TABLE IF EXISTS "Address"
+DROP CONSTRAINT "Address_userId_fkey" IF EXISTS,
+ADD CONSTRAINT "Address_userId_fkey"  FOREIGN KEY("userId") REFERENCES "User" ON DELETE CASCADE;
+
+ALTER TABLE IF EXISTS "DefaultAddress"
+DROP CONSTRAINT "DefaultAddress_userId_fkey" IF EXISTS,
+ADD CONSTRAINT "DefaultAddress_userId_fkey"  FOREIGN KEY("userId") REFERENCES "User" ON DELETE CASCADE;
+DROP CONSTRAINT "DefaultAddress_addressId_userId_fkey" IF EXISTS,
+ADD CONSTRAINT "DefaultAddress_addressId_userId_fkey"  FOREIGN KEY("addressId", "userId") REFERENCES "User" ON DELETE CASCADE;
+
+-- Add partial unique index
 
 CREATE UNIQUE INDEX  IF NOT EXISTS "userTitle" ON "Meal" ("title", "userId")
 WHERE "deletedAt" IS NULL;
@@ -29,69 +37,7 @@ WHERE "deletedAt" IS NULL;
 CREATE UNIQUE INDEX  IF NOT EXISTS "userTitleDeletedAt" ON "Meal" ("title", "userId", "deletedAt")
 WHERE "deletedAt" IS NOT NULL;
 
-CREATE TABLE IF NOT EXISTS "Menu" (
-    "id" VARCHAR(25) PRIMARY KEY,
-    "userId" VARCHAR(25) NOT NULL REFERENCES "User" ON DELETE CASCADE,
-    "menuDate" DATE NOT NULL DEFAULT CURRENT_DATE,
-    "createdAt" timestamptz NOT NULL DEFAULT NOW(),
-    "updatedAt" timestamptz NOT NULL DEFAULT NOW(),
-
-    CONSTRAINT "menuMine" UNIQUE("menuDate", "userId")
-);
-
-CREATE TABLE IF NOT EXISTS "_MealMenu" (
-    "A" VARCHAR(255) NOT NULL REFERENCES "Meal" ON DELETE CASCADE,
-    "B" VARCHAR(255) NOT NULL REFERENCES "Menu" ON DELETE CASCADE
-);
-
-CREATE UNIQUE INDEX IF NOT EXISTS "mealMenu" ON "_MealMenu" ("A", "B");
-CREATE INDEX IF NOT EXISTS "mealMenuB" ON "_MealMenu" ("B");
-
-CREATE TABLE IF NOT EXISTS "Order" (
-    "id" VARCHAR(25) PRIMARY KEY,
-    "userId" VARCHAR(25) NOT NULL REFERENCES "User" ON DELETE CASCADE,
-    "status" "Status" NOT NULL DEFAULT 'PENDING',
-    "createdAt" timestamptz NOT NULL DEFAULT NOW(),
-    "updatedAt" timestamptz NOT NULL DEFAULT NOW(),
-
-    CONSTRAINT "orderMine" UNIQUE("id", "userId")
-);
-
-CREATE TABLE IF NOT EXISTS "MealsOnOrders" (
-    "id" VARCHAR(25) PRIMARY KEY,
-    "mealId" VARCHAR(25) NOT NULL REFERENCES "Meal" ON DELETE CASCADE,
-    "orderId" VARCHAR(25) NOT NULL REFERENCES "Order" ON DELETE CASCADE,
-    "quantity" INT4 NOT NULL DEFAULT 1,
-    "createdAt" timestamptz NOT NULL DEFAULT NOW(),
-    "updatedAt" timestamptz NOT NULL DEFAULT NOW()
-);
-
-CREATE UNIQUE INDEX IF NOT EXISTS "mealsOnOrders" ON "MealsOnOrders" ("mealId", "orderId");
-
-CREATE TABLE IF NOT EXISTS "Address" (
-    "id" VARCHAR(25) PRIMARY KEY,
-    "userId" VARCHAR(25) NOT NULL REFERENCES "User" ON DELETE CASCADE,
-    "street1" VARCHAR(255) NOT NULL,
-    "street2" VARCHAR(255) NOT NULL,
-    "lga" VARCHAR(255) NOT NULL,
-    "areaCode" INT4 NOT NULL,
-    "state" VARCHAR(255) NOT NULL,
-    "createdAt" timestamptz NOT NULL DEFAULT NOW(),
-    "updatedAt" timestamptz NOT NULL DEFAULT NOW(),
-
-    CONSTRAINT "addressMine" UNIQUE("id", "userId")
-);
-
-CREATE TABLE IF NOT EXISTS "DefaultAddress" (
-    "id" VARCHAR(25) PRIMARY KEY,
-    "userId" VARCHAR(25) NOT NULL REFERENCES "User" ON DELETE CASCADE,
-    "addressId" VARCHAR(25) NOT NULL,
-    "createdAt" timestamptz NOT NULL DEFAULT NOW(),
-    "updatedAt" timestamptz NOT NULL DEFAULT NOW(),
-
-    CONSTRAINT "defaultAddress" FOREIGN KEY ("addressId", "userId")
-        REFERENCES "Address" (id, "userId") ON UPDATE CASCADE
-);
+-- Add trigger function
 
 CREATE OR REPLACE FUNCTION mealmenufunc()
  RETURNS trigger

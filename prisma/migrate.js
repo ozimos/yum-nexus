@@ -1,4 +1,3 @@
-import migrate from './base';
+const { migrateFile } = require('./base')
 
-const query = `psql ${process.env.DATABASE_URL} -f prisma/init.sql`;
-migrate(query)
+migrateFile('prisma/init.sql')

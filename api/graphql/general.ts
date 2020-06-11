@@ -1,8 +1,14 @@
-import { schema } from 'nexus'
+import { schema, use, settings } from 'nexus'
+import permissions from './permissions'
 import { extractTokenPayload } from '../utils/helpers'
-import {adjustUserInputPlugin} from './plugins'
-
-schema.addToContext(extractTokenPayload)
 
 // @ts-ignore
-schema.use(adjustUserInputPlugin)
+schema.addToContext(extractTokenPayload)
+
+use(permissions)
+
+settings.change({
+  schema: {
+    generateGraphQLSDLFile: './api/public/schema.graphql',
+  },
+})

@@ -6,3 +6,15 @@ yarn-error.log*
 lerna-debug.log*
 # Prisma
 failed-inferMigrationSteps*
+
+# Environment Variables
+prisma/.env
+.env
+envvars
+
+# Elastic Beanstalk Files
+.ebignored
+.ignored
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
