@@ -6,7 +6,8 @@
     "lib": ["ESNEXT"],
     "strict": false,
     "rootDir": "api",
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "plugins": [{ "name": "nexus/typescript-language-service" }]
   },
-  "include": ["api", "prisma/migrate.js", "prisma/seedGenerator.ts"]
+  "include": ["api"]
 }

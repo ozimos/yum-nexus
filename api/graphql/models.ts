@@ -9,7 +9,7 @@ schema.objectType({
     t.model.firstName()
     t.model.lastName()
     t.model.tokenVersion()
-    t.model.role()
+    t.model.roles()
     t.model.email()
     t.model.meals()
     t.model.addresses({
@@ -58,7 +58,7 @@ schema.objectType({
 })
 
 schema.objectType({
-  name: 'MealsOnOrders',
+  name: 'MealOrder',
   definition(t) {
     t.model.id()
     t.model.meal()
@@ -76,17 +76,6 @@ schema.objectType({
     t.model.lga()
     t.model.state()
     t.model.areaCode()
-  },
-})
-
-schema.objectType({
-  name: 'TokenUser',
-  // @ts-ignore
-  rootTyping: 'User',
-  definition(t) {
-    t.string('id')
-    t.string('role')
-    t.string('tokenVersion')
   },
 })
 

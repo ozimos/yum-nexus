@@ -30,22 +30,10 @@ config()
 const PORT = process.env.PORT || 4000
 // @ts-ignore
 server.express.options(cors())
-const whitelist = [
-  'http://localhost:3000',
-  'https://localhost:3000',
-  `http://localhost:${PORT}`,
-  `https://localhost:${PORT}`,
-]
+const whitelist = ['http://localhost:3000', 'https://localhost:3000']
 server.express.use(
   cors({
-    origin: function (origin, callback) {
-      if (whitelist.indexOf(origin) !== -1 || !origin) {
-        callback(null, true)
-      } else {
-        console.log(origin)
-        callback(new Error('Not allowed by CORS'))
-      }
-    },
+    origin: whitelist,
     credentials: true,
   }),
 )

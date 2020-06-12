@@ -14,7 +14,7 @@ model Address {
   lga       String
   state     String
   street1   String
-  street2   String
+  street2   String?
   updatedAt DateTime @default(now())
   userId    String
   user      User     @relation(fields: [userId], references: [id])
@@ -33,24 +33,24 @@ model DefaultAddress {
 }
 
 model Meal {
-  createdAt   DateTime        @default(now())
+  createdAt   DateTime    @default(now())
   deletedAt   DateTime?
   description String
-  id          String          @default(cuid()) @id
+  id          String      @default(cuid()) @id
   imageUrl    String
   price       Int
   tags        String[]
   title       String
-  updatedAt   DateTime        @default(now())
+  updatedAt   DateTime    @default(now())
   userId      String
-  user        User            @relation(fields: [userId], references: [id])
-  orders      MealsOnOrders[]
-  menus       Menu[]          @relation("MealMenu", references: [id])
+  user        User        @relation(fields: [userId], references: [id])
+  orders      MealOrder[]
+  menus       Menu[]      @relation("MealMenu", references: [id])
 
   @@unique([id, userId], name: "mealMine")
 }
 
-model MealsOnOrders {
+model MealOrder {
   createdAt DateTime @default(now())
   id        String   @default(cuid()) @id
   mealId    String
@@ -60,7 +60,7 @@ model MealsOnOrders {
   meal      Meal     @relation(fields: [mealId], references: [id])
   order     Order    @relation(fields: [orderId], references: [id])
 
-  @@unique([mealId, orderId], name: "mealsOnOrders")
+  @@unique([mealId, orderId], name: "meal_order")
 }
 
 model Menu {
@@ -76,13 +76,13 @@ model Menu {
 }
 
 model Order {
-  createdAt DateTime        @default(now())
-  id        String          @default(cuid()) @id
-  status    Status          @default(PENDING)
-  updatedAt DateTime        @default(now())
+  createdAt DateTime    @default(now())
+  id        String      @default(cuid()) @id
+  status    Status      @default(PENDING)
+  updatedAt DateTime    @default(now())
   userId    String
-  user      User            @relation(fields: [userId], references: [id])
-  meals     MealsOnOrders[]
+  user      User        @relation(fields: [userId], references: [id])
+  meals     MealOrder[]
 
   @@unique([id, userId], name: "orderMine")
 }
@@ -96,9 +96,11 @@ model User {
   googleId       String?         @unique
   lastName       String?
   tokenVersion   String          @default(cuid())
-  picture        Json?
+  // Json type is optimal but will use String for now
+  // see https://github.com/graphql-nexus/nexus/issues/947
+  picture        String?
   password       String?
-  role           Role            @default(USER)
+  roles          Role[]
   updatedAt      DateTime        @default(now())
   defaultAddress DefaultAddress?
   addresses      Address[]
@@ -110,7 +112,6 @@ model User {
 enum Role {
   ADMIN
   CATERER
-  USER
 }
 
 enum Status {

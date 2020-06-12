@@ -47,8 +47,8 @@ AS $function$
    "menuUserId" VARCHAR(255);
    "mealUserId" VARCHAR(255);
     BEGIN
-    SELECT "userId" INTO "menuUserId" FROM "Menu" WHERE id = NEW."menuId";
-    SELECT "userId" INTO "mealUserId" FROM "Meal" WHERE id = NEW."mealId";
+    SELECT "userId" INTO "menuUserId" FROM "Menu" WHERE id = NEW."B";
+    SELECT "userId" INTO "mealUserId" FROM "Meal" WHERE id = NEW."A";
        IF ("menuUserId"<>"mealUserId")  THEN
             RAISE EXCEPTION 'userId fields on meal and menu do not match';
       END IF;

@@ -1,5 +1,5 @@
 import { schema } from 'nexus'
-import { hash, compare } from 'bcrypt'
+import { hash, compare } from 'bcryptjs'
 import errors from '../utils/errors'
 import { OAuth2Client } from 'google-auth-library'
 import { debuglog } from 'util'
@@ -36,7 +36,7 @@ schema.mutationType({
     t.crud.deleteOneMeal({ alias: 'deleteOneOwnMeal' })
     t.crud.deleteOneMenu({ alias: 'deleteOneOwnMenu' })
     t.crud.deleteOneOrder({ alias: 'deleteOneOwnOrder' })
-    
+
     t.field('revokeUserRefreshToken', {
       type: 'User',
       args: {
@@ -94,10 +94,11 @@ schema.mutationType({
         lastName: schema.stringArg({ nullable: true }),
         email: schema.stringArg({ required: true }),
         password: schema.stringArg({ required: true }),
+        roles: schema.arg({ type: 'Role', list: true }),
       },
       resolve: async (
         _parent,
-        { firstName, lastName, email, password: newPassword },
+        { firstName, lastName, email, roles, password: newPassword },
         ctx,
       ) => {
         const hashedPassword = await hash(newPassword, 10)
@@ -108,6 +109,7 @@ schema.mutationType({
               firstName,
               lastName,
               email,
+              roles: { set: roles },
               password: hashedPassword,
             },
           }))
@@ -122,7 +124,6 @@ schema.mutationType({
       },
     })
 
-    
     t.field('loginWithGoogle', {
       type: 'AuthPayload',
       args: {

@@ -13,7 +13,7 @@ it('makes sure a user was registered', async () => {
         lastName: "elmarakbi"
         email: "assad@elmarakbi.com"
         password: "somerandompassword"
-        role: ADMIN)
+        role: [ADMIN])
       {
         user {
           id

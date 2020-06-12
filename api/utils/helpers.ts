@@ -1,21 +1,24 @@
 import { sign, verify, JsonWebTokenError } from 'jsonwebtoken'
-import { TOKEN_PASSWORD, REFRESH_TOKEN_SECRET, tokens } from './constants'
+import { TOKEN_PASSWORD, REFRESH_TOKEN_SECRET, tokens, Role } from './constants'
 import errors from './errors'
 import { Response } from 'express'
-
-export interface TokenPayload {
-  id: string
-  role: string
-  type: string
-  tokenVersion: string
-  timestamp: number
-}
 
 export class NoTokenError extends Error {
   constructor(message) {
     super(message)
     this.name = 'NoTokenError'
   }
+}
+
+interface CreateTokenInput {
+  id: string
+  roles: Array<Role | keyof typeof Role>
+  tokenVersion: string
+}
+
+export interface TokenPayload extends CreateTokenInput {
+  type: string
+  timestamp: number
 }
 
 export interface CustomContext {
@@ -25,14 +28,9 @@ export interface CustomContext {
   tokenError?: JsonWebTokenError | NoTokenError
 }
 
-export const handleError = (error) => {
+export const handleError = (error: Error | string) => {
   // add any other logging mechanism here e.g. Sentry
   throw error
-}
-interface CreateTokenInput {
-  id: string
-  role: string
-  tokenVersion: string
 }
 
 interface TokenType {
@@ -41,14 +39,14 @@ interface TokenType {
 }
 
 export const generateToken = (
-  { id, role, tokenVersion }: CreateTokenInput,
+  { id, roles, tokenVersion }: CreateTokenInput,
   tokenType: TokenType,
   password: string,
 ) =>
   sign(
     {
       id,
-      role,
+      roles,
       tokenVersion,
       type: tokenType.name,
       timestamp: Date.now(),

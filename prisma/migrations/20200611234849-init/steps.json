@@ -6,8 +6,7 @@
       "enum": "Role",
       "values": [
         "ADMIN",
-        "CATERER",
-        "USER"
+        "CATERER"
       ]
     },
     {
@@ -154,7 +153,7 @@
       "model": "Address",
       "field": "street2",
       "type": "String",
-      "arity": "Required"
+      "arity": "Optional"
     },
     {
       "tag": "CreateField",
@@ -699,7 +698,7 @@
       "tag": "CreateField",
       "model": "Meal",
       "field": "orders",
-      "type": "MealsOnOrders",
+      "type": "MealOrder",
       "arity": "List"
     },
     {
@@ -770,11 +769,11 @@
     },
     {
       "tag": "CreateModel",
-      "model": "MealsOnOrders"
+      "model": "MealOrder"
     },
     {
       "tag": "CreateField",
-      "model": "MealsOnOrders",
+      "model": "MealOrder",
       "field": "createdAt",
       "type": "DateTime",
       "arity": "Required"
@@ -784,7 +783,7 @@
       "location": {
         "path": {
           "tag": "Field",
-          "model": "MealsOnOrders",
+          "model": "MealOrder",
           "field": "createdAt"
         },
         "directive": "default"
@@ -796,7 +795,7 @@
         "tag": "Directive",
         "path": {
           "tag": "Field",
-          "model": "MealsOnOrders",
+          "model": "MealOrder",
           "field": "createdAt"
         },
         "directive": "default"
@@ -806,7 +805,7 @@
     },
     {
       "tag": "CreateField",
-      "model": "MealsOnOrders",
+      "model": "MealOrder",
       "field": "id",
       "type": "String",
       "arity": "Required"
@@ -816,7 +815,7 @@
       "location": {
         "path": {
           "tag": "Field",
-          "model": "MealsOnOrders",
+          "model": "MealOrder",
           "field": "id"
         },
         "directive": "default"
@@ -828,7 +827,7 @@
         "tag": "Directive",
         "path": {
           "tag": "Field",
-          "model": "MealsOnOrders",
+          "model": "MealOrder",
           "field": "id"
         },
         "directive": "default"
@@ -841,7 +840,7 @@
       "location": {
         "path": {
           "tag": "Field",
-          "model": "MealsOnOrders",
+          "model": "MealOrder",
           "field": "id"
         },
         "directive": "id"
@@ -849,21 +848,21 @@
     },
     {
       "tag": "CreateField",
-      "model": "MealsOnOrders",
+      "model": "MealOrder",
       "field": "mealId",
       "type": "String",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
-      "model": "MealsOnOrders",
+      "model": "MealOrder",
       "field": "orderId",
       "type": "String",
       "arity": "Required"
     },
     {
       "tag": "CreateField",
-      "model": "MealsOnOrders",
+      "model": "MealOrder",
       "field": "quantity",
       "type": "Int",
       "arity": "Required"
@@ -873,7 +872,7 @@
       "location": {
         "path": {
           "tag": "Field",
-          "model": "MealsOnOrders",
+          "model": "MealOrder",
           "field": "quantity"
         },
         "directive": "default"
@@ -885,7 +884,7 @@
         "tag": "Directive",
         "path": {
           "tag": "Field",
-          "model": "MealsOnOrders",
+          "model": "MealOrder",
           "field": "quantity"
         },
         "directive": "default"
@@ -895,7 +894,7 @@
     },
     {
       "tag": "CreateField",
-      "model": "MealsOnOrders",
+      "model": "MealOrder",
       "field": "updatedAt",
       "type": "DateTime",
       "arity": "Required"
@@ -905,7 +904,7 @@
       "location": {
         "path": {
           "tag": "Field",
-          "model": "MealsOnOrders",
+          "model": "MealOrder",
           "field": "updatedAt"
         },
         "directive": "default"
@@ -917,7 +916,7 @@
         "tag": "Directive",
         "path": {
           "tag": "Field",
-          "model": "MealsOnOrders",
+          "model": "MealOrder",
           "field": "updatedAt"
         },
         "directive": "default"
@@ -927,7 +926,7 @@
     },
     {
       "tag": "CreateField",
-      "model": "MealsOnOrders",
+      "model": "MealOrder",
       "field": "meal",
       "type": "Meal",
       "arity": "Required"
@@ -937,7 +936,7 @@
       "location": {
         "path": {
           "tag": "Field",
-          "model": "MealsOnOrders",
+          "model": "MealOrder",
           "field": "meal"
         },
         "directive": "relation"
@@ -949,7 +948,7 @@
         "tag": "Directive",
         "path": {
           "tag": "Field",
-          "model": "MealsOnOrders",
+          "model": "MealOrder",
           "field": "meal"
         },
         "directive": "relation"
@@ -963,7 +962,7 @@
         "tag": "Directive",
         "path": {
           "tag": "Field",
-          "model": "MealsOnOrders",
+          "model": "MealOrder",
           "field": "meal"
         },
         "directive": "relation"
@@ -973,7 +972,7 @@
     },
     {
       "tag": "CreateField",
-      "model": "MealsOnOrders",
+      "model": "MealOrder",
       "field": "order",
       "type": "Order",
       "arity": "Required"
@@ -983,7 +982,7 @@
       "location": {
         "path": {
           "tag": "Field",
-          "model": "MealsOnOrders",
+          "model": "MealOrder",
           "field": "order"
         },
         "directive": "relation"
@@ -995,7 +994,7 @@
         "tag": "Directive",
         "path": {
           "tag": "Field",
-          "model": "MealsOnOrders",
+          "model": "MealOrder",
           "field": "order"
         },
         "directive": "relation"
@@ -1009,7 +1008,7 @@
         "tag": "Directive",
         "path": {
           "tag": "Field",
-          "model": "MealsOnOrders",
+          "model": "MealOrder",
           "field": "order"
         },
         "directive": "relation"
@@ -1022,7 +1021,7 @@
       "location": {
         "path": {
           "tag": "Model",
-          "model": "MealsOnOrders",
+          "model": "MealOrder",
           "arguments": [
             {
               "name": "",
@@ -1030,7 +1029,7 @@
             },
             {
               "name": "name",
-              "value": "\"mealsOnOrders\""
+              "value": "\"meal_order\""
             }
           ]
         },
@@ -1474,7 +1473,7 @@
       "tag": "CreateField",
       "model": "Order",
       "field": "meals",
-      "type": "MealsOnOrders",
+      "type": "MealOrder",
       "arity": "List"
     },
     {
@@ -1680,7 +1679,7 @@
       "tag": "CreateField",
       "model": "User",
       "field": "picture",
-      "type": "Json",
+      "type": "String",
       "arity": "Optional"
     },
     {
@@ -1693,34 +1692,9 @@
     {
       "tag": "CreateField",
       "model": "User",
-      "field": "role",
+      "field": "roles",
       "type": "Role",
-      "arity": "Required"
-    },
-    {
-      "tag": "CreateDirective",
-      "location": {
-        "path": {
-          "tag": "Field",
-          "model": "User",
-          "field": "role"
-        },
-        "directive": "default"
-      }
-    },
-    {
-      "tag": "CreateArgument",
-      "location": {
-        "tag": "Directive",
-        "path": {
-          "tag": "Field",
-          "model": "User",
-          "field": "role"
-        },
-        "directive": "default"
-      },
-      "argument": "",
-      "value": "USER"
+      "arity": "List"
     },
     {
       "tag": "CreateField",

@@ -15,7 +15,7 @@ function migrate(query) {
 
 function getDatabaseConnection() {
   const connectionString = process.env.DATABASE_URL
-  const { schema } = url.parse(connectionString, true).query
+  const { schema = 'public' } = url.parse(connectionString, true).query
   return {
     safeConnectionString: connectionString.split('?')[0],
     schema,

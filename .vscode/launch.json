@@ -9,7 +9,6 @@
       "protocol": "inspector",
       "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/nexus",
       "runtimeArgs": ["dev"],
-      "args": ["api/app.ts"],
       "sourceMaps": true,
       "console": "integratedTerminal"
     }

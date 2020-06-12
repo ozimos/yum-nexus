@@ -16,8 +16,7 @@ export const tokens = {
   },
 }
 
-export enum roles {
+export enum Role {
   ADMIN = 'ADMIN',
   CATERER = 'CATERER',
-  USER = 'USER',
 }

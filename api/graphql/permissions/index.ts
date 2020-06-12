@@ -1,8 +1,8 @@
 import { shield, or } from 'nexus-plugin-shield'
 import rules from './rules'
 
-import { roles } from '../../utils/constants'
-const { USER, ADMIN } = roles
+import { Role } from '../../utils/constants'
+const { ADMIN } = Role
 const {
   isAuthenticated,
   hasValidRoles,

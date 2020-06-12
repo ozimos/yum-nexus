@@ -28,7 +28,7 @@ input AddressCreateWithoutDefaultAddressInput {
   lga: String!
   state: String!
   street1: String!
-  street2: String!
+  street2: String
   updatedAt: DateTime
   user: UserCreateOneWithoutAddressesInput!
 }
@@ -41,7 +41,7 @@ input AddressCreateWithoutUserInput {
   lga: String!
   state: String!
   street1: String!
-  street2: String!
+  street2: String
   updatedAt: DateTime
 }
 
@@ -67,7 +67,7 @@ input AddressScalarWhereInput {
   OR: [AddressScalarWhereInput!]
   state: StringFilter
   street1: StringFilter
-  street2: StringFilter
+  street2: NullableStringFilter
   updatedAt: DateTimeFilter
   userId: StringFilter
 }
@@ -158,7 +158,7 @@ input AddressWhereInput {
   OR: [AddressWhereInput!]
   state: StringFilter
   street1: StringFilter
-  street2: StringFilter
+  street2: NullableStringFilter
   updatedAt: DateTimeFilter
   user: UserWhereInput
   userId: StringFilter
@@ -333,6 +333,11 @@ type Meal {
   user: User!
 }
 
+input Meal_orderCompoundUniqueInput {
+  mealId: String!
+  orderId: String!
+}
+
 input MealCreateInput {
   createdAt: DateTime
   deletedAt: DateTime
@@ -340,7 +345,7 @@ input MealCreateInput {
   id: String
   imageUrl: String!
   menus: MenuCreateManyWithoutMealsInput
-  orders: MealsOnOrdersCreateManyWithoutMealInput
+  orders: MealOrderCreateManyWithoutMealInput
   price: Int!
   tags: MealCreatetagsInput
   title: String!
@@ -373,7 +378,7 @@ input MealCreateWithoutMenusInput {
   description: String!
   id: String
   imageUrl: String!
-  orders: MealsOnOrdersCreateManyWithoutMealInput
+  orders: MealOrderCreateManyWithoutMealInput
   price: Int!
   tags: MealCreatetagsInput
   title: String!
@@ -402,7 +407,7 @@ input MealCreateWithoutUserInput {
   id: String
   imageUrl: String!
   menus: MenuCreateManyWithoutMealsInput
-  orders: MealsOnOrdersCreateManyWithoutMealInput
+  orders: MealOrderCreateManyWithoutMealInput
   price: Int!
   tags: MealCreatetagsInput
   title: String!
@@ -420,6 +425,151 @@ input MealMineCompoundUniqueInput {
   userId: String!
 }
 
+type MealOrder {
+  id: String!
+  meal: Meal!
+  mealId: String!
+  order: Order!
+  orderId: String!
+}
+
+input MealOrderCreateManyWithoutMealInput {
+  connect: [MealOrderWhereUniqueInput!]
+  create: [MealOrderCreateWithoutMealInput!]
+}
+
+input MealOrderCreateManyWithoutOrderInput {
+  connect: [MealOrderWhereUniqueInput!]
+  create: [MealOrderCreateWithoutOrderInput!]
+}
+
+input MealOrderCreateWithoutMealInput {
+  createdAt: DateTime
+  id: String
+  order: OrderCreateOneWithoutMealsInput!
+  quantity: Int
+  updatedAt: DateTime
+}
+
+input MealOrderCreateWithoutOrderInput {
+  createdAt: DateTime
+  id: String
+  meal: MealCreateOneWithoutOrdersInput!
+  quantity: Int
+  updatedAt: DateTime
+}
+
+input MealOrderFilter {
+  every: MealOrderWhereInput
+  none: MealOrderWhereInput
+  some: MealOrderWhereInput
+}
+
+input MealOrderScalarWhereInput {
+  AND: [MealOrderScalarWhereInput!]
+  createdAt: DateTimeFilter
+  id: StringFilter
+  mealId: StringFilter
+  NOT: [MealOrderScalarWhereInput!]
+  OR: [MealOrderScalarWhereInput!]
+  orderId: StringFilter
+  quantity: IntFilter
+  updatedAt: DateTimeFilter
+}
+
+input MealOrderUpdateManyDataInput {
+  createdAt: DateTime
+  id: String
+  quantity: Int
+  updatedAt: DateTime
+}
+
+input MealOrderUpdateManyWithoutMealInput {
+  connect: [MealOrderWhereUniqueInput!]
+  create: [MealOrderCreateWithoutMealInput!]
+  delete: [MealOrderWhereUniqueInput!]
+  deleteMany: [MealOrderScalarWhereInput!]
+  disconnect: [MealOrderWhereUniqueInput!]
+  set: [MealOrderWhereUniqueInput!]
+  update: [MealOrderUpdateWithWhereUniqueWithoutMealInput!]
+  updateMany: [MealOrderUpdateManyWithWhereNestedInput!]
+  upsert: [MealOrderUpsertWithWhereUniqueWithoutMealInput!]
+}
+
+input MealOrderUpdateManyWithoutOrderInput {
+  connect: [MealOrderWhereUniqueInput!]
+  create: [MealOrderCreateWithoutOrderInput!]
+  delete: [MealOrderWhereUniqueInput!]
+  deleteMany: [MealOrderScalarWhereInput!]
+  disconnect: [MealOrderWhereUniqueInput!]
+  set: [MealOrderWhereUniqueInput!]
+  update: [MealOrderUpdateWithWhereUniqueWithoutOrderInput!]
+  updateMany: [MealOrderUpdateManyWithWhereNestedInput!]
+  upsert: [MealOrderUpsertWithWhereUniqueWithoutOrderInput!]
+}
+
+input MealOrderUpdateManyWithWhereNestedInput {
+  data: MealOrderUpdateManyDataInput!
+  where: MealOrderScalarWhereInput!
+}
+
+input MealOrderUpdateWithoutMealDataInput {
+  createdAt: DateTime
+  id: String
+  order: OrderUpdateOneRequiredWithoutMealsInput
+  quantity: Int
+  updatedAt: DateTime
+}
+
+input MealOrderUpdateWithoutOrderDataInput {
+  createdAt: DateTime
+  id: String
+  meal: MealUpdateOneRequiredWithoutOrdersInput
+  quantity: Int
+  updatedAt: DateTime
+}
+
+input MealOrderUpdateWithWhereUniqueWithoutMealInput {
+  data: MealOrderUpdateWithoutMealDataInput!
+  where: MealOrderWhereUniqueInput!
+}
+
+input MealOrderUpdateWithWhereUniqueWithoutOrderInput {
+  data: MealOrderUpdateWithoutOrderDataInput!
+  where: MealOrderWhereUniqueInput!
+}
+
+input MealOrderUpsertWithWhereUniqueWithoutMealInput {
+  create: MealOrderCreateWithoutMealInput!
+  update: MealOrderUpdateWithoutMealDataInput!
+  where: MealOrderWhereUniqueInput!
+}
+
+input MealOrderUpsertWithWhereUniqueWithoutOrderInput {
+  create: MealOrderCreateWithoutOrderInput!
+  update: MealOrderUpdateWithoutOrderDataInput!
+  where: MealOrderWhereUniqueInput!
+}
+
+input MealOrderWhereInput {
+  AND: [MealOrderWhereInput!]
+  createdAt: DateTimeFilter
+  id: StringFilter
+  meal: MealWhereInput
+  mealId: StringFilter
+  NOT: [MealOrderWhereInput!]
+  OR: [MealOrderWhereInput!]
+  order: OrderWhereInput
+  orderId: StringFilter
+  quantity: IntFilter
+  updatedAt: DateTimeFilter
+}
+
+input MealOrderWhereUniqueInput {
+  id: String
+  meal_order: Meal_orderCompoundUniqueInput
+}
+
 input MealScalarWhereInput {
   AND: [MealScalarWhereInput!]
   createdAt: DateTimeFilter
@@ -430,161 +580,11 @@ input MealScalarWhereInput {
   menus: MenuFilter
   NOT: [MealScalarWhereInput!]
   OR: [MealScalarWhereInput!]
-  orders: MealsOnOrdersFilter
+  orders: MealOrderFilter
   price: IntFilter
   title: StringFilter
   updatedAt: DateTimeFilter
   userId: StringFilter
-}
-
-type MealsOnOrders {
-  id: String!
-  meal: Meal!
-  mealId: String!
-  order: Order!
-  orderId: String!
-}
-
-input MealsOnOrdersCompoundUniqueInput {
-  mealId: String!
-  orderId: String!
-}
-
-input MealsOnOrdersCreateManyWithoutMealInput {
-  connect: [MealsOnOrdersWhereUniqueInput!]
-  create: [MealsOnOrdersCreateWithoutMealInput!]
-}
-
-input MealsOnOrdersCreateManyWithoutOrderInput {
-  connect: [MealsOnOrdersWhereUniqueInput!]
-  create: [MealsOnOrdersCreateWithoutOrderInput!]
-}
-
-input MealsOnOrdersCreateWithoutMealInput {
-  createdAt: DateTime
-  id: String
-  order: OrderCreateOneWithoutMealsInput!
-  quantity: Int
-  updatedAt: DateTime
-}
-
-input MealsOnOrdersCreateWithoutOrderInput {
-  createdAt: DateTime
-  id: String
-  meal: MealCreateOneWithoutOrdersInput!
-  quantity: Int
-  updatedAt: DateTime
-}
-
-input MealsOnOrdersFilter {
-  every: MealsOnOrdersWhereInput
-  none: MealsOnOrdersWhereInput
-  some: MealsOnOrdersWhereInput
-}
-
-input MealsOnOrdersScalarWhereInput {
-  AND: [MealsOnOrdersScalarWhereInput!]
-  createdAt: DateTimeFilter
-  id: StringFilter
-  mealId: StringFilter
-  NOT: [MealsOnOrdersScalarWhereInput!]
-  OR: [MealsOnOrdersScalarWhereInput!]
-  orderId: StringFilter
-  quantity: IntFilter
-  updatedAt: DateTimeFilter
-}
-
-input MealsOnOrdersUpdateManyDataInput {
-  createdAt: DateTime
-  id: String
-  quantity: Int
-  updatedAt: DateTime
-}
-
-input MealsOnOrdersUpdateManyWithoutMealInput {
-  connect: [MealsOnOrdersWhereUniqueInput!]
-  create: [MealsOnOrdersCreateWithoutMealInput!]
-  delete: [MealsOnOrdersWhereUniqueInput!]
-  deleteMany: [MealsOnOrdersScalarWhereInput!]
-  disconnect: [MealsOnOrdersWhereUniqueInput!]
-  set: [MealsOnOrdersWhereUniqueInput!]
-  update: [MealsOnOrdersUpdateWithWhereUniqueWithoutMealInput!]
-  updateMany: [MealsOnOrdersUpdateManyWithWhereNestedInput!]
-  upsert: [MealsOnOrdersUpsertWithWhereUniqueWithoutMealInput!]
-}
-
-input MealsOnOrdersUpdateManyWithoutOrderInput {
-  connect: [MealsOnOrdersWhereUniqueInput!]
-  create: [MealsOnOrdersCreateWithoutOrderInput!]
-  delete: [MealsOnOrdersWhereUniqueInput!]
-  deleteMany: [MealsOnOrdersScalarWhereInput!]
-  disconnect: [MealsOnOrdersWhereUniqueInput!]
-  set: [MealsOnOrdersWhereUniqueInput!]
-  update: [MealsOnOrdersUpdateWithWhereUniqueWithoutOrderInput!]
-  updateMany: [MealsOnOrdersUpdateManyWithWhereNestedInput!]
-  upsert: [MealsOnOrdersUpsertWithWhereUniqueWithoutOrderInput!]
-}
-
-input MealsOnOrdersUpdateManyWithWhereNestedInput {
-  data: MealsOnOrdersUpdateManyDataInput!
-  where: MealsOnOrdersScalarWhereInput!
-}
-
-input MealsOnOrdersUpdateWithoutMealDataInput {
-  createdAt: DateTime
-  id: String
-  order: OrderUpdateOneRequiredWithoutMealsInput
-  quantity: Int
-  updatedAt: DateTime
-}
-
-input MealsOnOrdersUpdateWithoutOrderDataInput {
-  createdAt: DateTime
-  id: String
-  meal: MealUpdateOneRequiredWithoutOrdersInput
-  quantity: Int
-  updatedAt: DateTime
-}
-
-input MealsOnOrdersUpdateWithWhereUniqueWithoutMealInput {
-  data: MealsOnOrdersUpdateWithoutMealDataInput!
-  where: MealsOnOrdersWhereUniqueInput!
-}
-
-input MealsOnOrdersUpdateWithWhereUniqueWithoutOrderInput {
-  data: MealsOnOrdersUpdateWithoutOrderDataInput!
-  where: MealsOnOrdersWhereUniqueInput!
-}
-
-input MealsOnOrdersUpsertWithWhereUniqueWithoutMealInput {
-  create: MealsOnOrdersCreateWithoutMealInput!
-  update: MealsOnOrdersUpdateWithoutMealDataInput!
-  where: MealsOnOrdersWhereUniqueInput!
-}
-
-input MealsOnOrdersUpsertWithWhereUniqueWithoutOrderInput {
-  create: MealsOnOrdersCreateWithoutOrderInput!
-  update: MealsOnOrdersUpdateWithoutOrderDataInput!
-  where: MealsOnOrdersWhereUniqueInput!
-}
-
-input MealsOnOrdersWhereInput {
-  AND: [MealsOnOrdersWhereInput!]
-  createdAt: DateTimeFilter
-  id: StringFilter
-  meal: MealWhereInput
-  mealId: StringFilter
-  NOT: [MealsOnOrdersWhereInput!]
-  OR: [MealsOnOrdersWhereInput!]
-  order: OrderWhereInput
-  orderId: StringFilter
-  quantity: IntFilter
-  updatedAt: DateTimeFilter
-}
-
-input MealsOnOrdersWhereUniqueInput {
-  id: String
-  mealsOnOrders: MealsOnOrdersCompoundUniqueInput
 }
 
 input MealUpdateInput {
@@ -594,7 +594,7 @@ input MealUpdateInput {
   id: String
   imageUrl: String
   menus: MenuUpdateManyWithoutMealsInput
-  orders: MealsOnOrdersUpdateManyWithoutMealInput
+  orders: MealOrderUpdateManyWithoutMealInput
   price: Int
   tags: MealUpdatetagsInput
   title: String
@@ -660,7 +660,7 @@ input MealUpdateWithoutMenusDataInput {
   description: String
   id: String
   imageUrl: String
-  orders: MealsOnOrdersUpdateManyWithoutMealInput
+  orders: MealOrderUpdateManyWithoutMealInput
   price: Int
   tags: MealUpdatetagsInput
   title: String
@@ -689,7 +689,7 @@ input MealUpdateWithoutUserDataInput {
   id: String
   imageUrl: String
   menus: MenuUpdateManyWithoutMealsInput
-  orders: MealsOnOrdersUpdateManyWithoutMealInput
+  orders: MealOrderUpdateManyWithoutMealInput
   price: Int
   tags: MealUpdatetagsInput
   title: String
@@ -733,7 +733,7 @@ input MealWhereInput {
   menus: MenuFilter
   NOT: [MealWhereInput!]
   OR: [MealWhereInput!]
-  orders: MealsOnOrdersFilter
+  orders: MealOrderFilter
   price: IntFilter
   title: StringFilter
   updatedAt: DateTimeFilter
@@ -935,7 +935,7 @@ type Mutation {
   loginWithGoogle(token: String!): AuthPayload
   logout: LogoutResponse
   revokeUserRefreshToken(user: UserWhereUniqueInput): User
-  signup(email: String!, firstName: String, lastName: String, password: String!): AuthPayload
+  signup(email: String!, firstName: String, lastName: String, password: String!, roles: [Role!]): AuthPayload
   updateOneMeal(data: MealUpdateInput!, where: MealWhereUniqueInput!): Meal
   updateOneMenu(data: MenuUpdateInput!, where: MenuWhereUniqueInput!): Menu
   updateOneOrder(data: OrderUpdateInput!, where: OrderWhereUniqueInput!): Order
@@ -974,7 +974,7 @@ input NullableStringFilter {
 type Order {
   createdAt: DateTime!
   id: String!
-  meals(after: MealsOnOrdersWhereUniqueInput, before: MealsOnOrdersWhereUniqueInput, first: Int, last: Int, skip: Int): [MealsOnOrders!]!
+  meals(after: MealOrderWhereUniqueInput, before: MealOrderWhereUniqueInput, first: Int, last: Int, skip: Int): [MealOrder!]!
   status: Status!
   updatedAt: DateTime!
   user: User!
@@ -989,7 +989,7 @@ enum OrderByArg {
 input OrderCreateInput {
   createdAt: DateTime
   id: String
-  meals: MealsOnOrdersCreateManyWithoutOrderInput
+  meals: MealOrderCreateManyWithoutOrderInput
   status: Status
   updatedAt: DateTime
   user: UserCreateOneWithoutOrdersInput!
@@ -1016,7 +1016,7 @@ input OrderCreateWithoutMealsInput {
 input OrderCreateWithoutUserInput {
   createdAt: DateTime
   id: String
-  meals: MealsOnOrdersCreateManyWithoutOrderInput
+  meals: MealOrderCreateManyWithoutOrderInput
   status: Status
   updatedAt: DateTime
 }
@@ -1036,7 +1036,7 @@ input OrderScalarWhereInput {
   AND: [OrderScalarWhereInput!]
   createdAt: DateTimeFilter
   id: StringFilter
-  meals: MealsOnOrdersFilter
+  meals: MealOrderFilter
   NOT: [OrderScalarWhereInput!]
   OR: [OrderScalarWhereInput!]
   status: Status
@@ -1047,7 +1047,7 @@ input OrderScalarWhereInput {
 input OrderUpdateInput {
   createdAt: DateTime
   id: String
-  meals: MealsOnOrdersUpdateManyWithoutOrderInput
+  meals: MealOrderUpdateManyWithoutOrderInput
   status: Status
   updatedAt: DateTime
   user: UserUpdateOneRequiredWithoutOrdersInput
@@ -1095,7 +1095,7 @@ input OrderUpdateWithoutMealsDataInput {
 input OrderUpdateWithoutUserDataInput {
   createdAt: DateTime
   id: String
-  meals: MealsOnOrdersUpdateManyWithoutOrderInput
+  meals: MealOrderUpdateManyWithoutOrderInput
   status: Status
   updatedAt: DateTime
 }
@@ -1120,7 +1120,7 @@ input OrderWhereInput {
   AND: [OrderWhereInput!]
   createdAt: DateTimeFilter
   id: StringFilter
-  meals: MealsOnOrdersFilter
+  meals: MealOrderFilter
   NOT: [OrderWhereInput!]
   OR: [OrderWhereInput!]
   status: Status
@@ -1149,7 +1149,6 @@ type Query {
 enum Role {
   ADMIN
   CATERER
-  USER
 }
 
 enum Status {
@@ -1173,12 +1172,6 @@ input StringFilter {
   startsWith: String
 }
 
-type TokenUser {
-  id: String
-  role: String
-  tokenVersion: String
-}
-
 type User {
   addresses(first: Int): [Address!]!
   createdAt: DateTime!
@@ -1187,7 +1180,7 @@ type User {
   id: String!
   lastName: String
   meals(after: MealWhereUniqueInput, before: MealWhereUniqueInput, first: Int, last: Int, skip: Int): [Meal!]!
-  role: Role!
+  roles: [Role!]!
   tokenVersion: String!
   updatedAt: DateTime!
 }
@@ -1217,6 +1210,10 @@ input UserCreateOneWithoutOrdersInput {
   create: UserCreateWithoutOrdersInput
 }
 
+input UserCreaterolesInput {
+  set: [Role!]
+}
+
 input UserCreateWithoutAddressesInput {
   createdAt: DateTime
   defaultAddress: DefaultAddressCreateOneWithoutUserInput
@@ -1230,7 +1227,8 @@ input UserCreateWithoutAddressesInput {
   menus: MenuCreateManyWithoutUserInput
   orders: OrderCreateManyWithoutUserInput
   password: String
-  role: Role
+  picture: String
+  roles: UserCreaterolesInput
   tokenVersion: String
   updatedAt: DateTime
 }
@@ -1248,7 +1246,8 @@ input UserCreateWithoutDefaultAddressInput {
   menus: MenuCreateManyWithoutUserInput
   orders: OrderCreateManyWithoutUserInput
   password: String
-  role: Role
+  picture: String
+  roles: UserCreaterolesInput
   tokenVersion: String
   updatedAt: DateTime
 }
@@ -1266,7 +1265,8 @@ input UserCreateWithoutMealsInput {
   menus: MenuCreateManyWithoutUserInput
   orders: OrderCreateManyWithoutUserInput
   password: String
-  role: Role
+  picture: String
+  roles: UserCreaterolesInput
   tokenVersion: String
   updatedAt: DateTime
 }
@@ -1284,7 +1284,8 @@ input UserCreateWithoutMenusInput {
   meals: MealCreateManyWithoutUserInput
   orders: OrderCreateManyWithoutUserInput
   password: String
-  role: Role
+  picture: String
+  roles: UserCreaterolesInput
   tokenVersion: String
   updatedAt: DateTime
 }
@@ -1302,7 +1303,8 @@ input UserCreateWithoutOrdersInput {
   meals: MealCreateManyWithoutUserInput
   menus: MenuCreateManyWithoutUserInput
   password: String
-  role: Role
+  picture: String
+  roles: UserCreaterolesInput
   tokenVersion: String
   updatedAt: DateTime
 }
@@ -1316,7 +1318,7 @@ input UserOrderByInput {
   id: OrderByArg
   lastName: OrderByArg
   password: OrderByArg
-  role: OrderByArg
+  picture: OrderByArg
   tokenVersion: OrderByArg
   updatedAt: OrderByArg
 }
@@ -1335,7 +1337,8 @@ input UserUpdateInput {
   menus: MenuUpdateManyWithoutUserInput
   orders: OrderUpdateManyWithoutUserInput
   password: String
-  role: Role
+  picture: String
+  roles: UserUpdaterolesInput
   tokenVersion: String
   updatedAt: DateTime
 }
@@ -1375,6 +1378,10 @@ input UserUpdateOneRequiredWithoutOrdersInput {
   upsert: UserUpsertWithoutOrdersInput
 }
 
+input UserUpdaterolesInput {
+  set: [Role!]
+}
+
 input UserUpdateWithoutAddressesDataInput {
   createdAt: DateTime
   defaultAddress: DefaultAddressUpdateOneWithoutUserInput
@@ -1388,7 +1395,8 @@ input UserUpdateWithoutAddressesDataInput {
   menus: MenuUpdateManyWithoutUserInput
   orders: OrderUpdateManyWithoutUserInput
   password: String
-  role: Role
+  picture: String
+  roles: UserUpdaterolesInput
   tokenVersion: String
   updatedAt: DateTime
 }
@@ -1406,7 +1414,8 @@ input UserUpdateWithoutDefaultAddressDataInput {
   menus: MenuUpdateManyWithoutUserInput
   orders: OrderUpdateManyWithoutUserInput
   password: String
-  role: Role
+  picture: String
+  roles: UserUpdaterolesInput
   tokenVersion: String
   updatedAt: DateTime
 }
@@ -1424,7 +1433,8 @@ input UserUpdateWithoutMealsDataInput {
   menus: MenuUpdateManyWithoutUserInput
   orders: OrderUpdateManyWithoutUserInput
   password: String
-  role: Role
+  picture: String
+  roles: UserUpdaterolesInput
   tokenVersion: String
   updatedAt: DateTime
 }
@@ -1442,7 +1452,8 @@ input UserUpdateWithoutMenusDataInput {
   meals: MealUpdateManyWithoutUserInput
   orders: OrderUpdateManyWithoutUserInput
   password: String
-  role: Role
+  picture: String
+  roles: UserUpdaterolesInput
   tokenVersion: String
   updatedAt: DateTime
 }
@@ -1460,7 +1471,8 @@ input UserUpdateWithoutOrdersDataInput {
   meals: MealUpdateManyWithoutUserInput
   menus: MenuUpdateManyWithoutUserInput
   password: String
-  role: Role
+  picture: String
+  roles: UserUpdaterolesInput
   tokenVersion: String
   updatedAt: DateTime
 }
@@ -1507,7 +1519,7 @@ input UserWhereInput {
   OR: [UserWhereInput!]
   orders: OrderFilter
   password: NullableStringFilter
-  role: Role
+  picture: NullableStringFilter
   tokenVersion: StringFilter
   updatedAt: DateTimeFilter
 }
