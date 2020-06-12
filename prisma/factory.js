@@ -7,16 +7,7 @@ const salt = bcrypt.genSaltSync(10)
 const hashPassword = bcrypt.hashSync(faker.internet.password(), salt)
 const roles = [[], [`ADMIN`], [`CATERER`], [`ADMIN`, `CATERER`]]
 const status = [`DISPATCHED`, `FULFILLED`, `PENDING`, `PROCESSING`]
-const zipCodes = [
-  101283,
-  100271,
-  100269,
-  104101,
-  101245,
-  101241,
-  101212,
-  101299,
-]
+const zipCodes = [101283, 100271, 100269, 104101, 101245, 101241, 101212, 101299]
 
 const userFactory = (defaults = {}) => ({
   id: cuid(),

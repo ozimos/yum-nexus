@@ -1,6 +1,6 @@
 {
   "name": "yum-nexus",
-  "license": "UNLICENSED",
+  "license": "ISC",
   "dependencies": {
     "@nexus/schema": "^0.13.1",
     "bcryptjs": "^2.4.3",
@@ -21,15 +21,23 @@
     "passport": "^0.4.1",
     "passport-facebook": "^3.0.0",
     "passport-google-oauth20": "^2.0.0",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "@apollo/react-hooks": "3.1.3",
+    "apollo-cache-inmemory": "1.6.5",
+    "apollo-client": "2.6.8",
+    "apollo-link-http": "1.5.16",
+    "graphql": "^14.0.2",
+    "graphql-tag": "2.10.3",
+    "prop-types": "^15.6.2",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0"
   },
   "scripts": {
     "format": "npx prettier --write './**/*.{js,ts,md}'",
     "dev": "next",
-    "build": "next build",
+    "build": "nexus build && next build",
     "start": "next start",
-    "nexus-dev": "nexus dev",
+    "nexus:reflection": "nexus dev --reflection --entrypoint pages/api/graphql.ts",
+    "nexus:check": "nexus build --entrypoint pages/api/graphql.ts",
     "generate": "prisma generate",
     "postmigrate": "dotenv -e prisma/.env -- node prisma/migrate",
     "migrate": "prisma migrate up --experimental",
@@ -37,13 +45,12 @@
     "seed": "dotenv -e prisma/.env  -- node prisma/seed",
     "drop": "dotenv -e prisma/.env  -- node prisma/drop",
     "reset": "yarn drop && yarn migrate",
-    "test": "dotenv -e prisma/.env -e .env -e .env.test -- jest"
+    "test": "dotenv -e prisma/.env -e .env -e .env.test -- jest",
+    
+    "deploy:preview": "now",
+    "deploy:prod": "now --prod"
   },
-  "prettier": {
-    "semi": false,
-    "singleQuote": true,
-    "trailingComma": "all"
-  },
+  "prettier": "@prisma-labs/prettier-config",
   "devDependencies": {
     "@babel/core": "^7.9.6",
     "@babel/preset-env": "^7.9.6",
@@ -64,6 +71,11 @@
     "jest-environment-node": "^26.0.1",
     "nanoid": "^3.1.9",
     "pg": "^8.2.1",
-    "prettier": "^2.0.5"
+    "prettier": "^2.0.5",
+    "babel-plugin-graphql-tag": "^2.5.0",
+    "@prisma-labs/prettier-config": "0.1.0",
+    "@types/node": "13.13.10",
+    "@types/react": "16.9.34",
+    "typescript": "3.9.5"
   }
 }

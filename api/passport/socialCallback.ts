@@ -2,12 +2,7 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-export const socialCallback = (socialId: string) => (
-  accessToken,
-  refreshToken,
-  profile,
-  cb,
-) => {
+export const socialCallback = (socialId: string) => (accessToken, refreshToken, profile, cb) => {
   return prisma.user
     .findOne({
       where: {
@@ -22,15 +17,9 @@ export const socialCallback = (socialId: string) => (
 
       const newUser = {
         [socialId]: profile.id,
-        firstName:
-          profile.name.givenName ||
-          profile.displayName.split(' ')[0] ||
-          profile.username,
+        firstName: profile.name.givenName || profile.displayName.split(' ')[0] || profile.username,
         lastName: profile.name.familyName || profile.displayName.split(' ')[1],
-        email:
-          profile.emails &&
-          profile.emails[0] &&
-          profile.emails[0].value.toLowerCase(),
+        email: profile.emails && profile.emails[0] && profile.emails[0].value.toLowerCase(),
       }
       return prisma.user
         .create({ data: newUser })
@@ -38,11 +27,7 @@ export const socialCallback = (socialId: string) => (
           return cb(null, user)
         })
         .catch(function (err) {
-          if (
-            !err.message.includes(
-              'Unique constraint failed on the fields: (`email`)',
-            )
-          ) {
+          if (!err.message.includes('Unique constraint failed on the fields: (`email`)')) {
             cb(err)
           }
           return prisma.user
@@ -53,11 +38,9 @@ export const socialCallback = (socialId: string) => (
               select: { id: true },
             })
             .then(({ id }) => {
-              return prisma.user
-                .create({ data: { id, ...newUser } })
-                .then(({ password, ...user }) => {
-                  return cb(null, user)
-                })
+              return prisma.user.create({ data: { id, ...newUser } }).then(({ password, ...user }) => {
+                return cb(null, user)
+              })
             })
         })
     })

@@ -3,12 +3,7 @@ import rules from './rules'
 
 import { Role } from '../../utils/constants'
 const { ADMIN } = Role
-const {
-  isAuthenticated,
-  hasValidRoles,
-  canEditOnlyOwnRecord,
-  canViewOnlyOwnRecord,
-} = rules
+const { isAuthenticated, hasValidRoles, canEditOnlyOwnRecord, canViewOnlyOwnRecord } = rules
 
 const defaultViewRule = or(hasValidRoles([ADMIN]), canViewOnlyOwnRecord)
 

@@ -4,11 +4,7 @@ import errors from '../utils/errors'
 import { OAuth2Client } from 'google-auth-library'
 import { debuglog } from 'util'
 import cuid from 'cuid'
-import {
-  generateAccessToken,
-  sendRefreshToken,
-  handleError,
-} from '../utils/helpers'
+import { generateAccessToken, sendRefreshToken, handleError } from '../utils/helpers'
 import fetch from 'node-fetch'
 
 const log = debuglog('app')
@@ -96,11 +92,7 @@ schema.mutationType({
         password: schema.stringArg({ required: true }),
         roles: schema.arg({ type: 'Role', list: true }),
       },
-      resolve: async (
-        _parent,
-        { firstName, lastName, email, roles, password: newPassword },
-        ctx,
-      ) => {
+      resolve: async (_parent, { firstName, lastName, email, roles, password: newPassword }, ctx) => {
         const hashedPassword = await hash(newPassword, 10)
         let user, password
         try {
@@ -145,12 +137,7 @@ schema.mutationType({
           throw e
         }
         const payload = ticket.getPayload()
-        const {
-          sub: googleId,
-          email,
-          family_name: lastName,
-          given_name: firstName,
-        } = payload
+        const { sub: googleId, email, family_name: lastName, given_name: firstName } = payload
 
         const profile = {
           googleId,
@@ -177,19 +164,14 @@ schema.mutationType({
         let payload
         try {
           const response = await fetch(
-            `/v7.0/me?fields=id,first_name,last_name,email,picture&access_token=${token}`,
+            `/v7.0/me?fields=id,first_name,last_name,email,picture&access_token=${token}`
           )
           payload = response.json()
         } catch (e) {
           log(e)
           throw e
         }
-        const {
-          id: facebookId,
-          email,
-          last_name: lastName,
-          first_name: firstName,
-        } = payload
+        const { id: facebookId, email, last_name: lastName, first_name: firstName } = payload
 
         const profile = {
           facebookId,
@@ -227,9 +209,7 @@ async function createAuthPayloadFromSocial(db, res, profile, existingUser) {
         user = await db.user.create({ data: profile })
       }
     } catch (e) {
-      if (
-        !e.message.includes('Unique constraint failed on the fields: (`email`)')
-      ) {
+      if (!e.message.includes('Unique constraint failed on the fields: (`email`)')) {
         log(e)
         throw e
       }

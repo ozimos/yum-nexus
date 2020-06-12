@@ -41,7 +41,7 @@ interface TokenType {
 export const generateToken = (
   { id, roles, tokenVersion }: CreateTokenInput,
   tokenType: TokenType,
-  password: string,
+  password: string
 ) =>
   sign(
     {
@@ -54,7 +54,7 @@ export const generateToken = (
     password,
     {
       expiresIn: tokenType.expiry,
-    },
+    }
   )
 
 export const generateAccessToken = (user: CreateTokenInput) =>
