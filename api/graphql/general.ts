@@ -5,7 +5,6 @@ import { extractTokenPayload } from '../utils/helpers'
 
 // @ts-ignore
 schema.addToContext(extractTokenPayload)
-
 use(permissions)
 use(prisma())
 

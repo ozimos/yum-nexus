@@ -1,5 +1,5 @@
-import Cors from 'cors'
-import { whitelist } from '../../api/utils/constants'
+import { NextApiRequest, NextApiResponse } from 'next'
+import { cors, runMiddleware } from '../../api/utils/api-tools'
 if (process.env.NODE_ENV === 'development') require('nexus').default.reset()
 
 const app = require('nexus').default
@@ -8,27 +8,10 @@ require('../../api/graphql')
 
 app.assemble()
 
-const cors = Cors({
-  methods: ['GET', 'HEAD'],
-  origin: whitelist,
-  credentials: true,
-})
-
-function runMiddleware(req, res, fn) {
-  return new Promise((resolve, reject) => {
-    fn(req, res, (result) => {
-      if (result instanceof Error) {
-        return reject(result)
-      }
-
-      return resolve(result)
-    })
-  })
-}
-
-async function handler(req, res) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Run the middleware
   await runMiddleware(req, res, cors)
+  req.res = res
   await app.server.handlers.graphql(req, res)
 }
 

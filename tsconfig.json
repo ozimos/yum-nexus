@@ -1,9 +1,11 @@
 {
   "compilerOptions": {
-    "target": "ES2019",
+    "target": "ES5",
     "esModuleInterop": true,
     "module": "esnext",
     "lib": [
+      "dom",
+      "dom.iterable",
       "ESNEXT"
     ],
     "strict": false,    
@@ -24,7 +26,9 @@
     "jsx": "preserve"
   },
   "include": [
-    "api", "components", "pages", "lib"
+    "api", "components", "pages", "lib", "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx", "pages/_app.js"
   ],
   "exclude": [
     "node_modules"
