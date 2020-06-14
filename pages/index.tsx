@@ -1,3 +1,4 @@
+import { GetStaticProps } from 'next'
 import App from '../components/App'
 import InfoBox from '../components/InfoBox'
 import Header from '../components/Header'
@@ -8,13 +9,18 @@ import { initializeApollo } from '../lib/apolloClient'
 const IndexPage = () => (
   <App>
     <Header />
-    <InfoBox>ℹ️ This page shows how to use SSG with Apollo.</InfoBox>
+    <InfoBox>
+      <span role="img" aria-label="icon">
+        ℹ️
+      </span>
+      This page shows how to use SSG with Apollo.
+    </InfoBox>
     <Submit />
     <PostList />
   </App>
 )
 
-export async function getStaticProps() {
+export const getStaticProps: GetStaticProps = async () => {
   const apolloClient = initializeApollo()
 
   await apolloClient.query({

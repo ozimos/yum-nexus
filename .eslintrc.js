@@ -27,9 +27,11 @@ module.exports = {
     'prettier/prettier': ['error', {}, { usePrettierrc: true }],
     'react/prop-types': 'off',
     'no-unused-vars': 'off',
+    'no-unsafe-finally': 'off',
     'react/react-in-jsx-scope': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/ban-ts-ignore': 'off',
+    'jsx-a11y/no-autofocus': 'off',
     'jsx-a11y/label-has-associated-control': [
       'error',
       {

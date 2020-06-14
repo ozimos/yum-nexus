@@ -35,7 +35,6 @@ failed-inferMigrationSteps*
 
 # Environment Variables
 prisma/.env
-.env
 .envrc
 
 # Elastic Beanstalk Files
