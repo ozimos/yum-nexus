@@ -9,8 +9,16 @@
       "protocol": "inspector",
       "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/nexus",
       "runtimeArgs": ["dev"],
+      "skipFiles": ["<node_internals>/**"],
       "sourceMaps": true,
       "console": "integratedTerminal"
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Launch Program",
+      "skipFiles": ["<node_internals>/**"],
+      "port": 9229
     }
   ]
 }

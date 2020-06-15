@@ -1,3 +1,4 @@
+import cookie from 'cookie'
 import { sign, verify, JsonWebTokenError } from 'jsonwebtoken'
 import { TOKEN_PASSWORD, REFRESH_TOKEN_SECRET, tokens, Role } from './constants'
 import errors from './errors'
@@ -41,7 +42,7 @@ interface TokenType {
 export const generateToken = (
   { id, roles, tokenVersion }: CreateTokenInput,
   tokenType: TokenType,
-  password: string,
+  password: string
 ) =>
   sign(
     {
@@ -54,7 +55,7 @@ export const generateToken = (
     password,
     {
       expiresIn: tokenType.expiry,
-    },
+    }
   )
 
 export const generateAccessToken = (user: CreateTokenInput) =>
@@ -74,7 +75,7 @@ export function authGuard(context) {
 
 export function extractTokenPayload(req) {
   const { res, cookies } = req
-  const bearerHeader = req.get('Authorization')
+  const bearerHeader = req.headers['authorization']
   const result = { cookies, res }
   if (typeof bearerHeader === 'undefined') {
     Object.assign(result, {
@@ -83,16 +84,15 @@ export function extractTokenPayload(req) {
     return result
   }
   const token = bearerHeader.split(' ').pop()
-
   try {
     const tokenPayload = verify(token, TOKEN_PASSWORD)
     if (!(tokenPayload as TokenPayload)) {
       throw errors.invalidToken
     }
     Object.assign(result, { tokenPayload })
+    return result
   } catch (tokenError) {
     Object.assign(result, { tokenError })
-  } finally {
     return result
   }
 }
@@ -101,5 +101,5 @@ export function sendRefreshToken(res: Response, user: CreateTokenInput) {
   if (user && (user as CreateTokenInput)) {
     token = generateRefreshToken(user)
   }
-  return res.cookie('jid', token, { httpOnly: true })
+  return res.setHeader('set-cookie', cookie.serialize('jid', token, { httpOnly: true }))
 }

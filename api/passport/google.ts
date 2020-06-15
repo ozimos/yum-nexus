@@ -18,9 +18,7 @@ export async function googleFrontEndSignIn(req, res, next) {
       return res.status(400).json({ message: error.message })
     }
     if (!user) {
-      return res
-        .status(404)
-        .json({ message: 'Unauthorized: Could not obtain user' })
+      return res.status(404).json({ message: 'Unauthorized: Could not obtain user' })
     }
     req.user = user
     next()
@@ -33,12 +31,7 @@ export async function googleFrontEndSignIn(req, res, next) {
       //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
     })
     const payload = ticket.getPayload()
-    const {
-      sub: id,
-      email,
-      family_name: familyName,
-      given_name: givenName,
-    } = payload
+    const { sub: id, email, family_name: familyName, given_name: givenName } = payload
 
     const profile = {
       emails: [{ value: email }],

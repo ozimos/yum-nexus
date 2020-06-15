@@ -14,6 +14,7 @@
       "enum": "Status",
       "values": [
         "DISPATCHED",
+        "CANCELLED",
         "FULFILLED",
         "PENDING",
         "PROCESSING"
@@ -1422,6 +1423,59 @@
       "field": "userId",
       "type": "String",
       "arity": "Required"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Order",
+      "field": "addressId",
+      "type": "String",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Order",
+      "field": "deliveryAddress",
+      "type": "Address",
+      "arity": "Optional"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Order",
+          "field": "deliveryAddress"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Order",
+          "field": "deliveryAddress"
+        },
+        "directive": "relation"
+      },
+      "argument": "fields",
+      "value": "[addressId]"
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Order",
+          "field": "deliveryAddress"
+        },
+        "directive": "relation"
+      },
+      "argument": "references",
+      "value": "[id]"
     },
     {
       "tag": "CreateField",

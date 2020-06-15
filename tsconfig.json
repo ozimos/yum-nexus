@@ -1,13 +1,36 @@
 {
   "compilerOptions": {
-    "target": "ES2019",
+    "target": "ES5",
     "esModuleInterop": true,
-    "module": "commonjs",
-    "lib": ["ESNEXT"],
-    "strict": false,
-    "rootDir": "api",
+    "module": "esnext",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "ESNEXT"
+    ],
+    "strict": true,    
+    "rootDir": ".",
+
     "moduleResolution": "node",
-    "plugins": [{ "name": "nexus/typescript-language-service" }]
+    "plugins": [
+      {
+        "name": "nexus/typescript-language-service"
+      }
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve"
   },
-  "include": ["api"]
+  "include": [
+    "api", "components", "pages", "lib", "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx", "pages/_app.js"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

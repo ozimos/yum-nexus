@@ -33,19 +33,19 @@ model DefaultAddress {
 }
 
 model Meal {
-  createdAt   DateTime        @default(now())
+  createdAt   DateTime    @default(now())
   deletedAt   DateTime?
   description String
-  id          String          @default(cuid()) @id
+  id          String      @default(cuid()) @id
   imageUrl    String
   price       Int
   tags        String[]
   title       String
-  updatedAt   DateTime        @default(now())
+  updatedAt   DateTime    @default(now())
   userId      String
-  user        User            @relation(fields: [userId], references: [id])
+  user        User        @relation(fields: [userId], references: [id])
   orders      MealOrder[]
-  menus       Menu[]          @relation("MealMenu", references: [id])
+  menus       Menu[]      @relation("MealMenu", references: [id])
 
   @@unique([id, userId], name: "mealMine")
 }
@@ -76,13 +76,15 @@ model Menu {
 }
 
 model Order {
-  createdAt DateTime        @default(now())
-  id        String          @default(cuid()) @id
-  status    Status          @default(PENDING)
-  updatedAt DateTime        @default(now())
-  userId    String
-  user      User            @relation(fields: [userId], references: [id])
-  meals     MealOrder[]
+  createdAt       DateTime    @default(now())
+  id              String      @default(cuid()) @id
+  status          Status      @default(PENDING)
+  updatedAt       DateTime    @default(now())
+  userId          String
+  addressId       String?
+  deliveryAddress Address?    @relation(fields: [addressId], references: [id])
+  user            User        @relation(fields: [userId], references: [id])
+  meals           MealOrder[]
 
   @@unique([id, userId], name: "orderMine")
 }
@@ -116,6 +118,7 @@ enum Role {
 
 enum Status {
   DISPATCHED
+  CANCELLED
   FULFILLED
   PENDING
   PROCESSING

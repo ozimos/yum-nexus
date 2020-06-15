@@ -8,7 +8,23 @@ type Address {
   id: String!
   lga: String!
   state: String!
+  street1: String!
+  street2: String
   updatedAt: DateTime!
+}
+
+input AddressCreateInput {
+  areaCode: Int!
+  createdAt: DateTime
+  DefaultAddress: DefaultAddressCreateManyWithoutAddressInput
+  id: String
+  lga: String!
+  Order: OrderCreateManyWithoutDeliveryAddressInput
+  state: String!
+  street1: String!
+  street2: String
+  updatedAt: DateTime
+  user: UserCreateOneWithoutAddressesInput!
 }
 
 input AddressCreateManyWithoutUserInput {
@@ -21,9 +37,28 @@ input AddressCreateOneWithoutDefaultAddressInput {
   create: AddressCreateWithoutDefaultAddressInput
 }
 
+input AddressCreateOneWithoutOrderInput {
+  connect: AddressWhereUniqueInput
+  create: AddressCreateWithoutOrderInput
+}
+
 input AddressCreateWithoutDefaultAddressInput {
   areaCode: Int!
   createdAt: DateTime
+  id: String
+  lga: String!
+  Order: OrderCreateManyWithoutDeliveryAddressInput
+  state: String!
+  street1: String!
+  street2: String
+  updatedAt: DateTime
+  user: UserCreateOneWithoutAddressesInput!
+}
+
+input AddressCreateWithoutOrderInput {
+  areaCode: Int!
+  createdAt: DateTime
+  DefaultAddress: DefaultAddressCreateManyWithoutAddressInput
   id: String
   lga: String!
   state: String!
@@ -39,6 +74,7 @@ input AddressCreateWithoutUserInput {
   DefaultAddress: DefaultAddressCreateManyWithoutAddressInput
   id: String
   lga: String!
+  Order: OrderCreateManyWithoutDeliveryAddressInput
   state: String!
   street1: String!
   street2: String
@@ -65,11 +101,26 @@ input AddressScalarWhereInput {
   lga: StringFilter
   NOT: [AddressScalarWhereInput!]
   OR: [AddressScalarWhereInput!]
+  Order: OrderFilter
   state: StringFilter
   street1: StringFilter
   street2: NullableStringFilter
   updatedAt: DateTimeFilter
   userId: StringFilter
+}
+
+input AddressUpdateInput {
+  areaCode: Int
+  createdAt: DateTime
+  DefaultAddress: DefaultAddressUpdateManyWithoutAddressInput
+  id: String
+  lga: String
+  Order: OrderUpdateManyWithoutDeliveryAddressInput
+  state: String
+  street1: String
+  street2: String
+  updatedAt: DateTime
+  user: UserUpdateOneRequiredWithoutAddressesInput
 }
 
 input AddressUpdateManyDataInput {
@@ -107,9 +158,32 @@ input AddressUpdateOneRequiredWithoutDefaultAddressInput {
   upsert: AddressUpsertWithoutDefaultAddressInput
 }
 
+input AddressUpdateOneWithoutOrderInput {
+  connect: AddressWhereUniqueInput
+  create: AddressCreateWithoutOrderInput
+  delete: Boolean
+  disconnect: Boolean
+  update: AddressUpdateWithoutOrderDataInput
+  upsert: AddressUpsertWithoutOrderInput
+}
+
 input AddressUpdateWithoutDefaultAddressDataInput {
   areaCode: Int
   createdAt: DateTime
+  id: String
+  lga: String
+  Order: OrderUpdateManyWithoutDeliveryAddressInput
+  state: String
+  street1: String
+  street2: String
+  updatedAt: DateTime
+  user: UserUpdateOneRequiredWithoutAddressesInput
+}
+
+input AddressUpdateWithoutOrderDataInput {
+  areaCode: Int
+  createdAt: DateTime
+  DefaultAddress: DefaultAddressUpdateManyWithoutAddressInput
   id: String
   lga: String
   state: String
@@ -125,6 +199,7 @@ input AddressUpdateWithoutUserDataInput {
   DefaultAddress: DefaultAddressUpdateManyWithoutAddressInput
   id: String
   lga: String
+  Order: OrderUpdateManyWithoutDeliveryAddressInput
   state: String
   street1: String
   street2: String
@@ -139,6 +214,11 @@ input AddressUpdateWithWhereUniqueWithoutUserInput {
 input AddressUpsertWithoutDefaultAddressInput {
   create: AddressCreateWithoutDefaultAddressInput!
   update: AddressUpdateWithoutDefaultAddressDataInput!
+}
+
+input AddressUpsertWithoutOrderInput {
+  create: AddressCreateWithoutOrderInput!
+  update: AddressUpdateWithoutOrderDataInput!
 }
 
 input AddressUpsertWithWhereUniqueWithoutUserInput {
@@ -156,6 +236,7 @@ input AddressWhereInput {
   lga: StringFilter
   NOT: [AddressWhereInput!]
   OR: [AddressWhereInput!]
+  Order: OrderFilter
   state: StringFilter
   street1: StringFilter
   street2: NullableStringFilter
@@ -916,6 +997,7 @@ input MenuWhereUniqueInput {
 }
 
 type Mutation {
+  createOneAddress(data: AddressCreateInput!): Address!
   createOneMeal(data: MealCreateInput!): Meal!
   createOneMenu(data: MenuCreateInput!): Menu!
   createOneOrder(data: OrderCreateInput!): Order!
@@ -936,6 +1018,7 @@ type Mutation {
   logout: LogoutResponse
   revokeUserRefreshToken(user: UserWhereUniqueInput): User
   signup(email: String!, firstName: String, lastName: String, password: String!, roles: [Role!]): AuthPayload
+  updateOneAddress(data: AddressUpdateInput!, where: AddressWhereUniqueInput!): Address
   updateOneMeal(data: MealUpdateInput!, where: MealWhereUniqueInput!): Meal
   updateOneMenu(data: MenuUpdateInput!, where: MenuWhereUniqueInput!): Menu
   updateOneOrder(data: OrderUpdateInput!, where: OrderWhereUniqueInput!): Order
@@ -973,6 +1056,7 @@ input NullableStringFilter {
 
 type Order {
   createdAt: DateTime!
+  deliveryAddress: Address
   id: String!
   meals(after: MealOrderWhereUniqueInput, before: MealOrderWhereUniqueInput, first: Int, last: Int, skip: Int): [MealOrder!]!
   status: Status!
@@ -988,11 +1072,17 @@ enum OrderByArg {
 
 input OrderCreateInput {
   createdAt: DateTime
+  deliveryAddress: AddressCreateOneWithoutOrderInput
   id: String
   meals: MealOrderCreateManyWithoutOrderInput
   status: Status
   updatedAt: DateTime
   user: UserCreateOneWithoutOrdersInput!
+}
+
+input OrderCreateManyWithoutDeliveryAddressInput {
+  connect: [OrderWhereUniqueInput!]
+  create: [OrderCreateWithoutDeliveryAddressInput!]
 }
 
 input OrderCreateManyWithoutUserInput {
@@ -1005,8 +1095,18 @@ input OrderCreateOneWithoutMealsInput {
   create: OrderCreateWithoutMealsInput
 }
 
+input OrderCreateWithoutDeliveryAddressInput {
+  createdAt: DateTime
+  id: String
+  meals: MealOrderCreateManyWithoutOrderInput
+  status: Status
+  updatedAt: DateTime
+  user: UserCreateOneWithoutOrdersInput!
+}
+
 input OrderCreateWithoutMealsInput {
   createdAt: DateTime
+  deliveryAddress: AddressCreateOneWithoutOrderInput
   id: String
   status: Status
   updatedAt: DateTime
@@ -1015,6 +1115,7 @@ input OrderCreateWithoutMealsInput {
 
 input OrderCreateWithoutUserInput {
   createdAt: DateTime
+  deliveryAddress: AddressCreateOneWithoutOrderInput
   id: String
   meals: MealOrderCreateManyWithoutOrderInput
   status: Status
@@ -1033,6 +1134,7 @@ input OrderMineCompoundUniqueInput {
 }
 
 input OrderScalarWhereInput {
+  addressId: NullableStringFilter
   AND: [OrderScalarWhereInput!]
   createdAt: DateTimeFilter
   id: StringFilter
@@ -1046,6 +1148,7 @@ input OrderScalarWhereInput {
 
 input OrderUpdateInput {
   createdAt: DateTime
+  deliveryAddress: AddressUpdateOneWithoutOrderInput
   id: String
   meals: MealOrderUpdateManyWithoutOrderInput
   status: Status
@@ -1058,6 +1161,18 @@ input OrderUpdateManyDataInput {
   id: String
   status: Status
   updatedAt: DateTime
+}
+
+input OrderUpdateManyWithoutDeliveryAddressInput {
+  connect: [OrderWhereUniqueInput!]
+  create: [OrderCreateWithoutDeliveryAddressInput!]
+  delete: [OrderWhereUniqueInput!]
+  deleteMany: [OrderScalarWhereInput!]
+  disconnect: [OrderWhereUniqueInput!]
+  set: [OrderWhereUniqueInput!]
+  update: [OrderUpdateWithWhereUniqueWithoutDeliveryAddressInput!]
+  updateMany: [OrderUpdateManyWithWhereNestedInput!]
+  upsert: [OrderUpsertWithWhereUniqueWithoutDeliveryAddressInput!]
 }
 
 input OrderUpdateManyWithoutUserInput {
@@ -1084,8 +1199,18 @@ input OrderUpdateOneRequiredWithoutMealsInput {
   upsert: OrderUpsertWithoutMealsInput
 }
 
+input OrderUpdateWithoutDeliveryAddressDataInput {
+  createdAt: DateTime
+  id: String
+  meals: MealOrderUpdateManyWithoutOrderInput
+  status: Status
+  updatedAt: DateTime
+  user: UserUpdateOneRequiredWithoutOrdersInput
+}
+
 input OrderUpdateWithoutMealsDataInput {
   createdAt: DateTime
+  deliveryAddress: AddressUpdateOneWithoutOrderInput
   id: String
   status: Status
   updatedAt: DateTime
@@ -1094,10 +1219,16 @@ input OrderUpdateWithoutMealsDataInput {
 
 input OrderUpdateWithoutUserDataInput {
   createdAt: DateTime
+  deliveryAddress: AddressUpdateOneWithoutOrderInput
   id: String
   meals: MealOrderUpdateManyWithoutOrderInput
   status: Status
   updatedAt: DateTime
+}
+
+input OrderUpdateWithWhereUniqueWithoutDeliveryAddressInput {
+  data: OrderUpdateWithoutDeliveryAddressDataInput!
+  where: OrderWhereUniqueInput!
 }
 
 input OrderUpdateWithWhereUniqueWithoutUserInput {
@@ -1110,6 +1241,12 @@ input OrderUpsertWithoutMealsInput {
   update: OrderUpdateWithoutMealsDataInput!
 }
 
+input OrderUpsertWithWhereUniqueWithoutDeliveryAddressInput {
+  create: OrderCreateWithoutDeliveryAddressInput!
+  update: OrderUpdateWithoutDeliveryAddressDataInput!
+  where: OrderWhereUniqueInput!
+}
+
 input OrderUpsertWithWhereUniqueWithoutUserInput {
   create: OrderCreateWithoutUserInput!
   update: OrderUpdateWithoutUserDataInput!
@@ -1117,8 +1254,10 @@ input OrderUpsertWithWhereUniqueWithoutUserInput {
 }
 
 input OrderWhereInput {
+  addressId: NullableStringFilter
   AND: [OrderWhereInput!]
   createdAt: DateTimeFilter
+  deliveryAddress: AddressWhereInput
   id: StringFilter
   meals: MealOrderFilter
   NOT: [OrderWhereInput!]
@@ -1152,6 +1291,7 @@ enum Role {
 }
 
 enum Status {
+  CANCELLED
   DISPATCHED
   FULFILLED
   PENDING
@@ -1180,6 +1320,7 @@ type User {
   id: String!
   lastName: String
   meals(after: MealWhereUniqueInput, before: MealWhereUniqueInput, first: Int, last: Int, skip: Int): [Meal!]!
+  orders(after: OrderWhereUniqueInput, before: OrderWhereUniqueInput, first: Int, last: Int, skip: Int): [Order!]!
   roles: [Role!]!
   tokenVersion: String!
   updatedAt: DateTime!

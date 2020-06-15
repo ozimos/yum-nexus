@@ -1,7 +1,4 @@
-import {
-  createTestContext as originalCreateTestContext,
-  TestContext,
-} from 'nexus/testing'
+import { createTestContext as originalCreateTestContext, TestContext } from 'nexus/testing'
 
 export function createTestContext(): TestContext {
   let ctx = {} as TestContext

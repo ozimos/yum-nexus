@@ -12,9 +12,7 @@ async function drop() {
       connectionString: safeConnectionString,
     })
     await client.connect()
-    const output = await client.query(
-      `DROP SCHEMA IF EXISTS "${schema}" CASCADE`,
-    )
+    const output = await client.query(`DROP SCHEMA IF EXISTS "${schema}" CASCADE`)
     log(output)
     await client.end()
   } catch (error) {

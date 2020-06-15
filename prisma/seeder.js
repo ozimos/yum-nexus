@@ -1,5 +1,4 @@
 const bcrypt = require('bcryptjs')
-/* eslint-disable-next-line import/no-extraneous-dependencies */
 const faker = require('faker/locale/en')
 const flattenDeep = require('lodash/flattenDeep')
 const sampleSize = require('lodash/sampleSize')
@@ -18,11 +17,9 @@ const seedPassword = 'Thisisatestpassword'
 const salt = bcrypt.genSaltSync(10)
 const hashPassword = bcrypt.hashSync(seedPassword, salt)
 
-const seedUsers = Array.from({ length: 8 }, () =>
-  userFactory({ password: hashPassword, roles: { set: [] } }),
-)
+const seedUsers = Array.from({ length: 8 }, () => userFactory({ password: hashPassword, roles: { set: [] } }))
 const seedCaterers = Array.from({ length: 4 }, () =>
-  userFactory({ password: hashPassword, roles: { set: [`CATERER`] } }),
+  userFactory({ password: hashPassword, roles: { set: [`CATERER`] } })
 )
 const adminUser = userFactory({
   email: 'admin_user@yum.com'.toLowerCase(),
@@ -58,18 +55,16 @@ const seedMealsNested = seedCaterers.map(({ id }) => {
 })
 const seedMeals = flattenDeep(seedMealsNested)
 
-const seedMenus = seedCaterers.map(({ id }) =>
-  menuFactory({ user: { connect: { id } } }),
-)
+const seedMenus = seedCaterers.map(({ id }) => menuFactory({ user: { connect: { id } } }))
 
-const seedOrders = Array.from({ length: 8 }, () =>
-  orderFactory({
-    user: { connect: { id: faker.random.arrayElement(seedCustomers).id } },
-  }),
-)
-const seedMealMenusNested = seedMenus.map((menu, index) =>
-  mealMenuFactory(menu, seedMealsNested[index], 3),
-)
+const seedOrders = Array.from({ length: 8 }, () => {
+  const index = faker.random.number({ min: 0, max: seedCustomers.length - 1 })
+  return orderFactory({
+    user: { connect: { id: seedCustomers[index].id } },
+    deliveryAddress: { connect: { id: faker.random.arrayElement(seedAddressesNested[index]).id } },
+  })
+})
+const seedMealMenusNested = seedMenus.map((menu, index) => mealMenuFactory(menu, seedMealsNested[index], 3))
 const seedMealMenus = flattenDeep(seedMealMenusNested)
 
 const seedMealOrdersNested = seedOrders.map((order) => {
@@ -77,7 +72,7 @@ const seedMealOrdersNested = seedOrders.map((order) => {
   return mealOrderFactory(
     order,
     sampleSize(seedMeals, faker.random.number({ min, max: seedMeals.length })),
-    min,
+    min
   )
 })
 

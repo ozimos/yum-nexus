@@ -1,9 +1,4 @@
-export const {
-  TOKEN_PASSWORD,
-  TOKEN_EXPIRY,
-  REFRESH_TOKEN_SECRET,
-  REFRESH_TOKEN_EXPIRY,
-} = process.env
+export const { TOKEN_PASSWORD, TOKEN_EXPIRY, REFRESH_TOKEN_SECRET, REFRESH_TOKEN_EXPIRY } = process.env
 
 export const tokens = {
   access: {
@@ -20,3 +15,5 @@ export enum Role {
   ADMIN = 'ADMIN',
   CATERER = 'CATERER',
 }
+
+export const whitelist = ['http://localhost:3000', 'https://localhost:3000']

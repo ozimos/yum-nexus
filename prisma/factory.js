@@ -1,4 +1,3 @@
-/* eslint-disable-next-line import/no-extraneous-dependencies */
 const faker = require('faker/locale/en')
 const bcrypt = require('bcryptjs')
 const cuid = require('cuid')
@@ -7,16 +6,7 @@ const salt = bcrypt.genSaltSync(10)
 const hashPassword = bcrypt.hashSync(faker.internet.password(), salt)
 const roles = [[], [`ADMIN`], [`CATERER`], [`ADMIN`, `CATERER`]]
 const status = [`DISPATCHED`, `FULFILLED`, `PENDING`, `PROCESSING`]
-const zipCodes = [
-  101283,
-  100271,
-  100269,
-  104101,
-  101245,
-  101241,
-  101212,
-  101299,
-]
+const zipCodes = [101283, 100271, 100269, 104101, 101245, 101241, 101212, 101299]
 
 const userFactory = (defaults = {}) => ({
   id: cuid(),
@@ -80,11 +70,15 @@ const menuFactory = ({ user, defaults } = {}) => ({
   ...defaults,
 })
 
-const orderFactory = ({ user, defaults } = {}) => ({
+const orderFactory = ({ user, deliveryAddress, defaults } = {}) => ({
   id: cuid(),
   get user() {
     if (user && !user.create) return user
     return { create: userFactory(user.create) }
+  },
+  get deliveryAddress() {
+    if (deliveryAddress && !deliveryAddress.create) return deliveryAddress
+    return { create: addressFactory(deliveryAddress.create) }
   },
   status: faker.random.arrayElement(status),
   createdAt: new Date(),
