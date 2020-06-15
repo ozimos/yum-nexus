@@ -12,6 +12,7 @@ schema.objectType({
     t.model.roles()
     t.model.email()
     t.model.meals()
+    t.model.orders()
     t.model.addresses({
       pagination: { first: true },
     })
@@ -54,6 +55,7 @@ schema.objectType({
     t.model.user()
     t.model.status()
     t.model.meals()
+    t.model.deliveryAddress()
   },
 })
 
@@ -73,6 +75,8 @@ schema.objectType({
     t.model.createdAt()
     t.model.updatedAt()
     t.model.id()
+    t.model.street1()
+    t.model.street2()
     t.model.lga()
     t.model.state()
     t.model.areaCode()

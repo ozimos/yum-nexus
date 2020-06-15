@@ -1,4 +1,3 @@
-/* eslint-disable-next-line import/no-extraneous-dependencies */
 const faker = require('faker/locale/en')
 const bcrypt = require('bcryptjs')
 const cuid = require('cuid')
@@ -71,11 +70,15 @@ const menuFactory = ({ user, defaults } = {}) => ({
   ...defaults,
 })
 
-const orderFactory = ({ user, defaults } = {}) => ({
+const orderFactory = ({ user, deliveryAddress, defaults } = {}) => ({
   id: cuid(),
   get user() {
     if (user && !user.create) return user
     return { create: userFactory(user.create) }
+  },
+  get deliveryAddress() {
+    if (deliveryAddress && !deliveryAddress.create) return deliveryAddress
+    return { create: addressFactory(deliveryAddress.create) }
   },
   status: faker.random.arrayElement(status),
   createdAt: new Date(),

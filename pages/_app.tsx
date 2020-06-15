@@ -7,6 +7,7 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 import { useApollo } from '../lib/apolloClient'
 import theme from '../lib/theme'
 
+process.on('warning', (e) => console.warn(e.stack))
 export default function App({ Component, pageProps }: AppProps) {
   const apolloClient = useApollo(pageProps.initialApolloState)
   useEffect(() => {

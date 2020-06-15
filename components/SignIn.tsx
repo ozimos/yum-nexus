@@ -10,8 +10,15 @@ import Grid from '@material-ui/core/Grid'
 import Box from '@material-ui/core/Box'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import Typography from '@material-ui/core/Typography'
+import Router from 'next/router'
 import { makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
+import { useForm } from 'react-hook-form'
+import * as z from 'zod'
+import { useZodValidationResolver } from '../lib/zodValidationResolver'
+import NextLink from './NextLink'
+import { setAccessToken } from '../lib/accessToken'
+import { useLoginMutation, UserFragmentDoc } from '../generated/graphql'
 
 function Copyright() {
   return (
@@ -46,8 +53,43 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
+const validationSchema = z.object({
+  email: z.string().email(),
+  password: z.string(),
+})
+type Inputs = z.infer<typeof validationSchema>
+
 export default function SignIn() {
   const classes = useStyles()
+  const validationResolver = useZodValidationResolver(validationSchema)
+  const { register, handleSubmit, errors } = useForm<Inputs>({
+    validationResolver,
+  })
+  const [login] = useLoginMutation({
+    onCompleted: (loginData) => {
+      if (loginData?.login?.accessToken) {
+        const { accessToken } = loginData.login
+        setAccessToken(accessToken)
+
+        Router.push('/meals')
+      }
+    },
+  })
+  const onSubmit = async (variables: Inputs) => {
+    login({
+      variables,
+      update: (cache, { data }) => {
+        if (data?.login?.user) {
+          const { user } = data.login
+          cache.writeFragment({
+            id: `User:${user.id}`,
+            fragment: UserFragmentDoc,
+            data: { __typename: 'User', ...user },
+          })
+        }
+      },
+    })
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -59,7 +101,7 @@ export default function SignIn() {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <form className={classes.form} noValidate>
+        <form className={classes.form} noValidate onSubmit={handleSubmit(onSubmit)}>
           <TextField
             variant="outlined"
             margin="normal"
@@ -70,6 +112,9 @@ export default function SignIn() {
             name="email"
             autoComplete="email"
             autoFocus
+            inputRef={register({ required: true })}
+            error={Boolean(errors?.email)}
+            helperText={errors?.email?.message}
           />
           <TextField
             variant="outlined"
@@ -81,20 +126,30 @@ export default function SignIn() {
             type="password"
             id="password"
             autoComplete="current-password"
+            inputRef={register({ required: true })}
+            error={Boolean(errors?.password)}
+            helperText={errors?.password?.message}
           />
           <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me" />
-          <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit}>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+            disabled={Object.keys(errors).length !== 0}
+          >
             Sign In
           </Button>
           <Grid container>
             <Grid item xs>
               <Link href="#" variant="body2">
-                Forgot password?
+                <a>Forgot password?</a>
               </Link>
             </Grid>
             <Grid item>
-              <Link href="#" variant="body2">
-                {"Don't have an account? Sign Up"}
+              <Link component={NextLink} href="/signup" variant="body2">
+                <a>Don&apos;t have an account? Sign Up</a>
               </Link>
             </Grid>
           </Grid>

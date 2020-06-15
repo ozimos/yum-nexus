@@ -1,5 +1,4 @@
 const bcrypt = require('bcryptjs')
-/* eslint-disable-next-line import/no-extraneous-dependencies */
 const faker = require('faker/locale/en')
 const flattenDeep = require('lodash/flattenDeep')
 const sampleSize = require('lodash/sampleSize')
@@ -58,11 +57,13 @@ const seedMeals = flattenDeep(seedMealsNested)
 
 const seedMenus = seedCaterers.map(({ id }) => menuFactory({ user: { connect: { id } } }))
 
-const seedOrders = Array.from({ length: 8 }, () =>
-  orderFactory({
-    user: { connect: { id: faker.random.arrayElement(seedCustomers).id } },
+const seedOrders = Array.from({ length: 8 }, () => {
+  const index = faker.random.number({ min: 0, max: seedCustomers.length - 1 })
+  return orderFactory({
+    user: { connect: { id: seedCustomers[index].id } },
+    deliveryAddress: { connect: { id: faker.random.arrayElement(seedAddressesNested[index]).id } },
   })
-)
+})
 const seedMealMenusNested = seedMenus.map((menu, index) => mealMenuFactory(menu, seedMealsNested[index], 3))
 const seedMealMenus = flattenDeep(seedMealMenusNested)
 

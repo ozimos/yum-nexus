@@ -1,4 +1,3 @@
-import React, { useCallback, useMemo } from 'react'
 import Avatar from '@material-ui/core/Avatar'
 import Button from '@material-ui/core/Button'
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -6,12 +5,17 @@ import TextField from '@material-ui/core/TextField'
 import Link from '@material-ui/core/Link'
 import Grid from '@material-ui/core/Grid'
 import Box from '@material-ui/core/Box'
+import Router from 'next/router'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
+import { useZodValidationResolver } from '../lib/zodValidationResolver'
+import NextLink from './NextLink'
+import { setAccessToken } from '../lib/accessToken'
+import { useSignupMutation, UserFragmentDoc } from '../generated/graphql'
 
 function Copyright() {
   return (
@@ -58,41 +62,37 @@ const validationSchema = z
 
 type Inputs = z.infer<typeof validationSchema>
 
-const useZodValidationResolver = (validationSchema: any) =>
-  useCallback(
-    (data: unknown) => {
-      try {
-        const values = validationSchema.parse(data)
-
-        return {
-          values,
-          errors: {},
-        }
-      } catch (error) {
-        return {
-          values: {},
-          errors: error.errors.reduce(
-            (allErrors: any, currentError: any) => ({
-              ...allErrors,
-              [currentError.path[0] ? currentError.path : ['confirmPassword']]: {
-                type: currentError.type ?? 'validation',
-                message: currentError.message,
-              },
-            }),
-            {}
-          ),
-        }
-      }
-    },
-    [validationSchema]
-  )
 export default function SignUp() {
   const classes = useStyles()
   const validationResolver = useZodValidationResolver(validationSchema)
-  const { register, handleSubmit, watch, errors } = useForm<Inputs>({
+  const { register, handleSubmit, errors } = useForm<Inputs>({
     validationResolver,
   })
-  const onSubmit = (data: Inputs) => console.log(data)
+  const [signup] = useSignupMutation({
+    onCompleted: (signupData) => {
+      if (signupData?.signup?.accessToken) {
+        const { accessToken } = signupData.signup
+        setAccessToken(accessToken)
+
+        Router.push('/meals')
+      }
+    },
+  })
+  const onSubmit = (variables: Inputs) => {
+    signup({
+      variables,
+      update: (cache, { data }) => {
+        if (data?.signup?.user) {
+          const { user } = data.signup
+          cache.writeFragment({
+            id: `User:${user.id}`,
+            fragment: UserFragmentDoc,
+            data: { __typename: 'User', ...user },
+          })
+        }
+      },
+    })
+  }
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -103,7 +103,7 @@ export default function SignUp() {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <form className={classes.form} onSubmit={handleSubmit(onSubmit)}>
+        <form className={classes.form} noValidate onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -183,14 +183,14 @@ export default function SignUp() {
             variant="contained"
             color="primary"
             className={classes.submit}
-            // disabled={Object.keys(errors).length !== 0}
+            disabled={Object.keys(errors).length !== 0}
           >
             Sign Up
           </Button>
           <Grid container justify="flex-end">
             <Grid item>
-              <Link href="#" variant="body2">
-                Already have an account? Sign in
+              <Link component={NextLink} href="/signin" variant="body2">
+                <a>Already have an account? Sign in</a>
               </Link>
             </Grid>
           </Grid>

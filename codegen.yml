@@ -1,9 +1,6 @@
 overwrite: true
 schema: "./api/public/schema.graphql"
-schema:
-  - './graphql/serverSchema.graphql'
-  - './graphql/**/*.js'
-documents: "./graphql"
+documents: "./graphql/**/*.ts"
 generates:
   ./generated/graphql.tsx:
     plugins:
@@ -11,11 +8,13 @@ generates:
       - "typescript-operations"
       - "typescript-react-apollo"
       - "fragment-matcher"
-  ./graphql.schema.json:
-    plugins:
-      - "introspection"
     config:
       withHOC: false
       withComponent: false
       withHooks: true
+      reactApolloVersion: 3
+  ./graphql.schema.json:
+    plugins:
+      - "introspection"
+    
 

@@ -46,6 +46,7 @@
     "start": "next start",
     "nexus:reflection": "nexus dev --reflection --entrypoint pages/api/graphql.ts",
     "nexus:check": "nexus build --entrypoint pages/api/graphql.ts",
+    "codegen": "graphql-codegen --config codegen.yml",
     "generate": "prisma generate",
     "postmigrate": "dotenv -e prisma/.env -- node prisma/migrate",
     "migrate": "prisma migrate up --experimental",

@@ -1,7 +1,9 @@
 import { useMemo } from 'react'
 import { ApolloClient, HttpLink, InMemoryCache, NormalizedCacheObject, from } from '@apollo/client'
+// @ts-ignore
 import { InStorageCache, PersistLink } from 'apollo-cache-instorage'
 import { TokenRefreshLink } from 'apollo-link-token-refresh'
+import { NextPageContext } from 'next'
 import cookie from 'cookie'
 import JwtDecode from 'jwt-decode'
 import { onError } from '@apollo/link-error'
@@ -60,7 +62,7 @@ export function initializeApollo(initialState = null, serverAccessToken?: string
   return _apolloClient
 }
 
-export async function getServerAccessToken(context) {
+export async function getServerAccessToken(context: NextPageContext) {
   let serverAccessToken = ''
   const cookies = cookie.parse(context.req?.headers?.cookie || '')
   if (cookies.jid) {
@@ -77,7 +79,7 @@ export async function getServerAccessToken(context) {
   return serverAccessToken
 }
 
-export function useApollo(initialState, serverAccessToken?: string) {
+export function useApollo(initialState: any, serverAccessToken?: string) {
   const store = useMemo(() => initializeApollo(initialState, serverAccessToken), [initialState])
   return store
 }
@@ -121,7 +123,7 @@ function createRefreshLink() {
   })
 }
 
-function createAuthLink(serverAccessToken?: string, label?) {
+function createAuthLink(serverAccessToken?: string, label?: string) {
   return setContext((_request, { headers }) => {
     const token = isServer() ? serverAccessToken : getAccessToken()
     return {
