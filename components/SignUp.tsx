@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import Avatar from '@material-ui/core/Avatar'
 import Button from '@material-ui/core/Button'
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -54,43 +54,45 @@ const validationSchema = z
     password: z.string(),
     confirmPassword: z.string(),
   })
-  .refine((data) => data.password === data.confirmPassword)
+  .refine((data) => data.password === data.confirmPassword, 'Both password and confirmation must match')
 
 type Inputs = z.infer<typeof validationSchema>
 
-const getValidationResolver = (validationSchema: any) => (data: unknown) => {
-  try {
-    const values = validationSchema.parse(data)
+const useZodValidationResolver = (validationSchema: any) =>
+  useCallback(
+    (data: unknown) => {
+      try {
+        const values = validationSchema.parse(data)
 
-    return {
-      values,
-      errors: {},
-    }
-  } catch (error) {
-    console.dir(error.errors)
-    return {
-      values: {},
-      errors: error.errors.reduce(
-        (allErrors: any, currentError: any) => ({
-          ...allErrors,
-          [currentError.path]: {
-            type: currentError.type ?? 'validation',
-            message: currentError.message,
-          },
-        }),
-        {}
-      ),
-    }
-  }
-}
+        return {
+          values,
+          errors: {},
+        }
+      } catch (error) {
+        return {
+          values: {},
+          errors: error.errors.reduce(
+            (allErrors: any, currentError: any) => ({
+              ...allErrors,
+              [currentError.path[0] ? currentError.path : ['confirmPassword']]: {
+                type: currentError.type ?? 'validation',
+                message: currentError.message,
+              },
+            }),
+            {}
+          ),
+        }
+      }
+    },
+    [validationSchema]
+  )
 export default function SignUp() {
   const classes = useStyles()
-
+  const validationResolver = useZodValidationResolver(validationSchema)
   const { register, handleSubmit, watch, errors } = useForm<Inputs>({
-    validationResolver: getValidationResolver(validationSchema),
+    validationResolver,
   })
   const onSubmit = (data: Inputs) => console.log(data)
-  console.log(watch('firstName'))
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -175,7 +177,14 @@ export default function SignUp() {
               />
             </Grid>
           </Grid>
-          <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit}>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+            // disabled={Object.keys(errors).length !== 0}
+          >
             Sign Up
           </Button>
           <Grid container justify="flex-end">
