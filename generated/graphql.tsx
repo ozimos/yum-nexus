@@ -10,7 +10,10 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** Use JavaScript Date object for date/time fields. */
   DateTime: any;
+  /** The `JSON` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
+  Json: any;
 };
 
 export type Address = {
@@ -412,6 +415,7 @@ export type IntFilter = {
   notIn?: Maybe<Array<Scalars['Int']>>;
 };
 
+
 export type LogoutResponse = {
   __typename?: 'LogoutResponse';
   accessToken?: Maybe<Scalars['String']>;
@@ -422,6 +426,7 @@ export type Meal = {
   createdAt: Scalars['DateTime'];
   description: Scalars['String'];
   id: Scalars['String'];
+  imageUrl: Scalars['String'];
   price: Scalars['Int'];
   title: Scalars['String'];
   updatedAt: Scalars['DateTime'];
@@ -859,7 +864,6 @@ export type MenuMealsArgs = {
   before?: Maybe<MealWhereUniqueInput>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
-  skip?: Maybe<Scalars['Int']>;
 };
 
 export type MenuCreateInput = {
@@ -1257,7 +1261,6 @@ export type OrderMealsArgs = {
   before?: Maybe<MealOrderWhereUniqueInput>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
-  skip?: Maybe<Scalars['Int']>;
 };
 
 export enum OrderByArg {
@@ -1492,7 +1495,6 @@ export type QueryMealsArgs = {
   before?: Maybe<MealWhereUniqueInput>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
-  skip?: Maybe<Scalars['Int']>;
   where?: Maybe<MealWhereInput>;
 };
 
@@ -1507,7 +1509,6 @@ export type QueryMenusArgs = {
   before?: Maybe<MenuWhereUniqueInput>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
-  skip?: Maybe<Scalars['Int']>;
   where?: Maybe<MenuWhereInput>;
 };
 
@@ -1522,7 +1523,6 @@ export type QueryOrdersArgs = {
   before?: Maybe<OrderWhereUniqueInput>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
-  skip?: Maybe<Scalars['Int']>;
   where?: Maybe<OrderWhereInput>;
 };
 
@@ -1538,7 +1538,6 @@ export type QueryUsersArgs = {
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
   orderBy?: Maybe<UserOrderByInput>;
-  skip?: Maybe<Scalars['Int']>;
 };
 
 export enum Role {
@@ -1594,7 +1593,6 @@ export type UserMealsArgs = {
   before?: Maybe<MealWhereUniqueInput>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
-  skip?: Maybe<Scalars['Int']>;
 };
 
 
@@ -1603,7 +1601,6 @@ export type UserOrdersArgs = {
   before?: Maybe<OrderWhereUniqueInput>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
-  skip?: Maybe<Scalars['Int']>;
 };
 
 export type UserCreateOneWithoutAddressesInput = {
@@ -2082,6 +2079,60 @@ export type MeQuery = (
   )> }
 );
 
+export type MealFragment = (
+  { __typename?: 'Meal' }
+  & Pick<Meal, 'id' | 'title' | 'description' | 'price' | 'imageUrl'>
+);
+
+export type TodayMealsQueryVariables = Exact<{
+  startOfToday: Scalars['DateTime'];
+  endOfToday: Scalars['DateTime'];
+  limit: Scalars['Int'];
+}>;
+
+
+export type TodayMealsQuery = (
+  { __typename?: 'Query' }
+  & { meals: Array<(
+    { __typename?: 'Meal' }
+    & MealFragment
+  )> }
+);
+
+export type MoreTodayMealsQueryVariables = Exact<{
+  startOfToday: Scalars['DateTime'];
+  endOfToday: Scalars['DateTime'];
+  limit: Scalars['Int'];
+  cursor: Scalars['String'];
+}>;
+
+
+export type MoreTodayMealsQuery = (
+  { __typename?: 'Query' }
+  & { meals: Array<(
+    { __typename?: 'Meal' }
+    & MealFragment
+  )> }
+);
+
+export type TodayMenuQueryVariables = Exact<{
+  yesterday: Scalars['DateTime'];
+  tomorrow: Scalars['DateTime'];
+}>;
+
+
+export type TodayMenuQuery = (
+  { __typename?: 'Query' }
+  & { menus: Array<(
+    { __typename?: 'Menu' }
+    & Pick<Menu, 'id'>
+    & { meals: Array<(
+      { __typename?: 'Meal' }
+      & MealFragment
+    )> }
+  )> }
+);
+
 export type OrderMutationMutationVariables = Exact<{
   userId: Scalars['String'];
   meals?: Maybe<Array<MealOrderCreateWithoutOrderInput>>;
@@ -2145,6 +2196,15 @@ export const UserFragmentDoc = gql`
   lastName
   email
   roles
+}
+    `;
+export const MealFragmentDoc = gql`
+    fragment MEAL on Meal {
+  id
+  title
+  description
+  price
+  imageUrl
 }
     `;
 export const AddressMutationDocument = gql`
@@ -2440,6 +2500,114 @@ export function useMeLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptio
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = ApolloReactCommon.QueryResult<MeQuery, MeQueryVariables>;
+export const TodayMealsDocument = gql`
+    query todayMeals($startOfToday: DateTime!, $endOfToday: DateTime!, $limit: Int!) {
+  meals(where: {menus: {some: {AND: [{menuDate: {gt: $startOfToday}}, {menuDate: {lt: $endOfToday}}]}}}, first: $limit) {
+    ...MEAL
+  }
+}
+    ${MealFragmentDoc}`;
+
+/**
+ * __useTodayMealsQuery__
+ *
+ * To run a query within a React component, call `useTodayMealsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTodayMealsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTodayMealsQuery({
+ *   variables: {
+ *      startOfToday: // value for 'startOfToday'
+ *      endOfToday: // value for 'endOfToday'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useTodayMealsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<TodayMealsQuery, TodayMealsQueryVariables>) {
+        return ApolloReactHooks.useQuery<TodayMealsQuery, TodayMealsQueryVariables>(TodayMealsDocument, baseOptions);
+      }
+export function useTodayMealsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<TodayMealsQuery, TodayMealsQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<TodayMealsQuery, TodayMealsQueryVariables>(TodayMealsDocument, baseOptions);
+        }
+export type TodayMealsQueryHookResult = ReturnType<typeof useTodayMealsQuery>;
+export type TodayMealsLazyQueryHookResult = ReturnType<typeof useTodayMealsLazyQuery>;
+export type TodayMealsQueryResult = ApolloReactCommon.QueryResult<TodayMealsQuery, TodayMealsQueryVariables>;
+export const MoreTodayMealsDocument = gql`
+    query moreTodayMeals($startOfToday: DateTime!, $endOfToday: DateTime!, $limit: Int!, $cursor: String!) {
+  meals(where: {menus: {some: {AND: [{menuDate: {gt: $startOfToday}}, {menuDate: {lt: $endOfToday}}]}}}, first: $limit, after: {id: $cursor}) {
+    ...MEAL
+  }
+}
+    ${MealFragmentDoc}`;
+
+/**
+ * __useMoreTodayMealsQuery__
+ *
+ * To run a query within a React component, call `useMoreTodayMealsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMoreTodayMealsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMoreTodayMealsQuery({
+ *   variables: {
+ *      startOfToday: // value for 'startOfToday'
+ *      endOfToday: // value for 'endOfToday'
+ *      limit: // value for 'limit'
+ *      cursor: // value for 'cursor'
+ *   },
+ * });
+ */
+export function useMoreTodayMealsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<MoreTodayMealsQuery, MoreTodayMealsQueryVariables>) {
+        return ApolloReactHooks.useQuery<MoreTodayMealsQuery, MoreTodayMealsQueryVariables>(MoreTodayMealsDocument, baseOptions);
+      }
+export function useMoreTodayMealsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<MoreTodayMealsQuery, MoreTodayMealsQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<MoreTodayMealsQuery, MoreTodayMealsQueryVariables>(MoreTodayMealsDocument, baseOptions);
+        }
+export type MoreTodayMealsQueryHookResult = ReturnType<typeof useMoreTodayMealsQuery>;
+export type MoreTodayMealsLazyQueryHookResult = ReturnType<typeof useMoreTodayMealsLazyQuery>;
+export type MoreTodayMealsQueryResult = ApolloReactCommon.QueryResult<MoreTodayMealsQuery, MoreTodayMealsQueryVariables>;
+export const TodayMenuDocument = gql`
+    query todayMenu($yesterday: DateTime!, $tomorrow: DateTime!) {
+  menus(where: {AND: [{menuDate: {gt: $yesterday}}, {menuDate: {lt: $tomorrow}}]}) {
+    id
+    meals {
+      ...MEAL
+    }
+  }
+}
+    ${MealFragmentDoc}`;
+
+/**
+ * __useTodayMenuQuery__
+ *
+ * To run a query within a React component, call `useTodayMenuQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTodayMenuQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTodayMenuQuery({
+ *   variables: {
+ *      yesterday: // value for 'yesterday'
+ *      tomorrow: // value for 'tomorrow'
+ *   },
+ * });
+ */
+export function useTodayMenuQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<TodayMenuQuery, TodayMenuQueryVariables>) {
+        return ApolloReactHooks.useQuery<TodayMenuQuery, TodayMenuQueryVariables>(TodayMenuDocument, baseOptions);
+      }
+export function useTodayMenuLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<TodayMenuQuery, TodayMenuQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<TodayMenuQuery, TodayMenuQueryVariables>(TodayMenuDocument, baseOptions);
+        }
+export type TodayMenuQueryHookResult = ReturnType<typeof useTodayMenuQuery>;
+export type TodayMenuLazyQueryHookResult = ReturnType<typeof useTodayMenuLazyQuery>;
+export type TodayMenuQueryResult = ApolloReactCommon.QueryResult<TodayMenuQuery, TodayMenuQueryVariables>;
 export const OrderMutationDocument = gql`
     mutation orderMutation($userId: String!, $meals: [MealOrderCreateWithoutOrderInput!], $addressId: String) {
   createOneOrder(data: {user: {connect: {id: $userId}}, meals: {create: $meals}, deliveryAddress: {connect: {id: $addressId}}}) {

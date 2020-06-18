@@ -593,7 +593,7 @@
       "tag": "CreateField",
       "model": "Meal",
       "field": "price",
-      "type": "Int",
+      "type": "Float",
       "arity": "Required"
     },
     {

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import AppBar from '@material-ui/core/AppBar'
 import Button from '@material-ui/core/Button'
 import CameraIcon from '@material-ui/icons/PhotoCamera'
@@ -13,6 +13,12 @@ import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
 import Link from '@material-ui/core/Link'
+import endOfToday from 'date-fns/endOfToday'
+import startOfToday from 'date-fns/startOfToday'
+import ErrorMessage from './ErrorMessage'
+import { NetworkStatus } from '@apollo/client'
+import { MORE_TODAY_MEALS } from '../graphql/meal.query'
+import { useTodayMealsQuery, TodayMealsQueryHookResult } from '../generated/graphql'
 
 function Copyright() {
   return (
@@ -26,6 +32,12 @@ function Copyright() {
     </Typography>
   )
 }
+
+export const getTodayMenuVariables = (limit = 6) => ({
+  startOfToday: startOfToday(),
+  endOfToday: endOfToday(),
+  limit,
+})
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -59,11 +71,45 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-
 export default function Album() {
   const classes = useStyles()
+  const [cursor, setCursor] = useState('')
+  const variables = getTodayMenuVariables()
+  const { loading, error, data, fetchMore, networkStatus } = useTodayMealsQuery({
+    variables,
+    notifyOnNetworkStatusChange: true,
+  })
 
+  useEffect(() => {
+    console.dir('data', data)
+    if (data?.meals?.length) {
+      setCursor(data?.meals.slice(-1)[0].id)
+    } else {
+      setCursor('')
+    }
+  }, [data])
+  const loadMoreMeals = () => {
+    // @ts-ignore
+    fetchMore({
+      query: MORE_TODAY_MEALS,
+      variables: { cursor, ...variables },
+      updateQuery: (previousResult: TodayMealsQueryHookResult['data'], { fetchMoreResult }) => {
+        if (!fetchMoreResult) {
+          return previousResult
+        }
+        return Object.assign({}, previousResult, {
+          // Append the new posts results to the old one
+          meals: [...previousResult.meals, ...fetchMoreResult.meals],
+        })
+      },
+    })
+  }
+
+  const loadingMoreMeals = networkStatus === NetworkStatus.fetchMore
+  if (error) return <ErrorMessage message="Error loading posts." />
+  if ((loading || !data) && !loadingMoreMeals) return <div>Loading</div>
+
+  const areMoreMeals = Boolean(cursor)
   return (
     <React.Fragment>
       <CssBaseline />
@@ -105,21 +151,19 @@ export default function Album() {
         <Container className={classes.cardGrid} maxWidth="md">
           {/* End hero unit */}
           <Grid container spacing={4}>
-            {cards.map((card) => (
-              <Grid item key={card} xs={12} sm={6} md={4}>
+            {data.meals.map(({ id, title, description, price, imageUrl }) => (
+              <Grid item key={id} xs={12} sm={6} md={4}>
                 <Card className={classes.card}>
                   <CardMedia
                     className={classes.cardMedia}
-                    image="https://source.unsplash.com/random"
-                    title="Image title"
+                    image={imageUrl || 'https://source.unsplash.com/random'}
+                    title={title}
                   />
                   <CardContent className={classes.cardContent}>
                     <Typography gutterBottom variant="h5" component="h2">
-                      Heading
+                      {price}
                     </Typography>
-                    <Typography>
-                      This is a media card. You can use this section to describe the content.
-                    </Typography>
+                    <Typography>{description}</Typography>
                   </CardContent>
                   <CardActions>
                     <Button size="small" color="primary">
@@ -133,6 +177,11 @@ export default function Album() {
               </Grid>
             ))}
           </Grid>
+          {areMoreMeals && (
+            <Button size="small" color="primary" onClick={() => loadMoreMeals()} disabled={loadingMoreMeals}>
+              {loadingMoreMeals ? 'Loading...' : 'Show More'}
+            </Button>
+          )}
         </Container>
       </main>
       {/* Footer */}

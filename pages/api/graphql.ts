@@ -7,8 +7,10 @@ const app = require('nexus').default
 require('../../api/graphql')
 
 app.assemble()
-
-async function handler(req: NextApiRequest, res: NextApiResponse) {
+interface CustomNextApiRequest extends NextApiRequest {
+  res?: NextApiResponse
+}
+async function handler(req: CustomNextApiRequest, res: NextApiResponse) {
   // Run the middleware
   await runMiddleware(req, res, cors)
   req.res = res

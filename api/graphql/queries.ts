@@ -8,8 +8,8 @@ schema.queryType({
     t.crud.menu()
     t.crud.order()
     t.crud.users({ ordering: true })
-    t.crud.meals({ filtering: true })
-    t.crud.menus({ filtering: true })
+    t.crud.meals({ filtering: true, pagination: true })
+    t.crud.menus({ filtering: true, pagination: true })
     t.crud.orders({ filtering: true })
     t.field('me', {
       type: 'User',

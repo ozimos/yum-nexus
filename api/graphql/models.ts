@@ -29,6 +29,7 @@ schema.objectType({
     t.model.description()
     t.model.price()
     t.model.user()
+    t.model.imageUrl()
   },
 })
 

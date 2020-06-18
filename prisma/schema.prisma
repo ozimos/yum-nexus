@@ -38,7 +38,7 @@ model Meal {
   description String
   id          String      @default(cuid()) @id
   imageUrl    String
-  price       Int
+  price       Float
   tags        String[]
   title       String
   updatedAt   DateTime    @default(now())

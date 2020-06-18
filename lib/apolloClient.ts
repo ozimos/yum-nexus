@@ -46,7 +46,10 @@ function createApolloClient(serverAccessToken?: string): ApolloClient<Normalized
   })
 }
 
-export function initializeApollo(initialState = null, serverAccessToken?: string) {
+export function initializeApollo(
+  initialState: NormalizedCacheObject | InMemoryCache | null = null,
+  serverAccessToken?: string
+) {
   const _apolloClient = apolloClient ?? createApolloClient()
 
   // If your page has Next.js data fetching methods that use Apollo Client, the initial state
@@ -58,7 +61,9 @@ export function initializeApollo(initialState = null, serverAccessToken?: string
   if (typeof window === 'undefined') return _apolloClient
   // Create the Apollo Client once in the client
   if (!apolloClient) apolloClient = _apolloClient
-
+  if (!getAccessToken() && serverAccessToken) {
+    setAccessToken(serverAccessToken)
+  }
   return _apolloClient
 }
 
@@ -80,7 +85,10 @@ export async function getServerAccessToken(context: NextPageContext) {
 }
 
 export function useApollo(initialState: any, serverAccessToken?: string) {
-  const store = useMemo(() => initializeApollo(initialState, serverAccessToken), [initialState])
+  const store = useMemo(() => initializeApollo(initialState, serverAccessToken), [
+    initialState,
+    serverAccessToken,
+  ])
   return store
 }
 

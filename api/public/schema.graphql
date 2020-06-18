@@ -255,6 +255,7 @@ type AuthPayload {
   user: User
 }
 
+"""Use JavaScript Date object for date/time fields."""
 scalar DateTime
 
 input DateTimeFilter {
@@ -389,6 +390,17 @@ input DefaultAddressWhereUniqueInput {
   userId: String
 }
 
+input FloatFilter {
+  equals: Float
+  gt: Float
+  gte: Float
+  in: [Float!]
+  lt: Float
+  lte: Float
+  not: Float
+  notIn: [Float!]
+}
+
 input IntFilter {
   equals: Int
   gt: Int
@@ -400,6 +412,11 @@ input IntFilter {
   notIn: [Int!]
 }
 
+"""
+The `JSON` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar Json
+
 type LogoutResponse {
   accessToken: String
 }
@@ -408,7 +425,8 @@ type Meal {
   createdAt: DateTime!
   description: String!
   id: String!
-  price: Int!
+  imageUrl: String!
+  price: Float!
   title: String!
   updatedAt: DateTime!
   user: User!
@@ -427,7 +445,7 @@ input MealCreateInput {
   imageUrl: String!
   menus: MenuCreateManyWithoutMealsInput
   orders: MealOrderCreateManyWithoutMealInput
-  price: Int!
+  price: Float!
   tags: MealCreatetagsInput
   title: String!
   updatedAt: DateTime
@@ -460,7 +478,7 @@ input MealCreateWithoutMenusInput {
   id: String
   imageUrl: String!
   orders: MealOrderCreateManyWithoutMealInput
-  price: Int!
+  price: Float!
   tags: MealCreatetagsInput
   title: String!
   updatedAt: DateTime
@@ -474,7 +492,7 @@ input MealCreateWithoutOrdersInput {
   id: String
   imageUrl: String!
   menus: MenuCreateManyWithoutMealsInput
-  price: Int!
+  price: Float!
   tags: MealCreatetagsInput
   title: String!
   updatedAt: DateTime
@@ -489,7 +507,7 @@ input MealCreateWithoutUserInput {
   imageUrl: String!
   menus: MenuCreateManyWithoutMealsInput
   orders: MealOrderCreateManyWithoutMealInput
-  price: Int!
+  price: Float!
   tags: MealCreatetagsInput
   title: String!
   updatedAt: DateTime
@@ -662,7 +680,7 @@ input MealScalarWhereInput {
   NOT: [MealScalarWhereInput!]
   OR: [MealScalarWhereInput!]
   orders: MealOrderFilter
-  price: IntFilter
+  price: FloatFilter
   title: StringFilter
   updatedAt: DateTimeFilter
   userId: StringFilter
@@ -676,7 +694,7 @@ input MealUpdateInput {
   imageUrl: String
   menus: MenuUpdateManyWithoutMealsInput
   orders: MealOrderUpdateManyWithoutMealInput
-  price: Int
+  price: Float
   tags: MealUpdatetagsInput
   title: String
   updatedAt: DateTime
@@ -689,7 +707,7 @@ input MealUpdateManyDataInput {
   description: String
   id: String
   imageUrl: String
-  price: Int
+  price: Float
   tags: MealUpdatetagsInput
   title: String
   updatedAt: DateTime
@@ -742,7 +760,7 @@ input MealUpdateWithoutMenusDataInput {
   id: String
   imageUrl: String
   orders: MealOrderUpdateManyWithoutMealInput
-  price: Int
+  price: Float
   tags: MealUpdatetagsInput
   title: String
   updatedAt: DateTime
@@ -756,7 +774,7 @@ input MealUpdateWithoutOrdersDataInput {
   id: String
   imageUrl: String
   menus: MenuUpdateManyWithoutMealsInput
-  price: Int
+  price: Float
   tags: MealUpdatetagsInput
   title: String
   updatedAt: DateTime
@@ -771,7 +789,7 @@ input MealUpdateWithoutUserDataInput {
   imageUrl: String
   menus: MenuUpdateManyWithoutMealsInput
   orders: MealOrderUpdateManyWithoutMealInput
-  price: Int
+  price: Float
   tags: MealUpdatetagsInput
   title: String
   updatedAt: DateTime
@@ -815,7 +833,7 @@ input MealWhereInput {
   NOT: [MealWhereInput!]
   OR: [MealWhereInput!]
   orders: MealOrderFilter
-  price: IntFilter
+  price: FloatFilter
   title: StringFilter
   updatedAt: DateTimeFilter
   user: UserWhereInput
@@ -830,7 +848,7 @@ input MealWhereUniqueInput {
 type Menu {
   createdAt: DateTime!
   id: String!
-  meals(after: MealWhereUniqueInput, before: MealWhereUniqueInput, first: Int, last: Int, skip: Int): [Meal!]!
+  meals(after: MealWhereUniqueInput, before: MealWhereUniqueInput, first: Int, last: Int): [Meal!]!
   menuDate: DateTime!
   updatedAt: DateTime!
   user: User!
@@ -1058,7 +1076,7 @@ type Order {
   createdAt: DateTime!
   deliveryAddress: Address
   id: String!
-  meals(after: MealOrderWhereUniqueInput, before: MealOrderWhereUniqueInput, first: Int, last: Int, skip: Int): [MealOrder!]!
+  meals(after: MealOrderWhereUniqueInput, before: MealOrderWhereUniqueInput, first: Int, last: Int): [MealOrder!]!
   status: Status!
   updatedAt: DateTime!
   user: User!
@@ -1276,13 +1294,13 @@ input OrderWhereUniqueInput {
 type Query {
   me: User
   meal(where: MealWhereUniqueInput!): Meal
-  meals(after: MealWhereUniqueInput, before: MealWhereUniqueInput, first: Int, last: Int, skip: Int, where: MealWhereInput): [Meal!]!
+  meals(after: MealWhereUniqueInput, before: MealWhereUniqueInput, first: Int, last: Int, where: MealWhereInput): [Meal!]!
   menu(where: MenuWhereUniqueInput!): Menu
-  menus(after: MenuWhereUniqueInput, before: MenuWhereUniqueInput, first: Int, last: Int, skip: Int, where: MenuWhereInput): [Menu!]!
+  menus(after: MenuWhereUniqueInput, before: MenuWhereUniqueInput, first: Int, last: Int, where: MenuWhereInput): [Menu!]!
   order(where: OrderWhereUniqueInput!): Order
-  orders(after: OrderWhereUniqueInput, before: OrderWhereUniqueInput, first: Int, last: Int, skip: Int, where: OrderWhereInput): [Order!]!
+  orders(after: OrderWhereUniqueInput, before: OrderWhereUniqueInput, first: Int, last: Int, where: OrderWhereInput): [Order!]!
   user(where: UserWhereUniqueInput!): User
-  users(after: UserWhereUniqueInput, before: UserWhereUniqueInput, first: Int, last: Int, orderBy: UserOrderByInput, skip: Int): [User!]!
+  users(after: UserWhereUniqueInput, before: UserWhereUniqueInput, first: Int, last: Int, orderBy: UserOrderByInput): [User!]!
 }
 
 enum Role {
@@ -1319,8 +1337,8 @@ type User {
   firstName: String
   id: String!
   lastName: String
-  meals(after: MealWhereUniqueInput, before: MealWhereUniqueInput, first: Int, last: Int, skip: Int): [Meal!]!
-  orders(after: OrderWhereUniqueInput, before: OrderWhereUniqueInput, first: Int, last: Int, skip: Int): [Order!]!
+  meals(after: MealWhereUniqueInput, before: MealWhereUniqueInput, first: Int, last: Int): [Meal!]!
+  orders(after: OrderWhereUniqueInput, before: OrderWhereUniqueInput, first: Int, last: Int): [Order!]!
   roles: [Role!]!
   tokenVersion: String!
   updatedAt: DateTime!
