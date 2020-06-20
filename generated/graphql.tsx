@@ -271,6 +271,20 @@ export type AuthPayload = {
   user?: Maybe<User>;
 };
 
+export type Cart = {
+  __typename?: 'Cart';
+  id: Scalars['ID'];
+  meals?: Maybe<Array<Meal>>;
+};
+
+export type CartStatus = {
+  __typename?: 'CartStatus';
+  id: Scalars['ID'];
+  isInCart: Scalars['Boolean'];
+  cartQty: Scalars['Int'];
+  total: Scalars['Float'];
+};
+
 
 export type DateTimeFilter = {
   equals?: Maybe<Scalars['DateTime']>;
@@ -404,6 +418,17 @@ export type DefaultAddressWhereUniqueInput = {
   userId?: Maybe<Scalars['String']>;
 };
 
+export type FloatFilter = {
+  equals?: Maybe<Scalars['Float']>;
+  gt?: Maybe<Scalars['Float']>;
+  gte?: Maybe<Scalars['Float']>;
+  in?: Maybe<Array<Scalars['Float']>>;
+  lt?: Maybe<Scalars['Float']>;
+  lte?: Maybe<Scalars['Float']>;
+  not?: Maybe<Scalars['Float']>;
+  notIn?: Maybe<Array<Scalars['Float']>>;
+};
+
 export type IntFilter = {
   equals?: Maybe<Scalars['Int']>;
   gt?: Maybe<Scalars['Int']>;
@@ -423,11 +448,12 @@ export type LogoutResponse = {
 
 export type Meal = {
   __typename?: 'Meal';
+  cartStatus?: Maybe<CartStatus>;
   createdAt: Scalars['DateTime'];
   description: Scalars['String'];
   id: Scalars['String'];
   imageUrl: Scalars['String'];
-  price: Scalars['Int'];
+  price: Scalars['Float'];
   title: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   user: User;
@@ -446,7 +472,7 @@ export type MealCreateInput = {
   imageUrl: Scalars['String'];
   menus?: Maybe<MenuCreateManyWithoutMealsInput>;
   orders?: Maybe<MealOrderCreateManyWithoutMealInput>;
-  price: Scalars['Int'];
+  price: Scalars['Float'];
   tags?: Maybe<MealCreatetagsInput>;
   title: Scalars['String'];
   updatedAt?: Maybe<Scalars['DateTime']>;
@@ -479,7 +505,7 @@ export type MealCreateWithoutMenusInput = {
   id?: Maybe<Scalars['String']>;
   imageUrl: Scalars['String'];
   orders?: Maybe<MealOrderCreateManyWithoutMealInput>;
-  price: Scalars['Int'];
+  price: Scalars['Float'];
   tags?: Maybe<MealCreatetagsInput>;
   title: Scalars['String'];
   updatedAt?: Maybe<Scalars['DateTime']>;
@@ -493,7 +519,7 @@ export type MealCreateWithoutOrdersInput = {
   id?: Maybe<Scalars['String']>;
   imageUrl: Scalars['String'];
   menus?: Maybe<MenuCreateManyWithoutMealsInput>;
-  price: Scalars['Int'];
+  price: Scalars['Float'];
   tags?: Maybe<MealCreatetagsInput>;
   title: Scalars['String'];
   updatedAt?: Maybe<Scalars['DateTime']>;
@@ -508,7 +534,7 @@ export type MealCreateWithoutUserInput = {
   imageUrl: Scalars['String'];
   menus?: Maybe<MenuCreateManyWithoutMealsInput>;
   orders?: Maybe<MealOrderCreateManyWithoutMealInput>;
-  price: Scalars['Int'];
+  price: Scalars['Float'];
   tags?: Maybe<MealCreatetagsInput>;
   title: Scalars['String'];
   updatedAt?: Maybe<Scalars['DateTime']>;
@@ -682,7 +708,7 @@ export type MealScalarWhereInput = {
   NOT?: Maybe<Array<MealScalarWhereInput>>;
   OR?: Maybe<Array<MealScalarWhereInput>>;
   orders?: Maybe<MealOrderFilter>;
-  price?: Maybe<IntFilter>;
+  price?: Maybe<FloatFilter>;
   title?: Maybe<StringFilter>;
   updatedAt?: Maybe<DateTimeFilter>;
   userId?: Maybe<StringFilter>;
@@ -696,7 +722,7 @@ export type MealUpdateInput = {
   imageUrl?: Maybe<Scalars['String']>;
   menus?: Maybe<MenuUpdateManyWithoutMealsInput>;
   orders?: Maybe<MealOrderUpdateManyWithoutMealInput>;
-  price?: Maybe<Scalars['Int']>;
+  price?: Maybe<Scalars['Float']>;
   tags?: Maybe<MealUpdatetagsInput>;
   title?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
@@ -709,7 +735,7 @@ export type MealUpdateManyDataInput = {
   description?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['String']>;
   imageUrl?: Maybe<Scalars['String']>;
-  price?: Maybe<Scalars['Int']>;
+  price?: Maybe<Scalars['Float']>;
   tags?: Maybe<MealUpdatetagsInput>;
   title?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
@@ -762,7 +788,7 @@ export type MealUpdateWithoutMenusDataInput = {
   id?: Maybe<Scalars['String']>;
   imageUrl?: Maybe<Scalars['String']>;
   orders?: Maybe<MealOrderUpdateManyWithoutMealInput>;
-  price?: Maybe<Scalars['Int']>;
+  price?: Maybe<Scalars['Float']>;
   tags?: Maybe<MealUpdatetagsInput>;
   title?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
@@ -776,7 +802,7 @@ export type MealUpdateWithoutOrdersDataInput = {
   id?: Maybe<Scalars['String']>;
   imageUrl?: Maybe<Scalars['String']>;
   menus?: Maybe<MenuUpdateManyWithoutMealsInput>;
-  price?: Maybe<Scalars['Int']>;
+  price?: Maybe<Scalars['Float']>;
   tags?: Maybe<MealUpdatetagsInput>;
   title?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
@@ -791,7 +817,7 @@ export type MealUpdateWithoutUserDataInput = {
   imageUrl?: Maybe<Scalars['String']>;
   menus?: Maybe<MenuUpdateManyWithoutMealsInput>;
   orders?: Maybe<MealOrderUpdateManyWithoutMealInput>;
-  price?: Maybe<Scalars['Int']>;
+  price?: Maybe<Scalars['Float']>;
   tags?: Maybe<MealUpdatetagsInput>;
   title?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
@@ -835,7 +861,7 @@ export type MealWhereInput = {
   NOT?: Maybe<Array<MealWhereInput>>;
   OR?: Maybe<Array<MealWhereInput>>;
   orders?: Maybe<MealOrderFilter>;
-  price?: Maybe<IntFilter>;
+  price?: Maybe<FloatFilter>;
   title?: Maybe<StringFilter>;
   updatedAt?: Maybe<DateTimeFilter>;
   user?: Maybe<UserWhereInput>;
@@ -1048,6 +1074,7 @@ export type Mutation = {
   logout?: Maybe<LogoutResponse>;
   revokeUserRefreshToken?: Maybe<User>;
   signup?: Maybe<AuthPayload>;
+  updateCartStatus?: Maybe<Scalars['ID']>;
   updateOneAddress?: Maybe<Address>;
   updateOneMeal?: Maybe<Meal>;
   updateOneMenu?: Maybe<Menu>;
@@ -1057,6 +1084,7 @@ export type Mutation = {
   updateOneOwnOrder?: Maybe<Order>;
   updateOneOwnUser?: Maybe<User>;
   updateOneUser?: Maybe<User>;
+  userId: Scalars['ID'];
 };
 
 
@@ -1162,6 +1190,12 @@ export type MutationSignupArgs = {
   lastName?: Maybe<Scalars['String']>;
   password: Scalars['String'];
   roles?: Maybe<Array<Role>>;
+};
+
+
+export type MutationUpdateCartStatusArgs = {
+  id: Scalars['String'];
+  quantity: Scalars['Int'];
 };
 
 
@@ -1473,6 +1507,8 @@ export type OrderWhereUniqueInput = {
 
 export type Query = {
   __typename?: 'Query';
+  cart: Cart;
+  cartStatus: CartStatus;
   me?: Maybe<User>;
   meal?: Maybe<Meal>;
   meals: Array<Meal>;
@@ -1481,6 +1517,7 @@ export type Query = {
   order?: Maybe<Order>;
   orders: Array<Order>;
   user?: Maybe<User>;
+  userId: Scalars['ID'];
   users: Array<User>;
 };
 
@@ -1574,8 +1611,10 @@ export type User = {
   email: Scalars['String'];
   firstName?: Maybe<Scalars['String']>;
   id: Scalars['String'];
+  imageUrl?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
   meals: Array<Meal>;
+  name?: Maybe<Scalars['String']>;
   orders: Array<Order>;
   roles: Array<Role>;
   tokenVersion: Scalars['String'];
@@ -2000,6 +2039,41 @@ export type GetAddressesQuery = (
   )> }
 );
 
+export type Upsert_CartMutationVariables = Exact<{
+  id: Scalars['String'];
+  quantity: Scalars['Int'];
+}>;
+
+
+export type Upsert_CartMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'updateCartStatus'>
+);
+
+export type CartQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CartQuery = (
+  { __typename?: 'Query' }
+  & { cart: (
+    { __typename?: 'Cart' }
+    & Pick<Cart, 'id'>
+    & { meals?: Maybe<Array<(
+      { __typename?: 'Meal' }
+      & Pick<Meal, 'id'>
+    )>> }
+  ) }
+);
+
+export type CartFragment = (
+  { __typename?: 'Cart' }
+  & Pick<Cart, 'id'>
+  & { meals?: Maybe<Array<(
+    { __typename?: 'Meal' }
+    & Pick<Meal, 'id'>
+  )>> }
+);
+
 export type Facebook_LoginMutationVariables = Exact<{
   token: Scalars['String'];
 }>;
@@ -2079,9 +2153,29 @@ export type MeQuery = (
   )> }
 );
 
+export type Cart_StatusFragment = (
+  { __typename?: 'CartStatus' }
+  & Pick<CartStatus, 'id' | 'isInCart' | 'cartQty' | 'total'>
+);
+
+export type Cart_StatusQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type Cart_StatusQuery = (
+  { __typename?: 'Query' }
+  & { cartStatus: (
+    { __typename?: 'CartStatus' }
+    & Cart_StatusFragment
+  ) }
+);
+
 export type MealFragment = (
   { __typename?: 'Meal' }
   & Pick<Meal, 'id' | 'title' | 'description' | 'price' | 'imageUrl'>
+  & { cartStatus?: Maybe<(
+    { __typename?: 'CartStatus' }
+    & Cart_StatusFragment
+  )> }
 );
 
 export type TodayMealsQueryVariables = Exact<{
@@ -2189,6 +2283,14 @@ export type SignupMutation = (
   )> }
 );
 
+export const CartFragmentDoc = gql`
+    fragment CART on Cart {
+  id
+  meals {
+    id
+  }
+}
+    `;
 export const UserFragmentDoc = gql`
     fragment USER on User {
   id
@@ -2198,6 +2300,14 @@ export const UserFragmentDoc = gql`
   roles
 }
     `;
+export const Cart_StatusFragmentDoc = gql`
+    fragment CART_STATUS on CartStatus {
+  id
+  isInCart
+  cartQty
+  total
+}
+    `;
 export const MealFragmentDoc = gql`
     fragment MEAL on Meal {
   id
@@ -2205,8 +2315,11 @@ export const MealFragmentDoc = gql`
   description
   price
   imageUrl
+  cartStatus @client {
+    ...CART_STATUS
+  }
 }
-    `;
+    ${Cart_StatusFragmentDoc}`;
 export const AddressMutationDocument = gql`
     mutation addressMutation($lga: String!, $state: String!, $street1: String!, $street2: String, $areaCode: Int!, $userId: String!) {
   createOneAddress(data: {lga: $lga, state: $state, street1: $street1, street2: $street2, areaCode: $areaCode, user: {connect: {id: $userId}}}) {
@@ -2331,6 +2444,72 @@ export function useGetAddressesLazyQuery(baseOptions?: ApolloReactHooks.LazyQuer
 export type GetAddressesQueryHookResult = ReturnType<typeof useGetAddressesQuery>;
 export type GetAddressesLazyQueryHookResult = ReturnType<typeof useGetAddressesLazyQuery>;
 export type GetAddressesQueryResult = ApolloReactCommon.QueryResult<GetAddressesQuery, GetAddressesQueryVariables>;
+export const Upsert_CartDocument = gql`
+    mutation UPSERT_CART($id: String!, $quantity: Int!) {
+  updateCartStatus(quantity: $quantity, id: $id) @client(always: true)
+}
+    `;
+export type Upsert_CartMutationFn = ApolloReactCommon.MutationFunction<Upsert_CartMutation, Upsert_CartMutationVariables>;
+
+/**
+ * __useUpsert_CartMutation__
+ *
+ * To run a mutation, you first call `useUpsert_CartMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpsert_CartMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [upsertCartMutation, { data, loading, error }] = useUpsert_CartMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      quantity: // value for 'quantity'
+ *   },
+ * });
+ */
+export function useUpsert_CartMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<Upsert_CartMutation, Upsert_CartMutationVariables>) {
+        return ApolloReactHooks.useMutation<Upsert_CartMutation, Upsert_CartMutationVariables>(Upsert_CartDocument, baseOptions);
+      }
+export type Upsert_CartMutationHookResult = ReturnType<typeof useUpsert_CartMutation>;
+export type Upsert_CartMutationResult = ApolloReactCommon.MutationResult<Upsert_CartMutation>;
+export type Upsert_CartMutationOptions = ApolloReactCommon.BaseMutationOptions<Upsert_CartMutation, Upsert_CartMutationVariables>;
+export const CartDocument = gql`
+    query CART {
+  cart @client {
+    id
+    meals {
+      id
+    }
+  }
+}
+    `;
+
+/**
+ * __useCartQuery__
+ *
+ * To run a query within a React component, call `useCartQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCartQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCartQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useCartQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<CartQuery, CartQueryVariables>) {
+        return ApolloReactHooks.useQuery<CartQuery, CartQueryVariables>(CartDocument, baseOptions);
+      }
+export function useCartLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<CartQuery, CartQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<CartQuery, CartQueryVariables>(CartDocument, baseOptions);
+        }
+export type CartQueryHookResult = ReturnType<typeof useCartQuery>;
+export type CartLazyQueryHookResult = ReturnType<typeof useCartLazyQuery>;
+export type CartQueryResult = ApolloReactCommon.QueryResult<CartQuery, CartQueryVariables>;
 export const Facebook_LoginDocument = gql`
     mutation FACEBOOK_LOGIN($token: String!) {
   loginWithFaceBook(token: $token) {
@@ -2500,6 +2679,38 @@ export function useMeLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptio
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = ApolloReactCommon.QueryResult<MeQuery, MeQueryVariables>;
+export const Cart_StatusDocument = gql`
+    query CART_STATUS {
+  cartStatus @client {
+    ...CART_STATUS
+  }
+}
+    ${Cart_StatusFragmentDoc}`;
+
+/**
+ * __useCart_StatusQuery__
+ *
+ * To run a query within a React component, call `useCart_StatusQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCart_StatusQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCart_StatusQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useCart_StatusQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<Cart_StatusQuery, Cart_StatusQueryVariables>) {
+        return ApolloReactHooks.useQuery<Cart_StatusQuery, Cart_StatusQueryVariables>(Cart_StatusDocument, baseOptions);
+      }
+export function useCart_StatusLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<Cart_StatusQuery, Cart_StatusQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<Cart_StatusQuery, Cart_StatusQueryVariables>(Cart_StatusDocument, baseOptions);
+        }
+export type Cart_StatusQueryHookResult = ReturnType<typeof useCart_StatusQuery>;
+export type Cart_StatusLazyQueryHookResult = ReturnType<typeof useCart_StatusLazyQuery>;
+export type Cart_StatusQueryResult = ApolloReactCommon.QueryResult<Cart_StatusQuery, Cart_StatusQueryVariables>;
 export const TodayMealsDocument = gql`
     query todayMeals($startOfToday: DateTime!, $endOfToday: DateTime!, $limit: Int!) {
   meals(where: {menus: {some: {AND: [{menuDate: {gt: $startOfToday}}, {menuDate: {lt: $endOfToday}}]}}}, first: $limit) {

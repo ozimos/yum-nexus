@@ -8,7 +8,10 @@ import cookie from 'cookie'
 import JwtDecode from 'jwt-decode'
 import { onError } from '@apollo/link-error'
 import { setContext } from '@apollo/link-context'
-import { getAccessToken, setAccessToken } from './accessToken'
+import { getAccessToken, setAccessToken } from '../lib/accessToken'
+import { resolvers } from './resolvers'
+import typeDefs from './typeDefs'
+import { CART_QUERY } from '../graphql/cart.query'
 
 let apolloClient: ApolloClient<NormalizedCacheObject | InMemoryCache> | null = null
 export const isServer = () => typeof window === 'undefined'
@@ -22,18 +25,8 @@ export function fetchAccessToken() {
 }
 
 function createApolloClient(serverAccessToken?: string): ApolloClient<NormalizedCacheObject | InMemoryCache> {
-  let cache: InMemoryCache | InStorageCache = {}
-  if (isServer()) {
-    cache = new InMemoryCache()
-  } else {
-    cache = new InStorageCache({
-      storage: window.localStorage,
-      // addPersistField: true,
-      shouldPersist: () => false,
-      // shouldPersist: PersistLink.shouldPersist,
-    })
-  }
-  return new ApolloClient({
+  const cache = new InMemoryCache()
+  const client = new ApolloClient({
     ssrMode: isServer(),
     link: from([
       new PersistLink(),
@@ -43,7 +36,26 @@ function createApolloClient(serverAccessToken?: string): ApolloClient<Normalized
       createHttpLink(),
     ]),
     cache,
+    resolvers,
+    typeDefs,
   })
+  function writeInitialData() {
+    return cache.writeQuery({
+      query: CART_QUERY,
+      data: {
+        cart: {
+          id: 'myCart',
+          meals: [],
+          __typename: 'Cart',
+        },
+      },
+    })
+  }
+
+  writeInitialData()
+  // @ts-ignore
+  client.onClearStore(writeInitialData)
+  return client
 }
 
 export function initializeApollo(

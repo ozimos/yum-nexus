@@ -1,5 +1,23 @@
 import { gql } from '@apollo/client'
 
+export const CART_STATUS = gql`
+  fragment CART_STATUS on CartStatus {
+    id
+    isInCart
+    cartQty
+    total
+  }
+`
+
+export const CART_STATUS_QUERY = gql`
+  query CART_STATUS {
+    cartStatus @client {
+      ...CART_STATUS
+    }
+  }
+  ${CART_STATUS}
+`
+
 export const MEAL = gql`
   fragment MEAL on Meal {
     id
@@ -7,8 +25,13 @@ export const MEAL = gql`
     description
     price
     imageUrl
+    cartStatus @client {
+      ...CART_STATUS
+    }
   }
+  ${CART_STATUS}
 `
+
 export const TODAY_MEALS = gql`
   query todayMeals($startOfToday: DateTime!, $endOfToday: DateTime!, $limit: Int!) {
     meals(

@@ -4,7 +4,7 @@ import InfoBox from '../components/InfoBox'
 import Header from '../components/Header'
 import Submit from '../components/Submit'
 import PostList, { ALL_POSTS_QUERY, allPostsQueryVars } from '../components/PostList'
-import { initializeApollo } from '../lib/apolloClient'
+import { initializeApollo } from '../apollo/apolloClient'
 
 const IndexPage = () => (
   <App>

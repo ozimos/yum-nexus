@@ -1,5 +1,5 @@
 import { GetServerSideProps, GetServerSidePropsContext } from 'next'
-import { initializeApollo } from '../lib/apolloClient'
+import { initializeApollo } from '../apollo/apolloClient'
 import Album, { getTodayMenuVariables } from '../components/Album'
 import { TODAY_MEALS } from '../graphql/meal.query'
 // if (process.env.NODE_ENV === 'development') require('nexus').default.reset()

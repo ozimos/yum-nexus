@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import Head from 'next/head'
 import { ThemeProvider } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import { useApollo } from '../lib/apolloClient'
+import { useApollo } from '../apollo/apolloClient'
 import theme from '../lib/theme'
 
 process.on('warning', (e) => console.warn(e.stack))
