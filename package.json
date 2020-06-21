@@ -39,6 +39,7 @@
     "react-hook-form": "^5.7.2",
     "react-number-format": "^4.4.1",
     "recharts": "^1.8.5",
+    "use-lodash-debounce": "^1.1.0",
     "zod": "^1.7.0"
   },
   "scripts": {

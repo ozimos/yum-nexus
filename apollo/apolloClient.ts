@@ -23,9 +23,19 @@ export function fetchAccessToken() {
     credentials: 'include',
   })
 }
-
+const typePolicies = {
+  Cart: {
+    fields: {
+      meals: {
+        merge(existing = [], incoming: any[]) {
+          return incoming
+        },
+      },
+    },
+  },
+}
 function createApolloClient(serverAccessToken?: string): ApolloClient<NormalizedCacheObject | InMemoryCache> {
-  const cache = new InMemoryCache()
+  const cache = new InMemoryCache({ typePolicies })
   const client = new ApolloClient({
     ssrMode: isServer(),
     link: from([

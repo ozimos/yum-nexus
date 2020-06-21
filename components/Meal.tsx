@@ -10,6 +10,7 @@ import AddIcon from '@material-ui/icons/Add'
 import RemoveOutlinedIcon from '@material-ui/icons/RemoveOutlined'
 import * as z from 'zod'
 import NumberFormat from 'react-number-format'
+import { useDebouncedCallback } from 'use-lodash-debounce'
 import ClearIcon from '@material-ui/icons/Clear'
 import InputBase from '@material-ui/core/InputBase'
 import { makeStyles } from '@material-ui/core/styles'
@@ -94,8 +95,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 const mealQuantity = z.number().int().min(1).max(1000)
-const mealQuantityInput = z.union([mealQuantity, z.literal('')])
-type MealQuantityInput = z.infer<typeof mealQuantityInput>
 const Meal = ({
   id,
   title,
@@ -104,38 +103,38 @@ const Meal = ({
   imageUrl,
   cartStatus: { isInCart, cartQty },
 }: Partial<MealType>) => {
-  const [quantity, setQuantity] = useState(0)
   const [updateCart] = useUpsert_CartMutation()
   const [removeFromCart] = useRemove_Cart_MealMutation()
   const classes = useStyles({ isInCart })
-  const changeQuantity = (quantity: MealQuantityInput) => {
-    setQuantity(quantity)
-    console.log('changeQuantity', quantity)
-    if (mealQuantity.check(quantity)) {
-      updateCart({
-        variables: { id, quantity },
-      })
-    }
-  }
+
   const remove = () => {
     removeFromCart({
       variables: { id },
     })
-    setQuantity(0)
+  }
+  const changeCartQuantity = (quantity: any) => {
+
+    if (mealQuantity.check(quantity)) {
+      return updateCart({
+        variables: { id, quantity },
+      })
+    }
+    if (isNaN(quantity)) {
+      return remove()
+    }
   }
   const increment = () => {
-    const plusOne = quantity + 1
-    changeQuantity(plusOne)
+    const plusOne = cartQty + 1
+    changeCartQuantity(plusOne)
   }
   const decrement = () => {
-    const minusOne = quantity - 1
-    changeQuantity(minusOne)
+    const minusOne = cartQty - 1
+    changeCartQuantity(minusOne)
   }
-  const handleInputChange = (value) => {
-    // const quantity = parseInt(event.currentTarget.value, 10)
-    const quantity = value?.formattedValue
-    // const parsedQuantity = mealQuantityInput.check(quantity) ? quantity : ''
-    changeQuantity(quantity)
+  const debouncedCartUpdate = useDebouncedCallback(changeCartQuantity, 800)
+  const handleValueChange = (value) => {
+    const quantity = parseInt(value?.formattedValue, 10)
+    debouncedCartUpdate(quantity)
   }
   const end = isInCart ? (
     <ButtonBase className="badgeButton status" aria-label="add to shopping cart">
@@ -194,19 +193,17 @@ const Meal = ({
               {end}
             </>
           }
-          inputComponent={(props) => (
-            <>
-              <NumberFormat {...props} />
-            </>
-          )}
+          inputComponent={({ inputRef, ...props }) => <NumberFormat getInputRef={inputRef} {...props} />}
           inputProps={{
-            max: 1000,
-            min: 0,
-            step: 1,
-            onValueChange: handleInputChange,
-            value: quantity,
+            onValueChange: handleValueChange,
+            value: cartQty,
             type: 'text',
-            id: `quantity:${id}`
+            id: `quantity:${id}`,
+            allowNegative: false,
+            allowLeadingZeros: false,
+            decimalScale: 0,
+            isNumericString: true,
+            'aria-label': 'meal quantity input',
           }}
         />
         <CardMedia
