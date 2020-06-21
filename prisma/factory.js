@@ -54,7 +54,7 @@ const mealFactory = ({ user, defaults } = {}) => ({
   title: faker.random.words(faker.random.number({ max: 4, min: 2 })),
   description: faker.lorem.sentence(),
   imageUrl: `${faker.image.food()}?random=${Date.now()}`,
-  price: faker.random.number({ min: 1500, max: 3000, precision: 0.01, }),
+  price: faker.random.number({ min: 1500, max: 3000, precision: 0.01 }),
   ...defaults,
 })
 
