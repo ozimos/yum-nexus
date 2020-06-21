@@ -37,6 +37,7 @@
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "react-hook-form": "^5.7.2",
+    "react-number-format": "^4.4.1",
     "recharts": "^1.8.5",
     "zod": "^1.7.0"
   },

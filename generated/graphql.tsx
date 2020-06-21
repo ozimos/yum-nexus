@@ -1060,6 +1060,7 @@ export type Mutation = {
   createOneOwnMeal: Meal;
   createOneOwnMenu: Menu;
   createOneOwnOrder: Order;
+  deleteFromCart?: Maybe<Scalars['ID']>;
   deleteOneMeal?: Maybe<Meal>;
   deleteOneMenu?: Maybe<Menu>;
   deleteOneOrder?: Maybe<Order>;
@@ -1120,6 +1121,11 @@ export type MutationCreateOneOwnMenuArgs = {
 
 export type MutationCreateOneOwnOrderArgs = {
   data: OrderCreateInput;
+};
+
+
+export type MutationDeleteFromCartArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -2050,6 +2056,16 @@ export type Upsert_CartMutation = (
   & Pick<Mutation, 'updateCartStatus'>
 );
 
+export type Remove_Cart_MealMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type Remove_Cart_MealMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'deleteFromCart'>
+);
+
 export type CartQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -2446,7 +2462,7 @@ export type GetAddressesLazyQueryHookResult = ReturnType<typeof useGetAddressesL
 export type GetAddressesQueryResult = ApolloReactCommon.QueryResult<GetAddressesQuery, GetAddressesQueryVariables>;
 export const Upsert_CartDocument = gql`
     mutation UPSERT_CART($id: String!, $quantity: Int!) {
-  updateCartStatus(quantity: $quantity, id: $id) @client(always: true)
+  updateCartStatus(id: $id, quantity: $quantity) @client(always: true)
 }
     `;
 export type Upsert_CartMutationFn = ApolloReactCommon.MutationFunction<Upsert_CartMutation, Upsert_CartMutationVariables>;
@@ -2475,6 +2491,36 @@ export function useUpsert_CartMutation(baseOptions?: ApolloReactHooks.MutationHo
 export type Upsert_CartMutationHookResult = ReturnType<typeof useUpsert_CartMutation>;
 export type Upsert_CartMutationResult = ApolloReactCommon.MutationResult<Upsert_CartMutation>;
 export type Upsert_CartMutationOptions = ApolloReactCommon.BaseMutationOptions<Upsert_CartMutation, Upsert_CartMutationVariables>;
+export const Remove_Cart_MealDocument = gql`
+    mutation REMOVE_CART_MEAL($id: String!) {
+  deleteFromCart(id: $id) @client(always: true)
+}
+    `;
+export type Remove_Cart_MealMutationFn = ApolloReactCommon.MutationFunction<Remove_Cart_MealMutation, Remove_Cart_MealMutationVariables>;
+
+/**
+ * __useRemove_Cart_MealMutation__
+ *
+ * To run a mutation, you first call `useRemove_Cart_MealMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemove_Cart_MealMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeCartMealMutation, { data, loading, error }] = useRemove_Cart_MealMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRemove_Cart_MealMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<Remove_Cart_MealMutation, Remove_Cart_MealMutationVariables>) {
+        return ApolloReactHooks.useMutation<Remove_Cart_MealMutation, Remove_Cart_MealMutationVariables>(Remove_Cart_MealDocument, baseOptions);
+      }
+export type Remove_Cart_MealMutationHookResult = ReturnType<typeof useRemove_Cart_MealMutation>;
+export type Remove_Cart_MealMutationResult = ApolloReactCommon.MutationResult<Remove_Cart_MealMutation>;
+export type Remove_Cart_MealMutationOptions = ApolloReactCommon.BaseMutationOptions<Remove_Cart_MealMutation, Remove_Cart_MealMutationVariables>;
 export const CartDocument = gql`
     query CART {
   cart @client {

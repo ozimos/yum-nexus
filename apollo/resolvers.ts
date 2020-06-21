@@ -8,8 +8,8 @@ const userId = () => getUserId(getAccessToken())
 export const resolvers: Resolvers = {
   Mutation: {
     userId,
-    updateCartStatus: (_root, variables, { cache }) => {
-      cache.writeFragment({
+    updateCartStatus: (_root, variables, { client }) => {
+      client.writeFragment({
         id: `CartStatus:${variables.id}`,
         fragment: CART_STATUS,
         data: {
@@ -18,16 +18,15 @@ export const resolvers: Resolvers = {
           cartQty: variables.quantity,
           __typename: 'CartStatus',
         },
-        broadcast: true,
       })
       try {
-        const myCart = cache.readFragment({
+        const myCart = client.readFragment({
           id: 'Cart:myCart',
           fragment: CART,
         })
         if (!myCart?.meals?.some((meal) => meal.id === variables.id)) {
           const data = { id: 'myCart', meals: [...myCart.meals, { id: variables.id, __typename: 'Meal' }] }
-          cache.writeFragment({
+          client.writeFragment({
             id: 'Cart:myCart',
             fragment: CART,
             data,
@@ -36,10 +35,48 @@ export const resolvers: Resolvers = {
       } catch (err) {
         console.log(err)
         console.log('cart read failed')
-        cache.writeFragment({
+        client.writeFragment({
           id: 'Cart:myCart',
           fragment: CART,
           data: { id: 'myCart', meals: [{ id: variables.id, __typename: 'Meal' }] },
+        })
+      }
+
+      return null
+    },
+    deleteFromCart: (_root, variables, { client }) => {
+      client.writeFragment({
+        id: `CartStatus:${variables.id}`,
+        fragment: CART_STATUS,
+        data: {
+          id: variables.id,
+          isInCart: false,
+          cartQty: 0,
+          __typename: 'CartStatus',
+        },
+      })
+      let data = {
+        id: 'Cart:myCart',
+        __typename: 'Cart',
+        meals: [],
+      }
+      try {
+        const myCart = client.readFragment({
+          id: 'Cart:myCart',
+          fragment: CART,
+        })
+        if (myCart?.meals) {
+          data.meals = myCart?.meals?.filter((meal) => meal.id !== variables.id)
+        }
+      } catch (err) {
+        console.log(err)
+        console.log('cart read failed')
+        data.meals = []
+      } finally {
+        client.writeFragment({
+          id: 'Cart:myCart',
+          fragment: CART,
+          data,
         })
       }
 

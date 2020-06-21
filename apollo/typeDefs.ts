@@ -31,5 +31,6 @@ export default gql`
   extend type Mutation {
     userId: ID!
     updateCartStatus(id: String!, quantity: Int!): ID
+    deleteFromCart(id: String!): ID
   }
 `

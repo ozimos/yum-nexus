@@ -8,12 +8,13 @@ import Grid from '@material-ui/core/Grid'
 import ButtonBase from '@material-ui/core/ButtonBase'
 import AddIcon from '@material-ui/icons/Add'
 import RemoveOutlinedIcon from '@material-ui/icons/RemoveOutlined'
+import * as z from 'zod'
+import NumberFormat from 'react-number-format'
 import ClearIcon from '@material-ui/icons/Clear'
 import InputBase from '@material-ui/core/InputBase'
 import { makeStyles } from '@material-ui/core/styles'
-import { Meal as MealType, useUpsert_CartMutation } from '../generated/graphql'
+import { Meal as MealType, useUpsert_CartMutation, useRemove_Cart_MealMutation } from '../generated/graphql'
 import clsx from 'clsx'
-import { UPSERT_CART } from '../graphql/cart.mutation'
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -92,7 +93,9 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }))
-
+const mealQuantity = z.number().int().min(1).max(1000)
+const mealQuantityInput = z.union([mealQuantity, z.literal('')])
+type MealQuantityInput = z.infer<typeof mealQuantityInput>
 const Meal = ({
   id,
   title,
@@ -103,12 +106,22 @@ const Meal = ({
 }: Partial<MealType>) => {
   const [quantity, setQuantity] = useState(0)
   const [updateCart] = useUpsert_CartMutation()
+  const [removeFromCart] = useRemove_Cart_MealMutation()
   const classes = useStyles({ isInCart })
-  const changeQuantity = (quantity: number) => {
-    updateCart({
-      variables: { id, quantity },
-    })
+  const changeQuantity = (quantity: MealQuantityInput) => {
     setQuantity(quantity)
+    console.log('changeQuantity', quantity)
+    if (mealQuantity.check(quantity)) {
+      updateCart({
+        variables: { id, quantity },
+      })
+    }
+  }
+  const remove = () => {
+    removeFromCart({
+      variables: { id },
+    })
+    setQuantity(0)
   }
   const increment = () => {
     const plusOne = quantity + 1
@@ -118,8 +131,10 @@ const Meal = ({
     const minusOne = quantity - 1
     changeQuantity(minusOne)
   }
-  const handleInputChange: ChangeEventHandler = (event) => {
-    const quantity = parseInt(event.currentTarget.value, 10)
+  const handleInputChange = (value) => {
+    // const quantity = parseInt(event.currentTarget.value, 10)
+    const quantity = value?.formattedValue
+    // const parsedQuantity = mealQuantityInput.check(quantity) ? quantity : ''
     changeQuantity(quantity)
   }
   const end = isInCart ? (
@@ -144,13 +159,7 @@ const Meal = ({
         color="primary"
         aria-label="add one to shopping cart"
         size="small"
-        onClick={() => {
-          const minusOne = quantity - 1
-          updateCart({
-            variables: { id, quantity: minusOne },
-          })
-          setQuantity(minusOne)
-        }}
+        onClick={remove}
       >
         <ClearIcon />
       </IconButton>
@@ -170,16 +179,6 @@ const Meal = ({
       <Card className={classes.card}>
         <InputBase
           className={classes.quantity}
-          id="quantity"
-          type="number"
-          value={quantity}
-          onChange={(event) => {
-            const quantity = parseInt(event.currentTarget.value, 10)
-            updateCart({
-              variables: { id, quantity },
-            })
-            setQuantity(quantity)
-          }}
           startAdornment={startAdornment}
           endAdornment={
             <>
@@ -195,7 +194,20 @@ const Meal = ({
               {end}
             </>
           }
-          inputProps={{ max: 1000, min: 0, step: 1 }}
+          inputComponent={(props) => (
+            <>
+              <NumberFormat {...props} />
+            </>
+          )}
+          inputProps={{
+            max: 1000,
+            min: 0,
+            step: 1,
+            onValueChange: handleInputChange,
+            value: quantity,
+            type: 'text',
+            id: `quantity:${id}`
+          }}
         />
         <CardMedia
           className={classes.cardMedia}
