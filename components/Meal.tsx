@@ -1,21 +1,18 @@
 import React, { useState, ChangeEventHandler, MouseEventHandler } from 'react'
 import Card from '@material-ui/core/Card'
-import CardActions from '@material-ui/core/CardActions'
 import CardContent from '@material-ui/core/CardContent'
 import IconButton from '@material-ui/core/IconButton'
 import CardMedia from '@material-ui/core/CardMedia'
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
-import { useApolloClient } from '@apollo/client'
 import ButtonBase from '@material-ui/core/ButtonBase'
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'
-import RemoveCircleOutlineOutlinedIcon from '@material-ui/icons/RemoveCircleOutlineOutlined'
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
+import AddIcon from '@material-ui/icons/Add'
+import RemoveOutlinedIcon from '@material-ui/icons/RemoveOutlined'
+import ClearIcon from '@material-ui/icons/Clear'
 import InputBase from '@material-ui/core/InputBase'
-import Popper from '@material-ui/core/Popper'
-import Grow from '@material-ui/core/Grow'
 import { makeStyles } from '@material-ui/core/styles'
-import { Meal, useUpsert_CartMutation } from '../generated/graphql'
+import { Meal as MealType, useUpsert_CartMutation } from '../generated/graphql'
+import clsx from 'clsx'
 import { UPSERT_CART } from '../graphql/cart.mutation'
 
 const useStyles = makeStyles((theme) => ({
@@ -24,14 +21,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     position: 'relative',
-  },
-  cardActions: {
-    justifyContent: 'flex-end',
-  },
-  onTop: {
-    position: 'absolute',
-    right: 0,
-    zIndex: 1,
   },
   cardMedia: {
     paddingTop: '56.25%', // 16:9
@@ -43,53 +32,25 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(6),
   },
-  quantity: {
-    '& input::-webkit-outer-spin-button,input::-webkit-inner-spin-button': {
-      '-webkit-appearance': 'none',
-      margin: 0,
+  quantityButton: {
+    backgroundColor: '#fafdfdbb',
+    '&:hover': {
+      backgroundColor: '#faffff',
     },
-
-    /* Firefox */
-    '& input[type=number]': {
-      '-moz-appearance': 'textfield',
-    },
-    '& input': {
-      borderBottom: '1px solid',
-      borderRadius: '1px',
-      width: 0,
-      transition: 'width 0.3s',
-      textAlign: 'center',
-    },
-    '& .badgeButton': {
-      backgroundColor: 'red',
-      margin: theme.spacing(1, 0, 1, 0),
-      borderRadius: '50%',
-      width: theme.spacing(4),
-      height: theme.spacing(4),
-      fontSize: 20,
-    },
-    '&:hover .status': {
-      display: (props: { isInCart: boolean }) => (props.isInCart ? 'none' : ''),
-    },
-    '& .action': {
-      display: 'none',
-    },
-    '&:hover .action': {
-      display: (props: { isInCart: boolean }) => (props.isInCart ? 'initial' : 'none'),
-    },
-    '&:hover input': {
-      width: (props: { isInCart: boolean }) => (props.isInCart ? theme.spacing(6) : ''),
+    // '&.MuiIconButton-root': {
+    //   borderRadius: '50%',
+    //   border: '3px solid',
+    // },
+    '& .MuiSvgIcon-root > path': {
+      mixBlendMode: 'difference',
     },
   },
-}))
-
-const useStyles2 = makeStyles((theme) => ({
-  onTop: {
+  quantity: {
     position: 'absolute',
+    justifyContent: 'flex-end',
+    margin: theme.spacing(0.5, 1),
     right: 0,
     zIndex: 1,
-  },
-  quantity: {
     '& input::-webkit-outer-spin-button,input::-webkit-inner-spin-button': {
       '-webkit-appearance': 'none',
       margin: 0,
@@ -100,18 +61,23 @@ const useStyles2 = makeStyles((theme) => ({
       '-moz-appearance': 'textfield',
     },
     '& input': {
-      borderBottom: '1px solid',
-      borderRadius: '1px',
+      border: '0 solid',
+      fontWeight: 'bold',
+      color: theme.palette.primary.main,
+      borderRadius: 10,
+      backgroundColor: '#fafdfdbb',
+      opacity: 0,
       width: 0,
-      transition: 'width 0.3s',
+      transition: 'width 300ms, opacity 100ms',
       textAlign: 'center',
     },
     '& .badgeButton': {
       backgroundColor: 'red',
-      margin: theme.spacing(1, 0, 1, 0),
-      borderRadius: '50%',
-      width: theme.spacing(4),
-      height: theme.spacing(4),
+      padding: theme.spacing(0, 1),
+      borderRadius: theme.spacing(1.75),
+      minWidth: theme.spacing(3.5),
+      width: 'min-content',
+      height: theme.spacing(3.5),
       fontSize: 20,
     },
     '&:hover .status': {
@@ -125,114 +91,23 @@ const useStyles2 = makeStyles((theme) => ({
     },
     '&:hover input': {
       width: (props: { isInCart: boolean }) => (props.isInCart ? theme.spacing(6) : ''),
+      borderWidth: (props: { isInCart: boolean }) => (props.isInCart ? '2px' : 0),
+      opacity: 1,
+    },
+    '& input:hover': {
+      backgroundColor: '#faffff',
     },
   },
 }))
 
-export function TransitionsPopper({ isInCart, cartQty, increment, decrement, handleInputChange, quantity }) {
-  const classes = useStyles2()
-  const [anchorEl, setAnchorEl] = useState(null)
-
-  const handleMouseEnter: MouseEventHandler = (event) => {
-    setAnchorEl(event.currentTarget)
-  }
-  const handleMouseLeave: MouseEventHandler = (event) => {
-    setAnchorEl(null)
-  }
-
-  const open = Boolean(anchorEl)
-  const id = open ? 'transitions-popper' : undefined
-
-  const end = isInCart ? (
-    <ButtonBase className="badgeButton status" aria-label="add to shopping cart">
-      {cartQty}
-    </ButtonBase>
-  ) : (
-    <IconButton
-      className="status"
-      color="primary"
-      aria-label="add one to shopping cart"
-      size="small"
-      onClick={increment}
-    >
-      <AddCircleOutlineIcon fontSize="large" />
-    </IconButton>
-  )
-  const startAdornment =
-    cartQty === 1 ? (
-      <IconButton
-        className="action"
-        color="primary"
-        aria-label="add one to shopping cart"
-        size="small"
-        onClick={decrement}
-      >
-        <DeleteForeverIcon fontSize="large" />
-      </IconButton>
-    ) : (
-      <IconButton color="primary" aria-label="remove one from shopping cart" size="small" className="action">
-        <RemoveCircleOutlineOutlinedIcon fontSize="large" />
-      </IconButton>
-    )
-  return (
-    <div>
-      <IconButton
-        aria-describedby={id}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        color="primary"
-        aria-label="add"
-        size="small"
-        className={classes.onTop}
-      >
-        <AddCircleOutlineIcon />
-      </IconButton>
-      <Popper id={id} open={open} anchorEl={anchorEl} transition>
-        {({ TransitionProps }) => (
-          <Grow
-            {...TransitionProps}
-            timeout={350}
-            style={{ transformOrigin: '0 -100 0', top: -36, zIndex: 1 }}
-          >
-            <InputBase
-              className={classes.quantity}
-              id="quantity"
-              type="number"
-              value={quantity}
-              onChange={handleInputChange}
-              startAdornment={startAdornment}
-              endAdornment={
-                <>
-                  <IconButton
-                    color="primary"
-                    aria-label="add one to shopping cart"
-                    size="small"
-                    className="action"
-                    onClick={increment}
-                  >
-                    <AddCircleOutlineIcon fontSize="large" />
-                  </IconButton>
-                  {end}
-                </>
-              }
-              inputProps={{ max: 1000, min: 0, step: 1 }}
-            />
-          </Grow>
-        )}
-      </Popper>
-    </div>
-  )
-}
-
-const Meals = ({
+const Meal = ({
   id,
   title,
   description,
   price,
   imageUrl,
   cartStatus: { isInCart, cartQty },
-}: Partial<Meal>) => {
-  const client = useApolloClient()
+}: Partial<MealType>) => {
   const [quantity, setQuantity] = useState(0)
   const [updateCart] = useUpsert_CartMutation()
   const classes = useStyles({ isInCart })
@@ -260,19 +135,19 @@ const Meals = ({
     </ButtonBase>
   ) : (
     <IconButton
-      className="status"
+      className={clsx(classes.quantityButton, 'status')}
       color="primary"
       aria-label="add one to shopping cart"
       size="small"
       onClick={increment}
     >
-      <AddCircleOutlineIcon fontSize="large" />
+      <AddIcon />
     </IconButton>
   )
   const startAdornment =
     cartQty === 1 ? (
       <IconButton
-        className="action"
+        className={clsx(classes.quantityButton, 'action')}
         color="primary"
         aria-label="add one to shopping cart"
         size="small"
@@ -284,49 +159,51 @@ const Meals = ({
           setQuantity(minusOne)
         }}
       >
-        <DeleteForeverIcon fontSize="large" />
+        <ClearIcon />
       </IconButton>
     ) : (
-      <IconButton color="primary" aria-label="remove one from shopping cart" size="small" className="action">
-        <RemoveCircleOutlineOutlinedIcon fontSize="large" />
+      <IconButton
+        color="primary"
+        aria-label="remove one from shopping cart"
+        size="small"
+        className={clsx(classes.quantityButton, 'action')}
+        onClick={decrement}
+      >
+        <RemoveOutlinedIcon />
       </IconButton>
     )
-  const transitionProps = { isInCart, cartQty, increment, decrement, handleInputChange, quantity }
   return (
     <Grid item xs={12} sm={6} md={4}>
       <Card className={classes.card}>
-        <CardActions className={classes.cardActions}>
-          <InputBase
-            className={classes.quantity}
-            id="quantity"
-            type="number"
-            value={quantity}
-            onChange={(event) => {
-              const quantity = parseInt(event.currentTarget.value, 10)
-              updateCart({
-                variables: { id, quantity },
-              })
-              setQuantity(quantity)
-            }}
-            startAdornment={startAdornment}
-            endAdornment={
-              <>
-                <IconButton
-                  color="primary"
-                  aria-label="add one to shopping cart"
-                  size="small"
-                  className="action"
-                  onClick={increment}
-                >
-                  <AddCircleOutlineIcon fontSize="large" />
-                </IconButton>
-                {end}
-              </>
-            }
-            inputProps={{ max: 1000, min: 0, step: 1 }}
-          />
-        </CardActions>
-        <TransitionsPopper {...transitionProps} />
+        <InputBase
+          className={classes.quantity}
+          id="quantity"
+          type="number"
+          value={quantity}
+          onChange={(event) => {
+            const quantity = parseInt(event.currentTarget.value, 10)
+            updateCart({
+              variables: { id, quantity },
+            })
+            setQuantity(quantity)
+          }}
+          startAdornment={startAdornment}
+          endAdornment={
+            <>
+              <IconButton
+                color="primary"
+                aria-label="add one to shopping cart"
+                size="small"
+                className={clsx(classes.quantityButton, 'action')}
+                onClick={increment}
+              >
+                <AddIcon />
+              </IconButton>
+              {end}
+            </>
+          }
+          inputProps={{ max: 1000, min: 0, step: 1 }}
+        />
         <CardMedia
           className={classes.cardMedia}
           image={imageUrl || 'https://source.unsplash.com/random'}
@@ -342,4 +219,4 @@ const Meals = ({
     </Grid>
   )
 }
-export default Meals
+export default Meal
