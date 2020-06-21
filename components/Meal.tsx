@@ -37,13 +37,6 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       backgroundColor: '#faffff',
     },
-    // '&.MuiIconButton-root': {
-    //   borderRadius: '50%',
-    //   border: '3px solid',
-    // },
-    '& .MuiSvgIcon-root > path': {
-      mixBlendMode: 'difference',
-    },
   },
   quantity: {
     position: 'absolute',
