@@ -1,4 +1,4 @@
-import React, { useState, ChangeEventHandler, MouseEventHandler } from 'react'
+import React from 'react'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import IconButton from '@material-ui/core/IconButton'
@@ -30,14 +30,10 @@ const useStyles = makeStyles((theme) => ({
   cardContent: {
     flexGrow: 1,
   },
-  footer: {
-    backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing(6),
-  },
   quantityButton: {
-    backgroundColor: '#fafdfdbb',
+    backgroundColor: theme.palette.button.main,
     '&:hover': {
-      backgroundColor: '#faffff',
+      backgroundColor: theme.palette.button.dark,
     },
   },
   quantity: {
@@ -60,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
       fontWeight: 'bold',
       color: theme.palette.primary.main,
       borderRadius: 10,
-      backgroundColor: '#fafdfdbb',
+      backgroundColor: theme.palette.button.main,
       opacity: 0,
       width: 0,
       transition: 'width 300ms, opacity 100ms',
@@ -90,7 +86,7 @@ const useStyles = makeStyles((theme) => ({
       opacity: 1,
     },
     '& input:hover': {
-      backgroundColor: '#faffff',
+      backgroundColor: theme.palette.button.dark,
     },
   },
 }))
@@ -113,7 +109,6 @@ const Meal = ({
     })
   }
   const changeCartQuantity = (quantity: any) => {
-
     if (mealQuantity.check(quantity)) {
       return updateCart({
         variables: { id, quantity },

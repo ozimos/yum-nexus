@@ -14,24 +14,13 @@ import Router from 'next/router'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import { useForm } from 'react-hook-form'
+import Copyright from './Copyright'
 import * as z from 'zod'
 import { useZodValidationResolver } from '../lib/zodValidationResolver'
 import NextLink from './NextLink'
 import { setAccessToken } from '../lib/accessToken'
 import { useLoginMutation, UserFragmentDoc } from '../generated/graphql'
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  )
-}
 
 const useStyles = makeStyles((theme) => ({
   root: {

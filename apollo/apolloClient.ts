@@ -1,27 +1,50 @@
 import { useMemo } from 'react'
 import { ApolloClient, HttpLink, InMemoryCache, NormalizedCacheObject, from } from '@apollo/client'
-// @ts-ignore
-import { InStorageCache, PersistLink } from 'apollo-cache-instorage'
 import { TokenRefreshLink } from 'apollo-link-token-refresh'
+import { debuglog } from 'util'
 import { NextPageContext } from 'next'
 import cookie from 'cookie'
 import JwtDecode from 'jwt-decode'
 import { onError } from '@apollo/link-error'
 import { setContext } from '@apollo/link-context'
+import merge from 'lodash/merge'
 import { getAccessToken, setAccessToken } from '../lib/accessToken'
 import { resolvers } from './resolvers'
 import typeDefs from './typeDefs'
 import { CART_QUERY } from '../graphql/cart.query'
 
+const log = debuglog('app')
+
 let apolloClient: ApolloClient<NormalizedCacheObject | InMemoryCache> | null = null
 export const isServer = () => typeof window === 'undefined'
 export const serverURL = process.env.NEXT_PUBLIC_YUM_SERVER_URL
 
-export function fetchAccessToken() {
-  return fetch(`${serverURL}/api/refresh_token`, {
-    method: 'POST',
-    credentials: 'include',
-  })
+export async function fetchServerAccessToken(context: Partial<NextPageContext>) {
+  const bearerToken = context?.req?.headers?.authorization?.split(' ')
+  if (bearerToken?.[1]) {
+    return bearerToken[1]
+  }
+  let serverAccessToken = ''
+  const cookies = cookie.parse(context.req?.headers?.cookie || '')
+  try {
+    if (cookies.jid) {
+      const response = await fetch(`${serverURL}/api/refresh_token`, {
+        method: 'POST',
+        headers: {
+          cookie: `jid=${cookies.jid}`,
+        },
+      })
+      const data = await response.json()
+      serverAccessToken = data.accessToken
+    }
+    if (serverAccessToken) {
+      merge(context, { req: { headers: { authorization: `Bearer ${serverAccessToken}` } } })
+    }
+    return serverAccessToken
+  } catch (error) {
+    log(error)
+    return serverAccessToken
+  }
 }
 const typePolicies = {
   Cart: {
@@ -34,17 +57,13 @@ const typePolicies = {
     },
   },
 }
-function createApolloClient(serverAccessToken?: string): ApolloClient<NormalizedCacheObject | InMemoryCache> {
+
+function createApolloClient(serverAccessToken = ''): ApolloClient<NormalizedCacheObject | InMemoryCache> {
   const cache = new InMemoryCache({ typePolicies })
   const client = new ApolloClient({
     ssrMode: isServer(),
-    link: from([
-      new PersistLink(),
-      createRefreshLink(),
-      createAuthLink(serverAccessToken, `createApolloClient-${isServer() ? 'server' : 'client'}`),
-      createErrorLink(),
-      createHttpLink(),
-    ]),
+    // @ts-ignore
+    link: from([createAuthLink(serverAccessToken), createRefreshLink(), createErrorLink(), createHttpLink()]),
     cache,
     resolvers,
     typeDefs,
@@ -70,9 +89,9 @@ function createApolloClient(serverAccessToken?: string): ApolloClient<Normalized
 
 export function initializeApollo(
   initialState: NormalizedCacheObject | InMemoryCache | null = null,
-  serverAccessToken?: string
+  serverAccessToken = ''
 ) {
-  const _apolloClient = apolloClient ?? createApolloClient()
+  const _apolloClient = apolloClient ?? createApolloClient(serverAccessToken)
 
   // If your page has Next.js data fetching methods that use Apollo Client, the initial state
   // gets hydrated here
@@ -80,7 +99,7 @@ export function initializeApollo(
     _apolloClient.cache.restore(initialState)
   }
   // For SSG and SSR always create a new Apollo Client
-  if (typeof window === 'undefined') return _apolloClient
+  if (isServer()) return _apolloClient
   // Create the Apollo Client once in the client
   if (!apolloClient) apolloClient = _apolloClient
   if (!getAccessToken() && serverAccessToken) {
@@ -89,24 +108,7 @@ export function initializeApollo(
   return _apolloClient
 }
 
-export async function getServerAccessToken(context: NextPageContext) {
-  let serverAccessToken = ''
-  const cookies = cookie.parse(context.req?.headers?.cookie || '')
-  if (cookies.jid) {
-    const response = await fetch(`${serverURL}/api/refresh_token`, {
-      method: 'POST',
-      credentials: 'same-origin',
-      headers: {
-        cookie: 'jid=' + cookies.jid,
-      },
-    })
-    const data = await response.json()
-    serverAccessToken = data.accessToken
-  }
-  return serverAccessToken
-}
-
-export function useApollo(initialState: any, serverAccessToken?: string) {
+export function useApollo(initialState: any, serverAccessToken = '') {
   const store = useMemo(() => initializeApollo(initialState, serverAccessToken), [
     initialState,
     serverAccessToken,
@@ -116,7 +118,6 @@ export function useApollo(initialState: any, serverAccessToken?: string) {
 
 function createHttpLink() {
   return new HttpLink({
-    // uri: 'https://api.graph.cool/simple/v1/cixmkt2ul01q00122mksg82pn',
     uri: `${serverURL}/api/graphql`,
     credentials: 'same-origin',
     fetch,
@@ -142,7 +143,11 @@ function createRefreshLink() {
         return false
       }
     },
-    fetchAccessToken,
+    fetchAccessToken: () =>
+      fetch(`${serverURL}/api/refresh_token`, {
+        method: 'POST',
+        credentials: 'include',
+      }),
     handleFetch: (accessToken) => {
       setAccessToken(accessToken)
     },
@@ -153,14 +158,13 @@ function createRefreshLink() {
   })
 }
 
-function createAuthLink(serverAccessToken?: string, label?: string) {
+function createAuthLink(serverAccessToken = '') {
   return setContext((_request, { headers }) => {
     const token = isServer() ? serverAccessToken : getAccessToken()
     return {
       headers: {
         ...headers,
         authorization: token ? `bearer ${token}` : '',
-        label,
       },
     }
   })
