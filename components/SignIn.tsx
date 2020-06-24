@@ -16,22 +16,10 @@ import Container from '@material-ui/core/Container'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 import { useZodValidationResolver } from '../lib/zodValidationResolver'
+import Copyright from './Copyright'
 import NextLink from './NextLink'
 import { setAccessToken } from '../lib/accessToken'
 import { useLoginMutation, UserFragmentDoc } from '../generated/graphql'
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  )
-}
 
 const useStyles = makeStyles((theme) => ({
   paper: {
