@@ -44,6 +44,7 @@ module.exports = {
       },
     ],
     '@typescript-eslint/no-explicit-any': 'off',
+    'no-empty': { allowEmptyCatch: true },
   },
   settings: {
     react: {

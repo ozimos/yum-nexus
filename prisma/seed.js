@@ -5,6 +5,7 @@ const {
   defaultAddresses,
   seedMeals,
   seedMenus,
+  defaultMenus,
   seedMealMenus,
   seedOrders,
   seedMealOrders,
@@ -34,6 +35,10 @@ async function main() {
     console.log('Seeded: %j', results)
 
     results = await Promise.all(seedMenus.map((data) => db.menu.create({ data })))
+
+    console.log('Seeded: %j', results)
+
+    results = await Promise.all(defaultMenus.map((data) => db.defaultMenu.create({ data })))
 
     console.log('Seeded: %j', results)
 

@@ -269,6 +269,16 @@ input DateTimeFilter {
   notIn: [DateTime!]
 }
 
+type DefaultAddress {
+  address: Address!
+  addressId: String!
+  createdAt: DateTime!
+  id: String!
+  updatedAt: DateTime!
+  user: User!
+  userId: String!
+}
+
 input DefaultAddressCreateManyWithoutAddressInput {
   connect: [DefaultAddressWhereUniqueInput!]
   create: [DefaultAddressCreateWithoutAddressInput!]
@@ -390,6 +400,100 @@ input DefaultAddressWhereUniqueInput {
   userId: String
 }
 
+type DefaultMenu {
+  createdAt: DateTime!
+  id: String!
+  menu: Menu!
+  menuId: String!
+  updatedAt: DateTime!
+  user: User!
+  userId: String!
+}
+
+input DefaultMenuCreateOneWithoutMenuInput {
+  connect: DefaultMenuWhereUniqueInput
+  create: DefaultMenuCreateWithoutMenuInput
+}
+
+input DefaultMenuCreateOneWithoutUserInput {
+  connect: DefaultMenuWhereUniqueInput
+  create: DefaultMenuCreateWithoutUserInput
+}
+
+input DefaultMenuCreateWithoutMenuInput {
+  createdAt: DateTime
+  id: String
+  updatedAt: DateTime
+  user: UserCreateOneWithoutDefaultMenuInput!
+}
+
+input DefaultMenuCreateWithoutUserInput {
+  createdAt: DateTime
+  id: String
+  menu: MenuCreateOneWithoutDefaultInput!
+  updatedAt: DateTime
+}
+
+input DefaultMenuUpdateOneWithoutMenuInput {
+  connect: DefaultMenuWhereUniqueInput
+  create: DefaultMenuCreateWithoutMenuInput
+  delete: Boolean
+  disconnect: Boolean
+  update: DefaultMenuUpdateWithoutMenuDataInput
+  upsert: DefaultMenuUpsertWithoutMenuInput
+}
+
+input DefaultMenuUpdateOneWithoutUserInput {
+  connect: DefaultMenuWhereUniqueInput
+  create: DefaultMenuCreateWithoutUserInput
+  delete: Boolean
+  disconnect: Boolean
+  update: DefaultMenuUpdateWithoutUserDataInput
+  upsert: DefaultMenuUpsertWithoutUserInput
+}
+
+input DefaultMenuUpdateWithoutMenuDataInput {
+  createdAt: DateTime
+  id: String
+  updatedAt: DateTime
+  user: UserUpdateOneRequiredWithoutDefaultMenuInput
+}
+
+input DefaultMenuUpdateWithoutUserDataInput {
+  createdAt: DateTime
+  id: String
+  menu: MenuUpdateOneRequiredWithoutDefaultInput
+  updatedAt: DateTime
+}
+
+input DefaultMenuUpsertWithoutMenuInput {
+  create: DefaultMenuCreateWithoutMenuInput!
+  update: DefaultMenuUpdateWithoutMenuDataInput!
+}
+
+input DefaultMenuUpsertWithoutUserInput {
+  create: DefaultMenuCreateWithoutUserInput!
+  update: DefaultMenuUpdateWithoutUserDataInput!
+}
+
+input DefaultMenuWhereInput {
+  AND: [DefaultMenuWhereInput!]
+  createdAt: DateTimeFilter
+  id: StringFilter
+  menu: MenuWhereInput
+  menuId: StringFilter
+  NOT: [DefaultMenuWhereInput!]
+  OR: [DefaultMenuWhereInput!]
+  updatedAt: DateTimeFilter
+  user: UserWhereInput
+  userId: StringFilter
+}
+
+input DefaultMenuWhereUniqueInput {
+  id: String
+  userId: String
+}
+
 input FloatFilter {
   equals: Float
   gt: Float
@@ -426,7 +530,9 @@ type Meal {
   description: String!
   id: String!
   imageUrl: String!
+  menus(after: MenuWhereUniqueInput, before: MenuWhereUniqueInput, first: Int, last: Int): [Menu!]!
   price: Float!
+  tags: [String!]!
   title: String!
   updatedAt: DateTime!
   user: User!
@@ -847,6 +953,7 @@ input MealWhereUniqueInput {
 
 type Menu {
   createdAt: DateTime!
+  default: DefaultMenu
   id: String!
   meals(after: MealWhereUniqueInput, before: MealWhereUniqueInput, first: Int, last: Int): [Meal!]!
   menuDate: DateTime!
@@ -857,9 +964,12 @@ type Menu {
 
 input MenuCreateInput {
   createdAt: DateTime
+  default: DefaultMenuCreateOneWithoutMenuInput
   id: String
   meals: MealCreateManyWithoutMenusInput
   menuDate: DateTime!
+  SavedMenus: SavedMenusCreateManyWithoutMenuInput
+  tags: MenuCreatetagsInput
   updatedAt: DateTime
   user: UserCreateOneWithoutMenusInput!
 }
@@ -874,20 +984,67 @@ input MenuCreateManyWithoutUserInput {
   create: [MenuCreateWithoutUserInput!]
 }
 
-input MenuCreateWithoutMealsInput {
+input MenuCreateOneWithoutDefaultInput {
+  connect: MenuWhereUniqueInput
+  create: MenuCreateWithoutDefaultInput
+}
+
+input MenuCreateOneWithoutSavedMenusInput {
+  connect: MenuWhereUniqueInput
+  create: MenuCreateWithoutSavedMenusInput
+}
+
+input MenuCreatetagsInput {
+  set: [String!]
+}
+
+input MenuCreateWithoutDefaultInput {
   createdAt: DateTime
   id: String
+  meals: MealCreateManyWithoutMenusInput
   menuDate: DateTime!
+  SavedMenus: SavedMenusCreateManyWithoutMenuInput
+  tags: MenuCreatetagsInput
+  updatedAt: DateTime
+  user: UserCreateOneWithoutMenusInput!
+}
+
+input MenuCreateWithoutMealsInput {
+  createdAt: DateTime
+  default: DefaultMenuCreateOneWithoutMenuInput
+  id: String
+  menuDate: DateTime!
+  SavedMenus: SavedMenusCreateManyWithoutMenuInput
+  tags: MenuCreatetagsInput
+  updatedAt: DateTime
+  user: UserCreateOneWithoutMenusInput!
+}
+
+input MenuCreateWithoutSavedMenusInput {
+  createdAt: DateTime
+  default: DefaultMenuCreateOneWithoutMenuInput
+  id: String
+  meals: MealCreateManyWithoutMenusInput
+  menuDate: DateTime!
+  tags: MenuCreatetagsInput
   updatedAt: DateTime
   user: UserCreateOneWithoutMenusInput!
 }
 
 input MenuCreateWithoutUserInput {
   createdAt: DateTime
+  default: DefaultMenuCreateOneWithoutMenuInput
   id: String
   meals: MealCreateManyWithoutMenusInput
   menuDate: DateTime!
+  SavedMenus: SavedMenusCreateManyWithoutMenuInput
+  tags: MenuCreatetagsInput
   updatedAt: DateTime
+}
+
+input MenuDateMineCompoundUniqueInput {
+  menuDate: DateTime!
+  userId: String!
 }
 
 input MenuFilter {
@@ -896,8 +1053,13 @@ input MenuFilter {
   some: MenuWhereInput
 }
 
+input MenuIdUserIdCompoundUniqueInput {
+  menuId: String!
+  userId: String!
+}
+
 input MenuMineCompoundUniqueInput {
-  menuDate: DateTime!
+  id: String!
   userId: String!
 }
 
@@ -909,15 +1071,19 @@ input MenuScalarWhereInput {
   menuDate: DateTimeFilter
   NOT: [MenuScalarWhereInput!]
   OR: [MenuScalarWhereInput!]
+  SavedMenus: SavedMenusFilter
   updatedAt: DateTimeFilter
   userId: StringFilter
 }
 
 input MenuUpdateInput {
   createdAt: DateTime
+  default: DefaultMenuUpdateOneWithoutMenuInput
   id: String
   meals: MealUpdateManyWithoutMenusInput
   menuDate: DateTime
+  SavedMenus: SavedMenusUpdateManyWithoutMenuInput
+  tags: MenuUpdatetagsInput
   updatedAt: DateTime
   user: UserUpdateOneRequiredWithoutMenusInput
 }
@@ -926,6 +1092,7 @@ input MenuUpdateManyDataInput {
   createdAt: DateTime
   id: String
   menuDate: DateTime
+  tags: MenuUpdatetagsInput
   updatedAt: DateTime
 }
 
@@ -958,19 +1125,65 @@ input MenuUpdateManyWithWhereNestedInput {
   where: MenuScalarWhereInput!
 }
 
-input MenuUpdateWithoutMealsDataInput {
+input MenuUpdateOneRequiredWithoutDefaultInput {
+  connect: MenuWhereUniqueInput
+  create: MenuCreateWithoutDefaultInput
+  update: MenuUpdateWithoutDefaultDataInput
+  upsert: MenuUpsertWithoutDefaultInput
+}
+
+input MenuUpdateOneRequiredWithoutSavedMenusInput {
+  connect: MenuWhereUniqueInput
+  create: MenuCreateWithoutSavedMenusInput
+  update: MenuUpdateWithoutSavedMenusDataInput
+  upsert: MenuUpsertWithoutSavedMenusInput
+}
+
+input MenuUpdatetagsInput {
+  set: [String!]
+}
+
+input MenuUpdateWithoutDefaultDataInput {
   createdAt: DateTime
   id: String
+  meals: MealUpdateManyWithoutMenusInput
   menuDate: DateTime
+  SavedMenus: SavedMenusUpdateManyWithoutMenuInput
+  tags: MenuUpdatetagsInput
+  updatedAt: DateTime
+  user: UserUpdateOneRequiredWithoutMenusInput
+}
+
+input MenuUpdateWithoutMealsDataInput {
+  createdAt: DateTime
+  default: DefaultMenuUpdateOneWithoutMenuInput
+  id: String
+  menuDate: DateTime
+  SavedMenus: SavedMenusUpdateManyWithoutMenuInput
+  tags: MenuUpdatetagsInput
+  updatedAt: DateTime
+  user: UserUpdateOneRequiredWithoutMenusInput
+}
+
+input MenuUpdateWithoutSavedMenusDataInput {
+  createdAt: DateTime
+  default: DefaultMenuUpdateOneWithoutMenuInput
+  id: String
+  meals: MealUpdateManyWithoutMenusInput
+  menuDate: DateTime
+  tags: MenuUpdatetagsInput
   updatedAt: DateTime
   user: UserUpdateOneRequiredWithoutMenusInput
 }
 
 input MenuUpdateWithoutUserDataInput {
   createdAt: DateTime
+  default: DefaultMenuUpdateOneWithoutMenuInput
   id: String
   meals: MealUpdateManyWithoutMenusInput
   menuDate: DateTime
+  SavedMenus: SavedMenusUpdateManyWithoutMenuInput
+  tags: MenuUpdatetagsInput
   updatedAt: DateTime
 }
 
@@ -982,6 +1195,16 @@ input MenuUpdateWithWhereUniqueWithoutMealsInput {
 input MenuUpdateWithWhereUniqueWithoutUserInput {
   data: MenuUpdateWithoutUserDataInput!
   where: MenuWhereUniqueInput!
+}
+
+input MenuUpsertWithoutDefaultInput {
+  create: MenuCreateWithoutDefaultInput!
+  update: MenuUpdateWithoutDefaultDataInput!
+}
+
+input MenuUpsertWithoutSavedMenusInput {
+  create: MenuCreateWithoutSavedMenusInput!
+  update: MenuUpdateWithoutSavedMenusDataInput!
 }
 
 input MenuUpsertWithWhereUniqueWithoutMealsInput {
@@ -999,11 +1222,13 @@ input MenuUpsertWithWhereUniqueWithoutUserInput {
 input MenuWhereInput {
   AND: [MenuWhereInput!]
   createdAt: DateTimeFilter
+  default: DefaultMenuWhereInput
   id: StringFilter
   meals: MealFilter
   menuDate: DateTimeFilter
   NOT: [MenuWhereInput!]
   OR: [MenuWhereInput!]
+  SavedMenus: SavedMenusFilter
   updatedAt: DateTimeFilter
   user: UserWhereInput
   userId: StringFilter
@@ -1011,6 +1236,7 @@ input MenuWhereInput {
 
 input MenuWhereUniqueInput {
   id: String
+  menuDateMine: MenuDateMineCompoundUniqueInput
   menuMine: MenuMineCompoundUniqueInput
 }
 
@@ -1292,20 +1518,139 @@ input OrderWhereUniqueInput {
 }
 
 type Query {
+  defaultAddress(where: DefaultAddressWhereUniqueInput!): DefaultAddress
+  defaultMenu(where: DefaultMenuWhereUniqueInput!): DefaultMenu
+  defaultMenus(after: DefaultMenuWhereUniqueInput, before: DefaultMenuWhereUniqueInput, first: Int, last: Int): [DefaultMenu!]!
   me: User
   meal(where: MealWhereUniqueInput!): Meal
   meals(after: MealWhereUniqueInput, before: MealWhereUniqueInput, first: Int, last: Int, where: MealWhereInput): [Meal!]!
   menu(where: MenuWhereUniqueInput!): Menu
+  menuMeals(after: MealWhereUniqueInput, before: MealWhereUniqueInput, first: Int, last: Int, where: MealWhereInput): [Meal!]!
   menus(after: MenuWhereUniqueInput, before: MenuWhereUniqueInput, first: Int, last: Int, where: MenuWhereInput): [Menu!]!
   order(where: OrderWhereUniqueInput!): Order
   orders(after: OrderWhereUniqueInput, before: OrderWhereUniqueInput, first: Int, last: Int, where: OrderWhereInput): [Order!]!
   user(where: UserWhereUniqueInput!): User
-  users(after: UserWhereUniqueInput, before: UserWhereUniqueInput, first: Int, last: Int, orderBy: UserOrderByInput): [User!]!
+  users(after: UserWhereUniqueInput, before: UserWhereUniqueInput, first: Int, last: Int, orderBy: UserOrderByInput, where: UserWhereInput): [User!]!
 }
 
 enum Role {
   ADMIN
   CATERER
+}
+
+input SavedMenusCreateManyWithoutMenuInput {
+  connect: [SavedMenusWhereUniqueInput!]
+  create: [SavedMenusCreateWithoutMenuInput!]
+}
+
+input SavedMenusCreateManyWithoutUserInput {
+  connect: [SavedMenusWhereUniqueInput!]
+  create: [SavedMenusCreateWithoutUserInput!]
+}
+
+input SavedMenusCreateWithoutMenuInput {
+  createdAt: DateTime
+  user: UserCreateOneWithoutSavedMenusInput!
+}
+
+input SavedMenusCreateWithoutUserInput {
+  createdAt: DateTime
+  menu: MenuCreateOneWithoutSavedMenusInput!
+}
+
+input SavedMenusFilter {
+  every: SavedMenusWhereInput
+  none: SavedMenusWhereInput
+  some: SavedMenusWhereInput
+}
+
+input SavedMenusScalarWhereInput {
+  AND: [SavedMenusScalarWhereInput!]
+  createdAt: DateTimeFilter
+  menuId: StringFilter
+  NOT: [SavedMenusScalarWhereInput!]
+  OR: [SavedMenusScalarWhereInput!]
+  userId: StringFilter
+}
+
+input SavedMenusUpdateManyDataInput {
+  createdAt: DateTime
+}
+
+input SavedMenusUpdateManyWithoutMenuInput {
+  connect: [SavedMenusWhereUniqueInput!]
+  create: [SavedMenusCreateWithoutMenuInput!]
+  delete: [SavedMenusWhereUniqueInput!]
+  deleteMany: [SavedMenusScalarWhereInput!]
+  disconnect: [SavedMenusWhereUniqueInput!]
+  set: [SavedMenusWhereUniqueInput!]
+  update: [SavedMenusUpdateWithWhereUniqueWithoutMenuInput!]
+  updateMany: [SavedMenusUpdateManyWithWhereNestedInput!]
+  upsert: [SavedMenusUpsertWithWhereUniqueWithoutMenuInput!]
+}
+
+input SavedMenusUpdateManyWithoutUserInput {
+  connect: [SavedMenusWhereUniqueInput!]
+  create: [SavedMenusCreateWithoutUserInput!]
+  delete: [SavedMenusWhereUniqueInput!]
+  deleteMany: [SavedMenusScalarWhereInput!]
+  disconnect: [SavedMenusWhereUniqueInput!]
+  set: [SavedMenusWhereUniqueInput!]
+  update: [SavedMenusUpdateWithWhereUniqueWithoutUserInput!]
+  updateMany: [SavedMenusUpdateManyWithWhereNestedInput!]
+  upsert: [SavedMenusUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input SavedMenusUpdateManyWithWhereNestedInput {
+  data: SavedMenusUpdateManyDataInput!
+  where: SavedMenusScalarWhereInput!
+}
+
+input SavedMenusUpdateWithoutMenuDataInput {
+  createdAt: DateTime
+  user: UserUpdateOneRequiredWithoutSavedMenusInput
+}
+
+input SavedMenusUpdateWithoutUserDataInput {
+  createdAt: DateTime
+  menu: MenuUpdateOneRequiredWithoutSavedMenusInput
+}
+
+input SavedMenusUpdateWithWhereUniqueWithoutMenuInput {
+  data: SavedMenusUpdateWithoutMenuDataInput!
+  where: SavedMenusWhereUniqueInput!
+}
+
+input SavedMenusUpdateWithWhereUniqueWithoutUserInput {
+  data: SavedMenusUpdateWithoutUserDataInput!
+  where: SavedMenusWhereUniqueInput!
+}
+
+input SavedMenusUpsertWithWhereUniqueWithoutMenuInput {
+  create: SavedMenusCreateWithoutMenuInput!
+  update: SavedMenusUpdateWithoutMenuDataInput!
+  where: SavedMenusWhereUniqueInput!
+}
+
+input SavedMenusUpsertWithWhereUniqueWithoutUserInput {
+  create: SavedMenusCreateWithoutUserInput!
+  update: SavedMenusUpdateWithoutUserDataInput!
+  where: SavedMenusWhereUniqueInput!
+}
+
+input SavedMenusWhereInput {
+  AND: [SavedMenusWhereInput!]
+  createdAt: DateTimeFilter
+  menu: MenuWhereInput
+  menuId: StringFilter
+  NOT: [SavedMenusWhereInput!]
+  OR: [SavedMenusWhereInput!]
+  user: UserWhereInput
+  userId: StringFilter
+}
+
+input SavedMenusWhereUniqueInput {
+  menuId_userId: MenuIdUserIdCompoundUniqueInput
 }
 
 enum Status {
@@ -1333,6 +1678,8 @@ input StringFilter {
 type User {
   addresses(first: Int): [Address!]!
   createdAt: DateTime!
+  defaultAddress: DefaultAddress
+  defaultMenu: DefaultMenu
   email: String!
   firstName: String
   id: String!
@@ -1354,6 +1701,11 @@ input UserCreateOneWithoutDefaultAddressInput {
   create: UserCreateWithoutDefaultAddressInput
 }
 
+input UserCreateOneWithoutDefaultMenuInput {
+  connect: UserWhereUniqueInput
+  create: UserCreateWithoutDefaultMenuInput
+}
+
 input UserCreateOneWithoutMealsInput {
   connect: UserWhereUniqueInput
   create: UserCreateWithoutMealsInput
@@ -1369,11 +1721,59 @@ input UserCreateOneWithoutOrdersInput {
   create: UserCreateWithoutOrdersInput
 }
 
+input UserCreateOneWithoutSavedMenusInput {
+  connect: UserWhereUniqueInput
+  create: UserCreateWithoutSavedMenusInput
+}
+
 input UserCreaterolesInput {
   set: [Role!]
 }
 
 input UserCreateWithoutAddressesInput {
+  createdAt: DateTime
+  defaultAddress: DefaultAddressCreateOneWithoutUserInput
+  defaultMenu: DefaultMenuCreateOneWithoutUserInput
+  email: String!
+  facebookId: String
+  firstName: String
+  googleId: String
+  id: String
+  lastName: String
+  meals: MealCreateManyWithoutUserInput
+  menus: MenuCreateManyWithoutUserInput
+  orders: OrderCreateManyWithoutUserInput
+  password: String
+  picture: Json
+  roles: UserCreaterolesInput
+  savedMenus: SavedMenusCreateManyWithoutUserInput
+  tokenVersion: String
+  updatedAt: DateTime
+}
+
+input UserCreateWithoutDefaultAddressInput {
+  addresses: AddressCreateManyWithoutUserInput
+  createdAt: DateTime
+  defaultMenu: DefaultMenuCreateOneWithoutUserInput
+  email: String!
+  facebookId: String
+  firstName: String
+  googleId: String
+  id: String
+  lastName: String
+  meals: MealCreateManyWithoutUserInput
+  menus: MenuCreateManyWithoutUserInput
+  orders: OrderCreateManyWithoutUserInput
+  password: String
+  picture: Json
+  roles: UserCreaterolesInput
+  savedMenus: SavedMenusCreateManyWithoutUserInput
+  tokenVersion: String
+  updatedAt: DateTime
+}
+
+input UserCreateWithoutDefaultMenuInput {
+  addresses: AddressCreateManyWithoutUserInput
   createdAt: DateTime
   defaultAddress: DefaultAddressCreateOneWithoutUserInput
   email: String!
@@ -1386,27 +1786,9 @@ input UserCreateWithoutAddressesInput {
   menus: MenuCreateManyWithoutUserInput
   orders: OrderCreateManyWithoutUserInput
   password: String
-  picture: String
+  picture: Json
   roles: UserCreaterolesInput
-  tokenVersion: String
-  updatedAt: DateTime
-}
-
-input UserCreateWithoutDefaultAddressInput {
-  addresses: AddressCreateManyWithoutUserInput
-  createdAt: DateTime
-  email: String!
-  facebookId: String
-  firstName: String
-  googleId: String
-  id: String
-  lastName: String
-  meals: MealCreateManyWithoutUserInput
-  menus: MenuCreateManyWithoutUserInput
-  orders: OrderCreateManyWithoutUserInput
-  password: String
-  picture: String
-  roles: UserCreaterolesInput
+  savedMenus: SavedMenusCreateManyWithoutUserInput
   tokenVersion: String
   updatedAt: DateTime
 }
@@ -1415,6 +1797,7 @@ input UserCreateWithoutMealsInput {
   addresses: AddressCreateManyWithoutUserInput
   createdAt: DateTime
   defaultAddress: DefaultAddressCreateOneWithoutUserInput
+  defaultMenu: DefaultMenuCreateOneWithoutUserInput
   email: String!
   facebookId: String
   firstName: String
@@ -1424,8 +1807,9 @@ input UserCreateWithoutMealsInput {
   menus: MenuCreateManyWithoutUserInput
   orders: OrderCreateManyWithoutUserInput
   password: String
-  picture: String
+  picture: Json
   roles: UserCreaterolesInput
+  savedMenus: SavedMenusCreateManyWithoutUserInput
   tokenVersion: String
   updatedAt: DateTime
 }
@@ -1434,6 +1818,7 @@ input UserCreateWithoutMenusInput {
   addresses: AddressCreateManyWithoutUserInput
   createdAt: DateTime
   defaultAddress: DefaultAddressCreateOneWithoutUserInput
+  defaultMenu: DefaultMenuCreateOneWithoutUserInput
   email: String!
   facebookId: String
   firstName: String
@@ -1443,8 +1828,9 @@ input UserCreateWithoutMenusInput {
   meals: MealCreateManyWithoutUserInput
   orders: OrderCreateManyWithoutUserInput
   password: String
-  picture: String
+  picture: Json
   roles: UserCreaterolesInput
+  savedMenus: SavedMenusCreateManyWithoutUserInput
   tokenVersion: String
   updatedAt: DateTime
 }
@@ -1453,6 +1839,7 @@ input UserCreateWithoutOrdersInput {
   addresses: AddressCreateManyWithoutUserInput
   createdAt: DateTime
   defaultAddress: DefaultAddressCreateOneWithoutUserInput
+  defaultMenu: DefaultMenuCreateOneWithoutUserInput
   email: String!
   facebookId: String
   firstName: String
@@ -1462,7 +1849,29 @@ input UserCreateWithoutOrdersInput {
   meals: MealCreateManyWithoutUserInput
   menus: MenuCreateManyWithoutUserInput
   password: String
-  picture: String
+  picture: Json
+  roles: UserCreaterolesInput
+  savedMenus: SavedMenusCreateManyWithoutUserInput
+  tokenVersion: String
+  updatedAt: DateTime
+}
+
+input UserCreateWithoutSavedMenusInput {
+  addresses: AddressCreateManyWithoutUserInput
+  createdAt: DateTime
+  defaultAddress: DefaultAddressCreateOneWithoutUserInput
+  defaultMenu: DefaultMenuCreateOneWithoutUserInput
+  email: String!
+  facebookId: String
+  firstName: String
+  googleId: String
+  id: String
+  lastName: String
+  meals: MealCreateManyWithoutUserInput
+  menus: MenuCreateManyWithoutUserInput
+  orders: OrderCreateManyWithoutUserInput
+  password: String
+  picture: Json
   roles: UserCreaterolesInput
   tokenVersion: String
   updatedAt: DateTime
@@ -1486,6 +1895,7 @@ input UserUpdateInput {
   addresses: AddressUpdateManyWithoutUserInput
   createdAt: DateTime
   defaultAddress: DefaultAddressUpdateOneWithoutUserInput
+  defaultMenu: DefaultMenuUpdateOneWithoutUserInput
   email: String
   facebookId: String
   firstName: String
@@ -1496,8 +1906,9 @@ input UserUpdateInput {
   menus: MenuUpdateManyWithoutUserInput
   orders: OrderUpdateManyWithoutUserInput
   password: String
-  picture: String
+  picture: Json
   roles: UserUpdaterolesInput
+  savedMenus: SavedMenusUpdateManyWithoutUserInput
   tokenVersion: String
   updatedAt: DateTime
 }
@@ -1514,6 +1925,13 @@ input UserUpdateOneRequiredWithoutDefaultAddressInput {
   create: UserCreateWithoutDefaultAddressInput
   update: UserUpdateWithoutDefaultAddressDataInput
   upsert: UserUpsertWithoutDefaultAddressInput
+}
+
+input UserUpdateOneRequiredWithoutDefaultMenuInput {
+  connect: UserWhereUniqueInput
+  create: UserCreateWithoutDefaultMenuInput
+  update: UserUpdateWithoutDefaultMenuDataInput
+  upsert: UserUpsertWithoutDefaultMenuInput
 }
 
 input UserUpdateOneRequiredWithoutMealsInput {
@@ -1537,11 +1955,61 @@ input UserUpdateOneRequiredWithoutOrdersInput {
   upsert: UserUpsertWithoutOrdersInput
 }
 
+input UserUpdateOneRequiredWithoutSavedMenusInput {
+  connect: UserWhereUniqueInput
+  create: UserCreateWithoutSavedMenusInput
+  update: UserUpdateWithoutSavedMenusDataInput
+  upsert: UserUpsertWithoutSavedMenusInput
+}
+
 input UserUpdaterolesInput {
   set: [Role!]
 }
 
 input UserUpdateWithoutAddressesDataInput {
+  createdAt: DateTime
+  defaultAddress: DefaultAddressUpdateOneWithoutUserInput
+  defaultMenu: DefaultMenuUpdateOneWithoutUserInput
+  email: String
+  facebookId: String
+  firstName: String
+  googleId: String
+  id: String
+  lastName: String
+  meals: MealUpdateManyWithoutUserInput
+  menus: MenuUpdateManyWithoutUserInput
+  orders: OrderUpdateManyWithoutUserInput
+  password: String
+  picture: Json
+  roles: UserUpdaterolesInput
+  savedMenus: SavedMenusUpdateManyWithoutUserInput
+  tokenVersion: String
+  updatedAt: DateTime
+}
+
+input UserUpdateWithoutDefaultAddressDataInput {
+  addresses: AddressUpdateManyWithoutUserInput
+  createdAt: DateTime
+  defaultMenu: DefaultMenuUpdateOneWithoutUserInput
+  email: String
+  facebookId: String
+  firstName: String
+  googleId: String
+  id: String
+  lastName: String
+  meals: MealUpdateManyWithoutUserInput
+  menus: MenuUpdateManyWithoutUserInput
+  orders: OrderUpdateManyWithoutUserInput
+  password: String
+  picture: Json
+  roles: UserUpdaterolesInput
+  savedMenus: SavedMenusUpdateManyWithoutUserInput
+  tokenVersion: String
+  updatedAt: DateTime
+}
+
+input UserUpdateWithoutDefaultMenuDataInput {
+  addresses: AddressUpdateManyWithoutUserInput
   createdAt: DateTime
   defaultAddress: DefaultAddressUpdateOneWithoutUserInput
   email: String
@@ -1554,27 +2022,9 @@ input UserUpdateWithoutAddressesDataInput {
   menus: MenuUpdateManyWithoutUserInput
   orders: OrderUpdateManyWithoutUserInput
   password: String
-  picture: String
+  picture: Json
   roles: UserUpdaterolesInput
-  tokenVersion: String
-  updatedAt: DateTime
-}
-
-input UserUpdateWithoutDefaultAddressDataInput {
-  addresses: AddressUpdateManyWithoutUserInput
-  createdAt: DateTime
-  email: String
-  facebookId: String
-  firstName: String
-  googleId: String
-  id: String
-  lastName: String
-  meals: MealUpdateManyWithoutUserInput
-  menus: MenuUpdateManyWithoutUserInput
-  orders: OrderUpdateManyWithoutUserInput
-  password: String
-  picture: String
-  roles: UserUpdaterolesInput
+  savedMenus: SavedMenusUpdateManyWithoutUserInput
   tokenVersion: String
   updatedAt: DateTime
 }
@@ -1583,6 +2033,7 @@ input UserUpdateWithoutMealsDataInput {
   addresses: AddressUpdateManyWithoutUserInput
   createdAt: DateTime
   defaultAddress: DefaultAddressUpdateOneWithoutUserInput
+  defaultMenu: DefaultMenuUpdateOneWithoutUserInput
   email: String
   facebookId: String
   firstName: String
@@ -1592,8 +2043,9 @@ input UserUpdateWithoutMealsDataInput {
   menus: MenuUpdateManyWithoutUserInput
   orders: OrderUpdateManyWithoutUserInput
   password: String
-  picture: String
+  picture: Json
   roles: UserUpdaterolesInput
+  savedMenus: SavedMenusUpdateManyWithoutUserInput
   tokenVersion: String
   updatedAt: DateTime
 }
@@ -1602,6 +2054,7 @@ input UserUpdateWithoutMenusDataInput {
   addresses: AddressUpdateManyWithoutUserInput
   createdAt: DateTime
   defaultAddress: DefaultAddressUpdateOneWithoutUserInput
+  defaultMenu: DefaultMenuUpdateOneWithoutUserInput
   email: String
   facebookId: String
   firstName: String
@@ -1611,8 +2064,9 @@ input UserUpdateWithoutMenusDataInput {
   meals: MealUpdateManyWithoutUserInput
   orders: OrderUpdateManyWithoutUserInput
   password: String
-  picture: String
+  picture: Json
   roles: UserUpdaterolesInput
+  savedMenus: SavedMenusUpdateManyWithoutUserInput
   tokenVersion: String
   updatedAt: DateTime
 }
@@ -1621,6 +2075,7 @@ input UserUpdateWithoutOrdersDataInput {
   addresses: AddressUpdateManyWithoutUserInput
   createdAt: DateTime
   defaultAddress: DefaultAddressUpdateOneWithoutUserInput
+  defaultMenu: DefaultMenuUpdateOneWithoutUserInput
   email: String
   facebookId: String
   firstName: String
@@ -1630,7 +2085,29 @@ input UserUpdateWithoutOrdersDataInput {
   meals: MealUpdateManyWithoutUserInput
   menus: MenuUpdateManyWithoutUserInput
   password: String
-  picture: String
+  picture: Json
+  roles: UserUpdaterolesInput
+  savedMenus: SavedMenusUpdateManyWithoutUserInput
+  tokenVersion: String
+  updatedAt: DateTime
+}
+
+input UserUpdateWithoutSavedMenusDataInput {
+  addresses: AddressUpdateManyWithoutUserInput
+  createdAt: DateTime
+  defaultAddress: DefaultAddressUpdateOneWithoutUserInput
+  defaultMenu: DefaultMenuUpdateOneWithoutUserInput
+  email: String
+  facebookId: String
+  firstName: String
+  googleId: String
+  id: String
+  lastName: String
+  meals: MealUpdateManyWithoutUserInput
+  menus: MenuUpdateManyWithoutUserInput
+  orders: OrderUpdateManyWithoutUserInput
+  password: String
+  picture: Json
   roles: UserUpdaterolesInput
   tokenVersion: String
   updatedAt: DateTime
@@ -1644,6 +2121,11 @@ input UserUpsertWithoutAddressesInput {
 input UserUpsertWithoutDefaultAddressInput {
   create: UserCreateWithoutDefaultAddressInput!
   update: UserUpdateWithoutDefaultAddressDataInput!
+}
+
+input UserUpsertWithoutDefaultMenuInput {
+  create: UserCreateWithoutDefaultMenuInput!
+  update: UserUpdateWithoutDefaultMenuDataInput!
 }
 
 input UserUpsertWithoutMealsInput {
@@ -1661,11 +2143,17 @@ input UserUpsertWithoutOrdersInput {
   update: UserUpdateWithoutOrdersDataInput!
 }
 
+input UserUpsertWithoutSavedMenusInput {
+  create: UserCreateWithoutSavedMenusInput!
+  update: UserUpdateWithoutSavedMenusDataInput!
+}
+
 input UserWhereInput {
   addresses: AddressFilter
   AND: [UserWhereInput!]
   createdAt: DateTimeFilter
   defaultAddress: DefaultAddressWhereInput
+  defaultMenu: DefaultMenuWhereInput
   email: StringFilter
   facebookId: NullableStringFilter
   firstName: NullableStringFilter
@@ -1678,7 +2166,7 @@ input UserWhereInput {
   OR: [UserWhereInput!]
   orders: OrderFilter
   password: NullableStringFilter
-  picture: NullableStringFilter
+  savedMenus: SavedMenusFilter
   tokenVersion: StringFilter
   updatedAt: DateTimeFilter
 }

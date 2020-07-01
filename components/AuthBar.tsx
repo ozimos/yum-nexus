@@ -2,8 +2,9 @@ import Button from '@material-ui/core/Button'
 import Link from 'next/link'
 import { useApolloClient } from '@apollo/client'
 import { useLogoutMutation } from '../generated/graphql'
-import { getAccessToken, setAccessToken } from '../lib/accessToken'
 import { makeStyles } from '@material-ui/core/styles'
+import { getAccessToken, setAccessToken } from '../lib/accessToken'
+import { Redirect } from '../lib/redirect'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,7 +33,7 @@ export function LogoutButton() {
         setAccessToken('')
         await logout()
         client.clearStore()
-        window.location.href = '/'
+        Redirect({}, '/')
       }}
     >
       Logout

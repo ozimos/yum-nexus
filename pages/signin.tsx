@@ -1,3 +1,9 @@
-import SignInSide from '../components/SignInSide'
+import SignInForm from '../components/SignIn'
+import AuthLayout from '../components/AuthLayout'
 
-export default SignInSide
+const SignUp = () => (
+  <AuthLayout title="Sign In">
+    <SignInForm></SignInForm>
+  </AuthLayout>
+)
+export default SignUp

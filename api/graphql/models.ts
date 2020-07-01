@@ -13,6 +13,8 @@ schema.objectType({
     t.model.email()
     t.model.meals()
     t.model.orders()
+    t.model.defaultAddress()
+    t.model.defaultMenu()
     t.model.addresses({
       pagination: { first: true },
     })
@@ -27,8 +29,10 @@ schema.objectType({
     t.model.id()
     t.model.title()
     t.model.description()
+    t.model.tags()
     t.model.price()
     t.model.user()
+    t.model.menus()
     t.model.imageUrl()
   },
 })
@@ -43,6 +47,32 @@ schema.objectType({
     t.model.menuDate()
     t.model.userId()
     t.model.meals()
+    t.model.default()
+  },
+})
+
+schema.objectType({
+  name: 'DefaultMenu',
+  definition(t) {
+    t.model.createdAt()
+    t.model.updatedAt()
+    t.model.id()
+    t.model.user()
+    t.model.userId()
+    t.model.menu()
+    t.model.menuId()
+  },
+})
+schema.objectType({
+  name: 'DefaultAddress',
+  definition(t) {
+    t.model.createdAt()
+    t.model.updatedAt()
+    t.model.id()
+    t.model.user()
+    t.model.userId()
+    t.model.address()
+    t.model.addressId()
   },
 })
 
@@ -101,4 +131,9 @@ schema.objectType({
     t.string('accessToken')
     t.field('user', { type: 'User' })
   },
+})
+
+schema.enumType({
+  name: 'Role',
+  members: ['ADMIN', 'CATERER'],
 })

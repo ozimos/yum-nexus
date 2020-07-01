@@ -5,7 +5,8 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 import TextField from '@material-ui/core/TextField'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Checkbox from '@material-ui/core/Checkbox'
-import Link from '@material-ui/core/Link'
+import Link from 'next/link'
+import MaterialLink from '@material-ui/core/Link'
 import Paper from '@material-ui/core/Paper'
 import Box from '@material-ui/core/Box'
 import Grid from '@material-ui/core/Grid'
@@ -17,10 +18,8 @@ import { useForm } from 'react-hook-form'
 import Copyright from './Copyright'
 import * as z from 'zod'
 import { useZodValidationResolver } from '../lib/zodValidationResolver'
-import NextLink from './NextLink'
 import { setAccessToken } from '../lib/accessToken'
 import { useLoginMutation, UserFragmentDoc } from '../generated/graphql'
-
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -143,13 +142,13 @@ export default function SignInSide() {
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link component={NextLink} href="#" variant="body2">
-                  <a>Forgot password?</a>
-                </Link>
+                <MaterialLink href="#" variant="body2">
+                  Forgot password?
+                </MaterialLink>
               </Grid>
               <Grid item>
-                <Link component={NextLink} href="/signup" variant="body2">
-                  <a>Don&apos;t have an account? Sign Up</a>
+                <Link passHref href="/signup">
+                  <MaterialLink variant="body2">Don&apos;t have an account? Sign Up</MaterialLink>
                 </Link>
               </Grid>
             </Grid>

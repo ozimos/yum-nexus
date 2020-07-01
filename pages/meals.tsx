@@ -1,7 +1,7 @@
 import { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { initializeApollo, fetchServerAccessToken } from '../apollo/apolloClient'
 import Album, { getTodayMenuVariables } from '../components/Album'
-import { TODAY_MEALS } from '../graphql/meal.query'
+import { TODAY_MEALS, PROJECTED_MEALS } from '../graphql/meal.query'
 import Layout from '../components/Layout'
 import ME from '../graphql/me.query'
 // if (process.env.NODE_ENV === 'development') require('nexus').default.reset()
@@ -12,7 +12,7 @@ import ME from '../graphql/me.query'
 
 // app.assemble()
 const AllTodayMeals = () => (
-  <Layout>
+  <Layout mainFlex="column">
     <Album />
   </Layout>
 )
@@ -23,8 +23,10 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
   const apolloClient = initializeApollo(null, serverAccessToken)
 
   await apolloClient.query({
-    query: TODAY_MEALS,
-    variables: getTodayMenuVariables(),
+    query: PROJECTED_MEALS,
+    variables: {limit: 6},
+    // query: TODAY_MEALS,
+    // variables: getTodayMenuVariables(),
   })
   if (serverAccessToken) {
     await apolloClient.query({

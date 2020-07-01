@@ -1,15 +1,8 @@
 import cookie from 'cookie'
 import { sign, verify, JsonWebTokenError } from 'jsonwebtoken'
 import { TOKEN_PASSWORD, REFRESH_TOKEN_SECRET, tokens, Role } from './constants'
-import errors from './errors'
+import errors, { NoTokenError } from './errors'
 import { Response } from 'express'
-
-export class NoTokenError extends Error {
-  constructor(message) {
-    super(message)
-    this.name = 'NoTokenError'
-  }
-}
 
 interface CreateTokenInput {
   id: string
@@ -24,7 +17,7 @@ export interface TokenPayload extends CreateTokenInput {
 
 export interface CustomContext {
   res: Response
-  cookies
+  cookies: any
   tokenPayload?: TokenPayload
   tokenError?: JsonWebTokenError | NoTokenError
 }
@@ -59,12 +52,12 @@ export const generateToken = (
   )
 
 export const generateAccessToken = (user: CreateTokenInput) =>
-  generateToken(user, tokens.access, TOKEN_PASSWORD)
+  generateToken(user, tokens.access, TOKEN_PASSWORD || '')
 
 export const generateRefreshToken = (user: CreateTokenInput) =>
-  generateToken(user, tokens.refresh, REFRESH_TOKEN_SECRET)
+  generateToken(user, tokens.refresh, REFRESH_TOKEN_SECRET || '')
 
-export function authGuard(context) {
+export function authGuard(context: any) {
   const { tokenPayload, tokenError } = context
   if (tokenPayload?.id && tokenPayload?.type === tokens.access.name) {
     return tokenPayload
@@ -73,7 +66,7 @@ export function authGuard(context) {
   handleError(error)
 }
 
-export function extractTokenPayload(req) {
+export function extractTokenPayload(req: any) {
   const { res, cookies } = req
   const bearerHeader = req.headers['authorization']
   const result = { cookies, res }
@@ -85,7 +78,7 @@ export function extractTokenPayload(req) {
   }
   const token = bearerHeader.split(' ').pop()
   try {
-    const tokenPayload = verify(token, TOKEN_PASSWORD)
+    const tokenPayload = verify(token, TOKEN_PASSWORD || '')
     if (!(tokenPayload as TokenPayload)) {
       throw errors.invalidToken
     }

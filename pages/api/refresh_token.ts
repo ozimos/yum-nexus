@@ -1,13 +1,14 @@
-import { NextApiRequest, NextApiResponse } from 'next'
+import { NextApiRequest } from 'next'
 import { verify } from 'jsonwebtoken'
 import { PrismaClient } from '@prisma/client'
 import { cors, runMiddleware } from '../../api/utils/api-tools'
-import { generateAccessToken, sendRefreshToken, NoTokenError, TokenPayload } from '../../api/utils/helpers'
+import { generateAccessToken, sendRefreshToken, TokenPayload } from '../../api/utils/helpers'
+import { NoTokenError } from '../../api/utils/errors'
 import { REFRESH_TOKEN_SECRET } from '../../api/utils/constants'
 
 const prismaClient = new PrismaClient()
 
-async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(req: NextApiRequest, res: any) {
   // Run the middleware
   await runMiddleware(req, res, cors)
   try {
@@ -15,7 +16,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (!token) {
       throw new NoTokenError('token not available in cookie')
     }
-    const tokenPayload = verify(token, REFRESH_TOKEN_SECRET)
+    const tokenPayload = verify(token, REFRESH_TOKEN_SECRET || '')
     if (!(tokenPayload as TokenPayload)) {
       throw new Error('token is not refresh token')
     }

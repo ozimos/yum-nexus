@@ -6,6 +6,7 @@ import { debuglog } from 'util'
 import cuid from 'cuid'
 import { generateAccessToken, sendRefreshToken, handleError } from '../utils/helpers'
 import fetch from 'node-fetch'
+import { PrismaClientKnownRequestError } from '@prisma/client'
 
 const log = debuglog('app')
 schema.mutationType({
@@ -108,7 +109,10 @@ schema.mutationType({
             },
           }))
         } catch (e) {
-          handleError(errors.invalidUserEmail)
+          if (e instanceof PrismaClientKnownRequestError) {
+            handleError(errors.invalidUserEmail)
+          }
+          throw e
         }
         const accessToken = generateAccessToken(user)
         return {
@@ -130,7 +134,7 @@ schema.mutationType({
         try {
           ticket = await client.verifyIdToken({
             idToken: token,
-            audience: [process.env.GOOGLE_CLIENT_ID], // Specify the CLIENT_ID of the app that accesses the backend
+            audience: [process.env.GOOGLE_CLIENT_ID || ''], // Specify the CLIENT_ID of the app that accesses the backend
             // Or, if multiple clients access the backend:
             //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
           })

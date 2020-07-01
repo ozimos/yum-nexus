@@ -4,6 +4,7 @@ import AppBar from '@material-ui/core/AppBar'
 import CameraIcon from '@material-ui/icons/PhotoCamera'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
+import Link from 'next/link'
 import Toolbar from '@material-ui/core/Toolbar'
 import Copyright from './Copyright'
 import AuthBar from './AuthBar'
@@ -21,6 +22,8 @@ const useStyles = makeStyles((theme) => ({
   },
   main: {
     display: 'flex',
+    flexDirection: props => props.mainFlex,
+    justifyContent: 'center',
     alignItems: 'stretch',
     flex: '1 0 auto',
   },
@@ -41,9 +44,10 @@ interface LayoutProps {
   children?: any
   home?: boolean
   title?: string
+  mainFlex?: string
 }
-export default function Layout({ children, home = false, title }: LayoutProps) {
-  const classes = useStyles()
+export default function Layout({ children, home = false, title, mainFlex = 'row' }: LayoutProps) {
+  const classes = useStyles({mainFlex})
   return (
     <div className={classes.root}>
       <Head>
@@ -51,7 +55,9 @@ export default function Layout({ children, home = false, title }: LayoutProps) {
       </Head>
       <AppBar position="relative">
         <Toolbar>
+          <Link href="/">
           <CameraIcon className={classes.icon} />
+          </Link>
           <div className={classes.spacer}></div>
           <AuthBar />
         </Toolbar>
@@ -60,9 +66,6 @@ export default function Layout({ children, home = false, title }: LayoutProps) {
         {children}
       </main>
       <footer className={classes.footer}>
-        <Typography variant="h6" align="center" gutterBottom>
-          Footer
-        </Typography>
         <Typography variant="subtitle1" align="center" color="textSecondary" component="p">
           Something here to give the footer a purpose!
         </Typography>

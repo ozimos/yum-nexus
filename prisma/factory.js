@@ -69,7 +69,20 @@ const menuFactory = ({ user, defaults } = {}) => ({
   updatedAt: new Date(),
   ...defaults,
 })
-
+const defaultMenuFactory = ({user, menu, defaults} = {}) => ({
+  id: cuid(),
+  get user() {
+    if (user && !user.create) return user
+    return { create: userFactory(user.create) }
+  },
+  get menu() {
+    if (menu && !menu.create) return menu
+    return { create: menuFactory(menu.create) }
+  },
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  ...defaults,
+})
 const orderFactory = ({ user, deliveryAddress, defaults } = {}) => ({
   id: cuid(),
   get user() {
@@ -117,6 +130,7 @@ module.exports = {
   userFactory,
   mealFactory,
   menuFactory,
+  defaultMenuFactory,
   orderFactory,
   mealMenuFactory,
   mealOrderFactory,

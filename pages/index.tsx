@@ -15,15 +15,10 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     width: '100%',
     backgroundImage:
-      'url(https://res.cloudinary.com/dffiyhgto/image/upload/c_scale,h_1747,q_43/v1589149006/groceries.jpg)',
+      'url(https://source.unsplash.com/random)',
     backgroundSize: '100% 100%',
     fontSize: 0,
     lineHeight: 0,
-  },
-  paddingBox: {
-    display: 'block',
-    height: 0,
-    paddingTop: '100%',
   },
   contentBox: {
     backgroundColor: 'white',

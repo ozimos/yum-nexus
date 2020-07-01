@@ -59,3 +59,20 @@ export const MORE_TODAY_MEALS = gql`
   }
   ${MEAL}
 `
+
+export const PROJECTED_MEALS = gql`
+  query projectedMeals($projected: [String!], $limit: Int!) {
+    meals(where: { id: { in: $projected } }, first: $limit) {
+      ...MEAL
+    }
+  }
+  ${MEAL}
+`
+export const MORE_PROJECTED_MEALS = gql`
+  query moreProjectedMeals($projected: [String!], $limit: Int!, $cursor: String!) {
+    meals(where: { id: { in: $projected } }, first: $limit, after: { id: $cursor }) {
+      ...MEAL
+    }
+  }
+  ${MEAL}
+`

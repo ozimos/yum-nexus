@@ -8,8 +8,13 @@ import endOfToday from 'date-fns/endOfToday'
 import startOfToday from 'date-fns/startOfToday'
 import ErrorMessage from './ErrorMessage'
 import { NetworkStatus } from '@apollo/client'
-import { MORE_TODAY_MEALS } from '../graphql/meal.query'
-import { useTodayMealsQuery, TodayMealsQueryHookResult } from '../generated/graphql'
+import { MORE_TODAY_MEALS, MORE_PROJECTED_MEALS } from '../graphql/meal.query'
+import {
+  useTodayMealsQuery,
+  TodayMealsQueryHookResult,
+  useProjectedMealsQuery,
+  ProjectedMealsQueryHookResult,
+} from '../generated/graphql'
 import Meal from './Meal'
 
 export const getTodayMenuVariables = (limit = 6) => ({
@@ -35,8 +40,9 @@ const useStyles = makeStyles((theme) => ({
 export default function Album() {
   const classes = useStyles()
   const [cursor, setCursor] = useState('')
-  const variables = getTodayMenuVariables()
-  const { loading, error, data, fetchMore, networkStatus } = useTodayMealsQuery({
+  const variables = { limit: 6 }
+  // const { loading, error, data, fetchMore, networkStatus } = useTodayMealsQuery({
+  const { loading, error, data, fetchMore, networkStatus } = useProjectedMealsQuery({
     variables,
     notifyOnNetworkStatusChange: true,
   })
@@ -50,9 +56,11 @@ export default function Album() {
   const loadMoreMeals = () => {
     // @ts-ignore
     fetchMore({
-      query: MORE_TODAY_MEALS,
+      // query: MORE_TODAY_MEALS,
+      query: MORE_PROJECTED_MEALS,
       variables: { cursor, ...variables },
-      updateQuery: (previousResult: TodayMealsQueryHookResult['data'], { fetchMoreResult }) => {
+      // updateQuery: (previousResult: TodayMealsQueryHookResult['data'], { fetchMoreResult }) => {
+      updateQuery: (previousResult: ProjectedMealsQueryHookResult['data'], { fetchMoreResult }) => {
         if (!fetchMoreResult) {
           return previousResult
         }
@@ -73,32 +81,30 @@ export default function Album() {
     <>
       {/* Hero unit */}
       <div className={classes.heroContent}>
-        <Container maxWidth="sm">
-          <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
-            Album layout
-          </Typography>
-          <Typography variant="h5" align="center" color="textSecondary" paragraph>
-            Something short and leading about the collection below—its contents, the creator, etc. Make it
-            short and sweet, but not too short so folks don&apos;t simply skip over it entirely.
-          </Typography>
-          <div className={classes.heroButtons}>
-            <Grid container spacing={2} justify="center">
-              <Grid item>
-                <Button variant="contained" color="primary">
-                  Main call to action
-                </Button>
-              </Grid>
-              <Grid item>
-                <Button variant="outlined" color="primary">
-                  Secondary action
-                </Button>
-              </Grid>
+        <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
+          Meals
+        </Typography>
+        <Typography variant="h5" align="center" color="textSecondary" paragraph>
+          Something short and leading about the collection below—its contents, the creator, etc. Make it short
+          and sweet, but not too short so folks don&apos;t simply skip over it entirely.
+        </Typography>
+        <div className={classes.heroButtons}>
+          <Grid container spacing={2} justify="center">
+            <Grid item>
+              <Button variant="contained" color="primary">
+                Main call to action
+              </Button>
             </Grid>
-          </div>
-        </Container>
+            <Grid item>
+              <Button variant="outlined" color="primary">
+                Secondary action
+              </Button>
+            </Grid>
+          </Grid>
+        </div>
       </div>
+      {/* End hero unit */}
       <Container className={classes.cardGrid} maxWidth="md">
-        {/* End hero unit */}
         <Grid container spacing={4}>
           {data.meals.map(({ id, title, description, price, imageUrl, cartStatus }) => {
             const props = { id, title, description, price, imageUrl, cartStatus }

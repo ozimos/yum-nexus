@@ -32,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
   },
   quantityButton: {
     backgroundColor: theme.palette.button.main,
+    border: `solid ${theme.palette.primary.main}` ,
     '&:hover': {
       backgroundColor: theme.palette.button.dark,
     },

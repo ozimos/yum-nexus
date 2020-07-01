@@ -6,6 +6,7 @@ const {
   userFactory,
   mealFactory,
   menuFactory,
+  defaultMenuFactory,
   orderFactory,
   mealMenuFactory,
   mealOrderFactory,
@@ -66,6 +67,7 @@ const seedOrders = Array.from({ length: 8 }, () => {
 })
 const seedMealMenusNested = seedMenus.map((menu, index) => mealMenuFactory(menu, seedMealsNested[index], 3))
 const seedMealMenus = flattenDeep(seedMealMenusNested)
+const defaultMenus = seedMenus.map(({ id, user }) => defaultMenuFactory({ menu: { connect: { id } }, user }))
 
 const seedMealOrdersNested = seedOrders.map((order) => {
   const min = 2
@@ -90,6 +92,7 @@ module.exports = {
   defaultAddresses,
   seedMeals,
   seedMenus,
+  defaultMenus,
   seedMealMenus,
   seedOrders,
   seedMealOrders,

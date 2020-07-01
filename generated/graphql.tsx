@@ -297,6 +297,17 @@ export type DateTimeFilter = {
   notIn?: Maybe<Array<Scalars['DateTime']>>;
 };
 
+export type DefaultAddress = {
+  __typename?: 'DefaultAddress';
+  address: Address;
+  addressId: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  id: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  user: User;
+  userId: Scalars['String'];
+};
+
 export type DefaultAddressCreateManyWithoutAddressInput = {
   connect?: Maybe<Array<DefaultAddressWhereUniqueInput>>;
   create?: Maybe<Array<DefaultAddressCreateWithoutAddressInput>>;
@@ -418,6 +429,101 @@ export type DefaultAddressWhereUniqueInput = {
   userId?: Maybe<Scalars['String']>;
 };
 
+export type DefaultMenu = {
+  __typename?: 'DefaultMenu';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['String'];
+  menu: Menu;
+  menuId: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  user: User;
+  userId: Scalars['String'];
+};
+
+export type DefaultMenuCreateOneWithoutMenuInput = {
+  connect?: Maybe<DefaultMenuWhereUniqueInput>;
+  create?: Maybe<DefaultMenuCreateWithoutMenuInput>;
+};
+
+export type DefaultMenuCreateOneWithoutUserInput = {
+  connect?: Maybe<DefaultMenuWhereUniqueInput>;
+  create?: Maybe<DefaultMenuCreateWithoutUserInput>;
+};
+
+export type DefaultMenuCreateWithoutMenuInput = {
+  createdAt?: Maybe<Scalars['DateTime']>;
+  id?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+  user: UserCreateOneWithoutDefaultMenuInput;
+};
+
+export type DefaultMenuCreateWithoutUserInput = {
+  createdAt?: Maybe<Scalars['DateTime']>;
+  id?: Maybe<Scalars['String']>;
+  menu: MenuCreateOneWithoutDefaultInput;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type DefaultMenuUpdateOneWithoutMenuInput = {
+  connect?: Maybe<DefaultMenuWhereUniqueInput>;
+  create?: Maybe<DefaultMenuCreateWithoutMenuInput>;
+  delete?: Maybe<Scalars['Boolean']>;
+  disconnect?: Maybe<Scalars['Boolean']>;
+  update?: Maybe<DefaultMenuUpdateWithoutMenuDataInput>;
+  upsert?: Maybe<DefaultMenuUpsertWithoutMenuInput>;
+};
+
+export type DefaultMenuUpdateOneWithoutUserInput = {
+  connect?: Maybe<DefaultMenuWhereUniqueInput>;
+  create?: Maybe<DefaultMenuCreateWithoutUserInput>;
+  delete?: Maybe<Scalars['Boolean']>;
+  disconnect?: Maybe<Scalars['Boolean']>;
+  update?: Maybe<DefaultMenuUpdateWithoutUserDataInput>;
+  upsert?: Maybe<DefaultMenuUpsertWithoutUserInput>;
+};
+
+export type DefaultMenuUpdateWithoutMenuDataInput = {
+  createdAt?: Maybe<Scalars['DateTime']>;
+  id?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+  user?: Maybe<UserUpdateOneRequiredWithoutDefaultMenuInput>;
+};
+
+export type DefaultMenuUpdateWithoutUserDataInput = {
+  createdAt?: Maybe<Scalars['DateTime']>;
+  id?: Maybe<Scalars['String']>;
+  menu?: Maybe<MenuUpdateOneRequiredWithoutDefaultInput>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type DefaultMenuUpsertWithoutMenuInput = {
+  create: DefaultMenuCreateWithoutMenuInput;
+  update: DefaultMenuUpdateWithoutMenuDataInput;
+};
+
+export type DefaultMenuUpsertWithoutUserInput = {
+  create: DefaultMenuCreateWithoutUserInput;
+  update: DefaultMenuUpdateWithoutUserDataInput;
+};
+
+export type DefaultMenuWhereInput = {
+  AND?: Maybe<Array<DefaultMenuWhereInput>>;
+  createdAt?: Maybe<DateTimeFilter>;
+  id?: Maybe<StringFilter>;
+  menu?: Maybe<MenuWhereInput>;
+  menuId?: Maybe<StringFilter>;
+  NOT?: Maybe<Array<DefaultMenuWhereInput>>;
+  OR?: Maybe<Array<DefaultMenuWhereInput>>;
+  updatedAt?: Maybe<DateTimeFilter>;
+  user?: Maybe<UserWhereInput>;
+  userId?: Maybe<StringFilter>;
+};
+
+export type DefaultMenuWhereUniqueInput = {
+  id?: Maybe<Scalars['String']>;
+  userId?: Maybe<Scalars['String']>;
+};
+
 export type FloatFilter = {
   equals?: Maybe<Scalars['Float']>;
   gt?: Maybe<Scalars['Float']>;
@@ -453,10 +559,20 @@ export type Meal = {
   description: Scalars['String'];
   id: Scalars['String'];
   imageUrl: Scalars['String'];
+  menus: Array<Menu>;
   price: Scalars['Float'];
+  tags: Array<Scalars['String']>;
   title: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   user: User;
+};
+
+
+export type MealMenusArgs = {
+  after?: Maybe<MenuWhereUniqueInput>;
+  before?: Maybe<MenuWhereUniqueInput>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 export type Meal_OrderCompoundUniqueInput = {
@@ -876,6 +992,7 @@ export type MealWhereUniqueInput = {
 export type Menu = {
   __typename?: 'Menu';
   createdAt: Scalars['DateTime'];
+  default?: Maybe<DefaultMenu>;
   id: Scalars['String'];
   meals: Array<Meal>;
   menuDate: Scalars['DateTime'];
@@ -894,9 +1011,12 @@ export type MenuMealsArgs = {
 
 export type MenuCreateInput = {
   createdAt?: Maybe<Scalars['DateTime']>;
+  default?: Maybe<DefaultMenuCreateOneWithoutMenuInput>;
   id?: Maybe<Scalars['String']>;
   meals?: Maybe<MealCreateManyWithoutMenusInput>;
   menuDate: Scalars['DateTime'];
+  SavedMenus?: Maybe<SavedMenusCreateManyWithoutMenuInput>;
+  tags?: Maybe<MenuCreatetagsInput>;
   updatedAt?: Maybe<Scalars['DateTime']>;
   user: UserCreateOneWithoutMenusInput;
 };
@@ -911,20 +1031,67 @@ export type MenuCreateManyWithoutUserInput = {
   create?: Maybe<Array<MenuCreateWithoutUserInput>>;
 };
 
-export type MenuCreateWithoutMealsInput = {
+export type MenuCreateOneWithoutDefaultInput = {
+  connect?: Maybe<MenuWhereUniqueInput>;
+  create?: Maybe<MenuCreateWithoutDefaultInput>;
+};
+
+export type MenuCreateOneWithoutSavedMenusInput = {
+  connect?: Maybe<MenuWhereUniqueInput>;
+  create?: Maybe<MenuCreateWithoutSavedMenusInput>;
+};
+
+export type MenuCreatetagsInput = {
+  set?: Maybe<Array<Scalars['String']>>;
+};
+
+export type MenuCreateWithoutDefaultInput = {
   createdAt?: Maybe<Scalars['DateTime']>;
   id?: Maybe<Scalars['String']>;
+  meals?: Maybe<MealCreateManyWithoutMenusInput>;
   menuDate: Scalars['DateTime'];
+  SavedMenus?: Maybe<SavedMenusCreateManyWithoutMenuInput>;
+  tags?: Maybe<MenuCreatetagsInput>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+  user: UserCreateOneWithoutMenusInput;
+};
+
+export type MenuCreateWithoutMealsInput = {
+  createdAt?: Maybe<Scalars['DateTime']>;
+  default?: Maybe<DefaultMenuCreateOneWithoutMenuInput>;
+  id?: Maybe<Scalars['String']>;
+  menuDate: Scalars['DateTime'];
+  SavedMenus?: Maybe<SavedMenusCreateManyWithoutMenuInput>;
+  tags?: Maybe<MenuCreatetagsInput>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+  user: UserCreateOneWithoutMenusInput;
+};
+
+export type MenuCreateWithoutSavedMenusInput = {
+  createdAt?: Maybe<Scalars['DateTime']>;
+  default?: Maybe<DefaultMenuCreateOneWithoutMenuInput>;
+  id?: Maybe<Scalars['String']>;
+  meals?: Maybe<MealCreateManyWithoutMenusInput>;
+  menuDate: Scalars['DateTime'];
+  tags?: Maybe<MenuCreatetagsInput>;
   updatedAt?: Maybe<Scalars['DateTime']>;
   user: UserCreateOneWithoutMenusInput;
 };
 
 export type MenuCreateWithoutUserInput = {
   createdAt?: Maybe<Scalars['DateTime']>;
+  default?: Maybe<DefaultMenuCreateOneWithoutMenuInput>;
   id?: Maybe<Scalars['String']>;
   meals?: Maybe<MealCreateManyWithoutMenusInput>;
   menuDate: Scalars['DateTime'];
+  SavedMenus?: Maybe<SavedMenusCreateManyWithoutMenuInput>;
+  tags?: Maybe<MenuCreatetagsInput>;
   updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type MenuDateMineCompoundUniqueInput = {
+  menuDate: Scalars['DateTime'];
+  userId: Scalars['String'];
 };
 
 export type MenuFilter = {
@@ -933,8 +1100,13 @@ export type MenuFilter = {
   some?: Maybe<MenuWhereInput>;
 };
 
+export type MenuIdUserIdCompoundUniqueInput = {
+  menuId: Scalars['String'];
+  userId: Scalars['String'];
+};
+
 export type MenuMineCompoundUniqueInput = {
-  menuDate: Scalars['DateTime'];
+  id: Scalars['String'];
   userId: Scalars['String'];
 };
 
@@ -946,15 +1118,19 @@ export type MenuScalarWhereInput = {
   menuDate?: Maybe<DateTimeFilter>;
   NOT?: Maybe<Array<MenuScalarWhereInput>>;
   OR?: Maybe<Array<MenuScalarWhereInput>>;
+  SavedMenus?: Maybe<SavedMenusFilter>;
   updatedAt?: Maybe<DateTimeFilter>;
   userId?: Maybe<StringFilter>;
 };
 
 export type MenuUpdateInput = {
   createdAt?: Maybe<Scalars['DateTime']>;
+  default?: Maybe<DefaultMenuUpdateOneWithoutMenuInput>;
   id?: Maybe<Scalars['String']>;
   meals?: Maybe<MealUpdateManyWithoutMenusInput>;
   menuDate?: Maybe<Scalars['DateTime']>;
+  SavedMenus?: Maybe<SavedMenusUpdateManyWithoutMenuInput>;
+  tags?: Maybe<MenuUpdatetagsInput>;
   updatedAt?: Maybe<Scalars['DateTime']>;
   user?: Maybe<UserUpdateOneRequiredWithoutMenusInput>;
 };
@@ -963,6 +1139,7 @@ export type MenuUpdateManyDataInput = {
   createdAt?: Maybe<Scalars['DateTime']>;
   id?: Maybe<Scalars['String']>;
   menuDate?: Maybe<Scalars['DateTime']>;
+  tags?: Maybe<MenuUpdatetagsInput>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
@@ -995,19 +1172,65 @@ export type MenuUpdateManyWithWhereNestedInput = {
   where: MenuScalarWhereInput;
 };
 
-export type MenuUpdateWithoutMealsDataInput = {
+export type MenuUpdateOneRequiredWithoutDefaultInput = {
+  connect?: Maybe<MenuWhereUniqueInput>;
+  create?: Maybe<MenuCreateWithoutDefaultInput>;
+  update?: Maybe<MenuUpdateWithoutDefaultDataInput>;
+  upsert?: Maybe<MenuUpsertWithoutDefaultInput>;
+};
+
+export type MenuUpdateOneRequiredWithoutSavedMenusInput = {
+  connect?: Maybe<MenuWhereUniqueInput>;
+  create?: Maybe<MenuCreateWithoutSavedMenusInput>;
+  update?: Maybe<MenuUpdateWithoutSavedMenusDataInput>;
+  upsert?: Maybe<MenuUpsertWithoutSavedMenusInput>;
+};
+
+export type MenuUpdatetagsInput = {
+  set?: Maybe<Array<Scalars['String']>>;
+};
+
+export type MenuUpdateWithoutDefaultDataInput = {
   createdAt?: Maybe<Scalars['DateTime']>;
   id?: Maybe<Scalars['String']>;
+  meals?: Maybe<MealUpdateManyWithoutMenusInput>;
   menuDate?: Maybe<Scalars['DateTime']>;
+  SavedMenus?: Maybe<SavedMenusUpdateManyWithoutMenuInput>;
+  tags?: Maybe<MenuUpdatetagsInput>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+  user?: Maybe<UserUpdateOneRequiredWithoutMenusInput>;
+};
+
+export type MenuUpdateWithoutMealsDataInput = {
+  createdAt?: Maybe<Scalars['DateTime']>;
+  default?: Maybe<DefaultMenuUpdateOneWithoutMenuInput>;
+  id?: Maybe<Scalars['String']>;
+  menuDate?: Maybe<Scalars['DateTime']>;
+  SavedMenus?: Maybe<SavedMenusUpdateManyWithoutMenuInput>;
+  tags?: Maybe<MenuUpdatetagsInput>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+  user?: Maybe<UserUpdateOneRequiredWithoutMenusInput>;
+};
+
+export type MenuUpdateWithoutSavedMenusDataInput = {
+  createdAt?: Maybe<Scalars['DateTime']>;
+  default?: Maybe<DefaultMenuUpdateOneWithoutMenuInput>;
+  id?: Maybe<Scalars['String']>;
+  meals?: Maybe<MealUpdateManyWithoutMenusInput>;
+  menuDate?: Maybe<Scalars['DateTime']>;
+  tags?: Maybe<MenuUpdatetagsInput>;
   updatedAt?: Maybe<Scalars['DateTime']>;
   user?: Maybe<UserUpdateOneRequiredWithoutMenusInput>;
 };
 
 export type MenuUpdateWithoutUserDataInput = {
   createdAt?: Maybe<Scalars['DateTime']>;
+  default?: Maybe<DefaultMenuUpdateOneWithoutMenuInput>;
   id?: Maybe<Scalars['String']>;
   meals?: Maybe<MealUpdateManyWithoutMenusInput>;
   menuDate?: Maybe<Scalars['DateTime']>;
+  SavedMenus?: Maybe<SavedMenusUpdateManyWithoutMenuInput>;
+  tags?: Maybe<MenuUpdatetagsInput>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
@@ -1019,6 +1242,16 @@ export type MenuUpdateWithWhereUniqueWithoutMealsInput = {
 export type MenuUpdateWithWhereUniqueWithoutUserInput = {
   data: MenuUpdateWithoutUserDataInput;
   where: MenuWhereUniqueInput;
+};
+
+export type MenuUpsertWithoutDefaultInput = {
+  create: MenuCreateWithoutDefaultInput;
+  update: MenuUpdateWithoutDefaultDataInput;
+};
+
+export type MenuUpsertWithoutSavedMenusInput = {
+  create: MenuCreateWithoutSavedMenusInput;
+  update: MenuUpdateWithoutSavedMenusDataInput;
 };
 
 export type MenuUpsertWithWhereUniqueWithoutMealsInput = {
@@ -1036,11 +1269,13 @@ export type MenuUpsertWithWhereUniqueWithoutUserInput = {
 export type MenuWhereInput = {
   AND?: Maybe<Array<MenuWhereInput>>;
   createdAt?: Maybe<DateTimeFilter>;
+  default?: Maybe<DefaultMenuWhereInput>;
   id?: Maybe<StringFilter>;
   meals?: Maybe<MealFilter>;
   menuDate?: Maybe<DateTimeFilter>;
   NOT?: Maybe<Array<MenuWhereInput>>;
   OR?: Maybe<Array<MenuWhereInput>>;
+  SavedMenus?: Maybe<SavedMenusFilter>;
   updatedAt?: Maybe<DateTimeFilter>;
   user?: Maybe<UserWhereInput>;
   userId?: Maybe<StringFilter>;
@@ -1048,6 +1283,7 @@ export type MenuWhereInput = {
 
 export type MenuWhereUniqueInput = {
   id?: Maybe<Scalars['String']>;
+  menuDateMine?: Maybe<MenuDateMineCompoundUniqueInput>;
   menuMine?: Maybe<MenuMineCompoundUniqueInput>;
 };
 
@@ -1515,16 +1751,38 @@ export type Query = {
   __typename?: 'Query';
   cart: Cart;
   cartStatus: CartStatus;
+  defaultAddress?: Maybe<DefaultAddress>;
+  defaultMenu?: Maybe<DefaultMenu>;
+  defaultMenus: Array<DefaultMenu>;
   me?: Maybe<User>;
   meal?: Maybe<Meal>;
   meals: Array<Meal>;
   menu?: Maybe<Menu>;
+  menuMeals: Array<Meal>;
   menus: Array<Menu>;
   order?: Maybe<Order>;
   orders: Array<Order>;
   user?: Maybe<User>;
   userId: Scalars['ID'];
   users: Array<User>;
+};
+
+
+export type QueryDefaultAddressArgs = {
+  where: DefaultAddressWhereUniqueInput;
+};
+
+
+export type QueryDefaultMenuArgs = {
+  where: DefaultMenuWhereUniqueInput;
+};
+
+
+export type QueryDefaultMenusArgs = {
+  after?: Maybe<DefaultMenuWhereUniqueInput>;
+  before?: Maybe<DefaultMenuWhereUniqueInput>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 
@@ -1544,6 +1802,15 @@ export type QueryMealsArgs = {
 
 export type QueryMenuArgs = {
   where: MenuWhereUniqueInput;
+};
+
+
+export type QueryMenuMealsArgs = {
+  after?: Maybe<MealWhereUniqueInput>;
+  before?: Maybe<MealWhereUniqueInput>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  where?: Maybe<MealWhereInput>;
 };
 
 
@@ -1581,12 +1848,128 @@ export type QueryUsersArgs = {
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
   orderBy?: Maybe<UserOrderByInput>;
+  where?: Maybe<UserWhereInput>;
 };
 
 export enum Role {
   Admin = 'ADMIN',
   Caterer = 'CATERER'
 }
+
+export type SavedMenusCreateManyWithoutMenuInput = {
+  connect?: Maybe<Array<SavedMenusWhereUniqueInput>>;
+  create?: Maybe<Array<SavedMenusCreateWithoutMenuInput>>;
+};
+
+export type SavedMenusCreateManyWithoutUserInput = {
+  connect?: Maybe<Array<SavedMenusWhereUniqueInput>>;
+  create?: Maybe<Array<SavedMenusCreateWithoutUserInput>>;
+};
+
+export type SavedMenusCreateWithoutMenuInput = {
+  createdAt?: Maybe<Scalars['DateTime']>;
+  user: UserCreateOneWithoutSavedMenusInput;
+};
+
+export type SavedMenusCreateWithoutUserInput = {
+  createdAt?: Maybe<Scalars['DateTime']>;
+  menu: MenuCreateOneWithoutSavedMenusInput;
+};
+
+export type SavedMenusFilter = {
+  every?: Maybe<SavedMenusWhereInput>;
+  none?: Maybe<SavedMenusWhereInput>;
+  some?: Maybe<SavedMenusWhereInput>;
+};
+
+export type SavedMenusScalarWhereInput = {
+  AND?: Maybe<Array<SavedMenusScalarWhereInput>>;
+  createdAt?: Maybe<DateTimeFilter>;
+  menuId?: Maybe<StringFilter>;
+  NOT?: Maybe<Array<SavedMenusScalarWhereInput>>;
+  OR?: Maybe<Array<SavedMenusScalarWhereInput>>;
+  userId?: Maybe<StringFilter>;
+};
+
+export type SavedMenusUpdateManyDataInput = {
+  createdAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type SavedMenusUpdateManyWithoutMenuInput = {
+  connect?: Maybe<Array<SavedMenusWhereUniqueInput>>;
+  create?: Maybe<Array<SavedMenusCreateWithoutMenuInput>>;
+  delete?: Maybe<Array<SavedMenusWhereUniqueInput>>;
+  deleteMany?: Maybe<Array<SavedMenusScalarWhereInput>>;
+  disconnect?: Maybe<Array<SavedMenusWhereUniqueInput>>;
+  set?: Maybe<Array<SavedMenusWhereUniqueInput>>;
+  update?: Maybe<Array<SavedMenusUpdateWithWhereUniqueWithoutMenuInput>>;
+  updateMany?: Maybe<Array<SavedMenusUpdateManyWithWhereNestedInput>>;
+  upsert?: Maybe<Array<SavedMenusUpsertWithWhereUniqueWithoutMenuInput>>;
+};
+
+export type SavedMenusUpdateManyWithoutUserInput = {
+  connect?: Maybe<Array<SavedMenusWhereUniqueInput>>;
+  create?: Maybe<Array<SavedMenusCreateWithoutUserInput>>;
+  delete?: Maybe<Array<SavedMenusWhereUniqueInput>>;
+  deleteMany?: Maybe<Array<SavedMenusScalarWhereInput>>;
+  disconnect?: Maybe<Array<SavedMenusWhereUniqueInput>>;
+  set?: Maybe<Array<SavedMenusWhereUniqueInput>>;
+  update?: Maybe<Array<SavedMenusUpdateWithWhereUniqueWithoutUserInput>>;
+  updateMany?: Maybe<Array<SavedMenusUpdateManyWithWhereNestedInput>>;
+  upsert?: Maybe<Array<SavedMenusUpsertWithWhereUniqueWithoutUserInput>>;
+};
+
+export type SavedMenusUpdateManyWithWhereNestedInput = {
+  data: SavedMenusUpdateManyDataInput;
+  where: SavedMenusScalarWhereInput;
+};
+
+export type SavedMenusUpdateWithoutMenuDataInput = {
+  createdAt?: Maybe<Scalars['DateTime']>;
+  user?: Maybe<UserUpdateOneRequiredWithoutSavedMenusInput>;
+};
+
+export type SavedMenusUpdateWithoutUserDataInput = {
+  createdAt?: Maybe<Scalars['DateTime']>;
+  menu?: Maybe<MenuUpdateOneRequiredWithoutSavedMenusInput>;
+};
+
+export type SavedMenusUpdateWithWhereUniqueWithoutMenuInput = {
+  data: SavedMenusUpdateWithoutMenuDataInput;
+  where: SavedMenusWhereUniqueInput;
+};
+
+export type SavedMenusUpdateWithWhereUniqueWithoutUserInput = {
+  data: SavedMenusUpdateWithoutUserDataInput;
+  where: SavedMenusWhereUniqueInput;
+};
+
+export type SavedMenusUpsertWithWhereUniqueWithoutMenuInput = {
+  create: SavedMenusCreateWithoutMenuInput;
+  update: SavedMenusUpdateWithoutMenuDataInput;
+  where: SavedMenusWhereUniqueInput;
+};
+
+export type SavedMenusUpsertWithWhereUniqueWithoutUserInput = {
+  create: SavedMenusCreateWithoutUserInput;
+  update: SavedMenusUpdateWithoutUserDataInput;
+  where: SavedMenusWhereUniqueInput;
+};
+
+export type SavedMenusWhereInput = {
+  AND?: Maybe<Array<SavedMenusWhereInput>>;
+  createdAt?: Maybe<DateTimeFilter>;
+  menu?: Maybe<MenuWhereInput>;
+  menuId?: Maybe<StringFilter>;
+  NOT?: Maybe<Array<SavedMenusWhereInput>>;
+  OR?: Maybe<Array<SavedMenusWhereInput>>;
+  user?: Maybe<UserWhereInput>;
+  userId?: Maybe<StringFilter>;
+};
+
+export type SavedMenusWhereUniqueInput = {
+  menuId_userId?: Maybe<MenuIdUserIdCompoundUniqueInput>;
+};
 
 export enum Status {
   Cancelled = 'CANCELLED',
@@ -1614,6 +1997,8 @@ export type User = {
   __typename?: 'User';
   addresses: Array<Address>;
   createdAt: Scalars['DateTime'];
+  defaultAddress?: Maybe<DefaultAddress>;
+  defaultMenu?: Maybe<DefaultMenu>;
   email: Scalars['String'];
   firstName?: Maybe<Scalars['String']>;
   id: Scalars['String'];
@@ -1658,6 +2043,11 @@ export type UserCreateOneWithoutDefaultAddressInput = {
   create?: Maybe<UserCreateWithoutDefaultAddressInput>;
 };
 
+export type UserCreateOneWithoutDefaultMenuInput = {
+  connect?: Maybe<UserWhereUniqueInput>;
+  create?: Maybe<UserCreateWithoutDefaultMenuInput>;
+};
+
 export type UserCreateOneWithoutMealsInput = {
   connect?: Maybe<UserWhereUniqueInput>;
   create?: Maybe<UserCreateWithoutMealsInput>;
@@ -1673,11 +2063,59 @@ export type UserCreateOneWithoutOrdersInput = {
   create?: Maybe<UserCreateWithoutOrdersInput>;
 };
 
+export type UserCreateOneWithoutSavedMenusInput = {
+  connect?: Maybe<UserWhereUniqueInput>;
+  create?: Maybe<UserCreateWithoutSavedMenusInput>;
+};
+
 export type UserCreaterolesInput = {
   set?: Maybe<Array<Role>>;
 };
 
 export type UserCreateWithoutAddressesInput = {
+  createdAt?: Maybe<Scalars['DateTime']>;
+  defaultAddress?: Maybe<DefaultAddressCreateOneWithoutUserInput>;
+  defaultMenu?: Maybe<DefaultMenuCreateOneWithoutUserInput>;
+  email: Scalars['String'];
+  facebookId?: Maybe<Scalars['String']>;
+  firstName?: Maybe<Scalars['String']>;
+  googleId?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  meals?: Maybe<MealCreateManyWithoutUserInput>;
+  menus?: Maybe<MenuCreateManyWithoutUserInput>;
+  orders?: Maybe<OrderCreateManyWithoutUserInput>;
+  password?: Maybe<Scalars['String']>;
+  picture?: Maybe<Scalars['Json']>;
+  roles?: Maybe<UserCreaterolesInput>;
+  savedMenus?: Maybe<SavedMenusCreateManyWithoutUserInput>;
+  tokenVersion?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type UserCreateWithoutDefaultAddressInput = {
+  addresses?: Maybe<AddressCreateManyWithoutUserInput>;
+  createdAt?: Maybe<Scalars['DateTime']>;
+  defaultMenu?: Maybe<DefaultMenuCreateOneWithoutUserInput>;
+  email: Scalars['String'];
+  facebookId?: Maybe<Scalars['String']>;
+  firstName?: Maybe<Scalars['String']>;
+  googleId?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  meals?: Maybe<MealCreateManyWithoutUserInput>;
+  menus?: Maybe<MenuCreateManyWithoutUserInput>;
+  orders?: Maybe<OrderCreateManyWithoutUserInput>;
+  password?: Maybe<Scalars['String']>;
+  picture?: Maybe<Scalars['Json']>;
+  roles?: Maybe<UserCreaterolesInput>;
+  savedMenus?: Maybe<SavedMenusCreateManyWithoutUserInput>;
+  tokenVersion?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type UserCreateWithoutDefaultMenuInput = {
+  addresses?: Maybe<AddressCreateManyWithoutUserInput>;
   createdAt?: Maybe<Scalars['DateTime']>;
   defaultAddress?: Maybe<DefaultAddressCreateOneWithoutUserInput>;
   email: Scalars['String'];
@@ -1690,27 +2128,9 @@ export type UserCreateWithoutAddressesInput = {
   menus?: Maybe<MenuCreateManyWithoutUserInput>;
   orders?: Maybe<OrderCreateManyWithoutUserInput>;
   password?: Maybe<Scalars['String']>;
-  picture?: Maybe<Scalars['String']>;
+  picture?: Maybe<Scalars['Json']>;
   roles?: Maybe<UserCreaterolesInput>;
-  tokenVersion?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-};
-
-export type UserCreateWithoutDefaultAddressInput = {
-  addresses?: Maybe<AddressCreateManyWithoutUserInput>;
-  createdAt?: Maybe<Scalars['DateTime']>;
-  email: Scalars['String'];
-  facebookId?: Maybe<Scalars['String']>;
-  firstName?: Maybe<Scalars['String']>;
-  googleId?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['String']>;
-  lastName?: Maybe<Scalars['String']>;
-  meals?: Maybe<MealCreateManyWithoutUserInput>;
-  menus?: Maybe<MenuCreateManyWithoutUserInput>;
-  orders?: Maybe<OrderCreateManyWithoutUserInput>;
-  password?: Maybe<Scalars['String']>;
-  picture?: Maybe<Scalars['String']>;
-  roles?: Maybe<UserCreaterolesInput>;
+  savedMenus?: Maybe<SavedMenusCreateManyWithoutUserInput>;
   tokenVersion?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
@@ -1719,6 +2139,7 @@ export type UserCreateWithoutMealsInput = {
   addresses?: Maybe<AddressCreateManyWithoutUserInput>;
   createdAt?: Maybe<Scalars['DateTime']>;
   defaultAddress?: Maybe<DefaultAddressCreateOneWithoutUserInput>;
+  defaultMenu?: Maybe<DefaultMenuCreateOneWithoutUserInput>;
   email: Scalars['String'];
   facebookId?: Maybe<Scalars['String']>;
   firstName?: Maybe<Scalars['String']>;
@@ -1728,8 +2149,9 @@ export type UserCreateWithoutMealsInput = {
   menus?: Maybe<MenuCreateManyWithoutUserInput>;
   orders?: Maybe<OrderCreateManyWithoutUserInput>;
   password?: Maybe<Scalars['String']>;
-  picture?: Maybe<Scalars['String']>;
+  picture?: Maybe<Scalars['Json']>;
   roles?: Maybe<UserCreaterolesInput>;
+  savedMenus?: Maybe<SavedMenusCreateManyWithoutUserInput>;
   tokenVersion?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
@@ -1738,6 +2160,7 @@ export type UserCreateWithoutMenusInput = {
   addresses?: Maybe<AddressCreateManyWithoutUserInput>;
   createdAt?: Maybe<Scalars['DateTime']>;
   defaultAddress?: Maybe<DefaultAddressCreateOneWithoutUserInput>;
+  defaultMenu?: Maybe<DefaultMenuCreateOneWithoutUserInput>;
   email: Scalars['String'];
   facebookId?: Maybe<Scalars['String']>;
   firstName?: Maybe<Scalars['String']>;
@@ -1747,8 +2170,9 @@ export type UserCreateWithoutMenusInput = {
   meals?: Maybe<MealCreateManyWithoutUserInput>;
   orders?: Maybe<OrderCreateManyWithoutUserInput>;
   password?: Maybe<Scalars['String']>;
-  picture?: Maybe<Scalars['String']>;
+  picture?: Maybe<Scalars['Json']>;
   roles?: Maybe<UserCreaterolesInput>;
+  savedMenus?: Maybe<SavedMenusCreateManyWithoutUserInput>;
   tokenVersion?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
@@ -1757,6 +2181,7 @@ export type UserCreateWithoutOrdersInput = {
   addresses?: Maybe<AddressCreateManyWithoutUserInput>;
   createdAt?: Maybe<Scalars['DateTime']>;
   defaultAddress?: Maybe<DefaultAddressCreateOneWithoutUserInput>;
+  defaultMenu?: Maybe<DefaultMenuCreateOneWithoutUserInput>;
   email: Scalars['String'];
   facebookId?: Maybe<Scalars['String']>;
   firstName?: Maybe<Scalars['String']>;
@@ -1766,7 +2191,29 @@ export type UserCreateWithoutOrdersInput = {
   meals?: Maybe<MealCreateManyWithoutUserInput>;
   menus?: Maybe<MenuCreateManyWithoutUserInput>;
   password?: Maybe<Scalars['String']>;
-  picture?: Maybe<Scalars['String']>;
+  picture?: Maybe<Scalars['Json']>;
+  roles?: Maybe<UserCreaterolesInput>;
+  savedMenus?: Maybe<SavedMenusCreateManyWithoutUserInput>;
+  tokenVersion?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type UserCreateWithoutSavedMenusInput = {
+  addresses?: Maybe<AddressCreateManyWithoutUserInput>;
+  createdAt?: Maybe<Scalars['DateTime']>;
+  defaultAddress?: Maybe<DefaultAddressCreateOneWithoutUserInput>;
+  defaultMenu?: Maybe<DefaultMenuCreateOneWithoutUserInput>;
+  email: Scalars['String'];
+  facebookId?: Maybe<Scalars['String']>;
+  firstName?: Maybe<Scalars['String']>;
+  googleId?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  meals?: Maybe<MealCreateManyWithoutUserInput>;
+  menus?: Maybe<MenuCreateManyWithoutUserInput>;
+  orders?: Maybe<OrderCreateManyWithoutUserInput>;
+  password?: Maybe<Scalars['String']>;
+  picture?: Maybe<Scalars['Json']>;
   roles?: Maybe<UserCreaterolesInput>;
   tokenVersion?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
@@ -1790,6 +2237,7 @@ export type UserUpdateInput = {
   addresses?: Maybe<AddressUpdateManyWithoutUserInput>;
   createdAt?: Maybe<Scalars['DateTime']>;
   defaultAddress?: Maybe<DefaultAddressUpdateOneWithoutUserInput>;
+  defaultMenu?: Maybe<DefaultMenuUpdateOneWithoutUserInput>;
   email?: Maybe<Scalars['String']>;
   facebookId?: Maybe<Scalars['String']>;
   firstName?: Maybe<Scalars['String']>;
@@ -1800,8 +2248,9 @@ export type UserUpdateInput = {
   menus?: Maybe<MenuUpdateManyWithoutUserInput>;
   orders?: Maybe<OrderUpdateManyWithoutUserInput>;
   password?: Maybe<Scalars['String']>;
-  picture?: Maybe<Scalars['String']>;
+  picture?: Maybe<Scalars['Json']>;
   roles?: Maybe<UserUpdaterolesInput>;
+  savedMenus?: Maybe<SavedMenusUpdateManyWithoutUserInput>;
   tokenVersion?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
@@ -1818,6 +2267,13 @@ export type UserUpdateOneRequiredWithoutDefaultAddressInput = {
   create?: Maybe<UserCreateWithoutDefaultAddressInput>;
   update?: Maybe<UserUpdateWithoutDefaultAddressDataInput>;
   upsert?: Maybe<UserUpsertWithoutDefaultAddressInput>;
+};
+
+export type UserUpdateOneRequiredWithoutDefaultMenuInput = {
+  connect?: Maybe<UserWhereUniqueInput>;
+  create?: Maybe<UserCreateWithoutDefaultMenuInput>;
+  update?: Maybe<UserUpdateWithoutDefaultMenuDataInput>;
+  upsert?: Maybe<UserUpsertWithoutDefaultMenuInput>;
 };
 
 export type UserUpdateOneRequiredWithoutMealsInput = {
@@ -1841,11 +2297,61 @@ export type UserUpdateOneRequiredWithoutOrdersInput = {
   upsert?: Maybe<UserUpsertWithoutOrdersInput>;
 };
 
+export type UserUpdateOneRequiredWithoutSavedMenusInput = {
+  connect?: Maybe<UserWhereUniqueInput>;
+  create?: Maybe<UserCreateWithoutSavedMenusInput>;
+  update?: Maybe<UserUpdateWithoutSavedMenusDataInput>;
+  upsert?: Maybe<UserUpsertWithoutSavedMenusInput>;
+};
+
 export type UserUpdaterolesInput = {
   set?: Maybe<Array<Role>>;
 };
 
 export type UserUpdateWithoutAddressesDataInput = {
+  createdAt?: Maybe<Scalars['DateTime']>;
+  defaultAddress?: Maybe<DefaultAddressUpdateOneWithoutUserInput>;
+  defaultMenu?: Maybe<DefaultMenuUpdateOneWithoutUserInput>;
+  email?: Maybe<Scalars['String']>;
+  facebookId?: Maybe<Scalars['String']>;
+  firstName?: Maybe<Scalars['String']>;
+  googleId?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  meals?: Maybe<MealUpdateManyWithoutUserInput>;
+  menus?: Maybe<MenuUpdateManyWithoutUserInput>;
+  orders?: Maybe<OrderUpdateManyWithoutUserInput>;
+  password?: Maybe<Scalars['String']>;
+  picture?: Maybe<Scalars['Json']>;
+  roles?: Maybe<UserUpdaterolesInput>;
+  savedMenus?: Maybe<SavedMenusUpdateManyWithoutUserInput>;
+  tokenVersion?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type UserUpdateWithoutDefaultAddressDataInput = {
+  addresses?: Maybe<AddressUpdateManyWithoutUserInput>;
+  createdAt?: Maybe<Scalars['DateTime']>;
+  defaultMenu?: Maybe<DefaultMenuUpdateOneWithoutUserInput>;
+  email?: Maybe<Scalars['String']>;
+  facebookId?: Maybe<Scalars['String']>;
+  firstName?: Maybe<Scalars['String']>;
+  googleId?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  meals?: Maybe<MealUpdateManyWithoutUserInput>;
+  menus?: Maybe<MenuUpdateManyWithoutUserInput>;
+  orders?: Maybe<OrderUpdateManyWithoutUserInput>;
+  password?: Maybe<Scalars['String']>;
+  picture?: Maybe<Scalars['Json']>;
+  roles?: Maybe<UserUpdaterolesInput>;
+  savedMenus?: Maybe<SavedMenusUpdateManyWithoutUserInput>;
+  tokenVersion?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type UserUpdateWithoutDefaultMenuDataInput = {
+  addresses?: Maybe<AddressUpdateManyWithoutUserInput>;
   createdAt?: Maybe<Scalars['DateTime']>;
   defaultAddress?: Maybe<DefaultAddressUpdateOneWithoutUserInput>;
   email?: Maybe<Scalars['String']>;
@@ -1858,27 +2364,9 @@ export type UserUpdateWithoutAddressesDataInput = {
   menus?: Maybe<MenuUpdateManyWithoutUserInput>;
   orders?: Maybe<OrderUpdateManyWithoutUserInput>;
   password?: Maybe<Scalars['String']>;
-  picture?: Maybe<Scalars['String']>;
+  picture?: Maybe<Scalars['Json']>;
   roles?: Maybe<UserUpdaterolesInput>;
-  tokenVersion?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-};
-
-export type UserUpdateWithoutDefaultAddressDataInput = {
-  addresses?: Maybe<AddressUpdateManyWithoutUserInput>;
-  createdAt?: Maybe<Scalars['DateTime']>;
-  email?: Maybe<Scalars['String']>;
-  facebookId?: Maybe<Scalars['String']>;
-  firstName?: Maybe<Scalars['String']>;
-  googleId?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['String']>;
-  lastName?: Maybe<Scalars['String']>;
-  meals?: Maybe<MealUpdateManyWithoutUserInput>;
-  menus?: Maybe<MenuUpdateManyWithoutUserInput>;
-  orders?: Maybe<OrderUpdateManyWithoutUserInput>;
-  password?: Maybe<Scalars['String']>;
-  picture?: Maybe<Scalars['String']>;
-  roles?: Maybe<UserUpdaterolesInput>;
+  savedMenus?: Maybe<SavedMenusUpdateManyWithoutUserInput>;
   tokenVersion?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
@@ -1887,6 +2375,7 @@ export type UserUpdateWithoutMealsDataInput = {
   addresses?: Maybe<AddressUpdateManyWithoutUserInput>;
   createdAt?: Maybe<Scalars['DateTime']>;
   defaultAddress?: Maybe<DefaultAddressUpdateOneWithoutUserInput>;
+  defaultMenu?: Maybe<DefaultMenuUpdateOneWithoutUserInput>;
   email?: Maybe<Scalars['String']>;
   facebookId?: Maybe<Scalars['String']>;
   firstName?: Maybe<Scalars['String']>;
@@ -1896,8 +2385,9 @@ export type UserUpdateWithoutMealsDataInput = {
   menus?: Maybe<MenuUpdateManyWithoutUserInput>;
   orders?: Maybe<OrderUpdateManyWithoutUserInput>;
   password?: Maybe<Scalars['String']>;
-  picture?: Maybe<Scalars['String']>;
+  picture?: Maybe<Scalars['Json']>;
   roles?: Maybe<UserUpdaterolesInput>;
+  savedMenus?: Maybe<SavedMenusUpdateManyWithoutUserInput>;
   tokenVersion?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
@@ -1906,6 +2396,7 @@ export type UserUpdateWithoutMenusDataInput = {
   addresses?: Maybe<AddressUpdateManyWithoutUserInput>;
   createdAt?: Maybe<Scalars['DateTime']>;
   defaultAddress?: Maybe<DefaultAddressUpdateOneWithoutUserInput>;
+  defaultMenu?: Maybe<DefaultMenuUpdateOneWithoutUserInput>;
   email?: Maybe<Scalars['String']>;
   facebookId?: Maybe<Scalars['String']>;
   firstName?: Maybe<Scalars['String']>;
@@ -1915,8 +2406,9 @@ export type UserUpdateWithoutMenusDataInput = {
   meals?: Maybe<MealUpdateManyWithoutUserInput>;
   orders?: Maybe<OrderUpdateManyWithoutUserInput>;
   password?: Maybe<Scalars['String']>;
-  picture?: Maybe<Scalars['String']>;
+  picture?: Maybe<Scalars['Json']>;
   roles?: Maybe<UserUpdaterolesInput>;
+  savedMenus?: Maybe<SavedMenusUpdateManyWithoutUserInput>;
   tokenVersion?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
@@ -1925,6 +2417,7 @@ export type UserUpdateWithoutOrdersDataInput = {
   addresses?: Maybe<AddressUpdateManyWithoutUserInput>;
   createdAt?: Maybe<Scalars['DateTime']>;
   defaultAddress?: Maybe<DefaultAddressUpdateOneWithoutUserInput>;
+  defaultMenu?: Maybe<DefaultMenuUpdateOneWithoutUserInput>;
   email?: Maybe<Scalars['String']>;
   facebookId?: Maybe<Scalars['String']>;
   firstName?: Maybe<Scalars['String']>;
@@ -1934,7 +2427,29 @@ export type UserUpdateWithoutOrdersDataInput = {
   meals?: Maybe<MealUpdateManyWithoutUserInput>;
   menus?: Maybe<MenuUpdateManyWithoutUserInput>;
   password?: Maybe<Scalars['String']>;
-  picture?: Maybe<Scalars['String']>;
+  picture?: Maybe<Scalars['Json']>;
+  roles?: Maybe<UserUpdaterolesInput>;
+  savedMenus?: Maybe<SavedMenusUpdateManyWithoutUserInput>;
+  tokenVersion?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type UserUpdateWithoutSavedMenusDataInput = {
+  addresses?: Maybe<AddressUpdateManyWithoutUserInput>;
+  createdAt?: Maybe<Scalars['DateTime']>;
+  defaultAddress?: Maybe<DefaultAddressUpdateOneWithoutUserInput>;
+  defaultMenu?: Maybe<DefaultMenuUpdateOneWithoutUserInput>;
+  email?: Maybe<Scalars['String']>;
+  facebookId?: Maybe<Scalars['String']>;
+  firstName?: Maybe<Scalars['String']>;
+  googleId?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  meals?: Maybe<MealUpdateManyWithoutUserInput>;
+  menus?: Maybe<MenuUpdateManyWithoutUserInput>;
+  orders?: Maybe<OrderUpdateManyWithoutUserInput>;
+  password?: Maybe<Scalars['String']>;
+  picture?: Maybe<Scalars['Json']>;
   roles?: Maybe<UserUpdaterolesInput>;
   tokenVersion?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
@@ -1948,6 +2463,11 @@ export type UserUpsertWithoutAddressesInput = {
 export type UserUpsertWithoutDefaultAddressInput = {
   create: UserCreateWithoutDefaultAddressInput;
   update: UserUpdateWithoutDefaultAddressDataInput;
+};
+
+export type UserUpsertWithoutDefaultMenuInput = {
+  create: UserCreateWithoutDefaultMenuInput;
+  update: UserUpdateWithoutDefaultMenuDataInput;
 };
 
 export type UserUpsertWithoutMealsInput = {
@@ -1965,11 +2485,17 @@ export type UserUpsertWithoutOrdersInput = {
   update: UserUpdateWithoutOrdersDataInput;
 };
 
+export type UserUpsertWithoutSavedMenusInput = {
+  create: UserCreateWithoutSavedMenusInput;
+  update: UserUpdateWithoutSavedMenusDataInput;
+};
+
 export type UserWhereInput = {
   addresses?: Maybe<AddressFilter>;
   AND?: Maybe<Array<UserWhereInput>>;
   createdAt?: Maybe<DateTimeFilter>;
   defaultAddress?: Maybe<DefaultAddressWhereInput>;
+  defaultMenu?: Maybe<DefaultMenuWhereInput>;
   email?: Maybe<StringFilter>;
   facebookId?: Maybe<NullableStringFilter>;
   firstName?: Maybe<NullableStringFilter>;
@@ -1982,7 +2508,7 @@ export type UserWhereInput = {
   OR?: Maybe<Array<UserWhereInput>>;
   orders?: Maybe<OrderFilter>;
   password?: Maybe<NullableStringFilter>;
-  picture?: Maybe<NullableStringFilter>;
+  savedMenus?: Maybe<SavedMenusFilter>;
   tokenVersion?: Maybe<StringFilter>;
   updatedAt?: Maybe<DateTimeFilter>;
 };
@@ -2218,6 +2744,35 @@ export type MoreTodayMealsQueryVariables = Exact<{
 
 
 export type MoreTodayMealsQuery = (
+  { __typename?: 'Query' }
+  & { meals: Array<(
+    { __typename?: 'Meal' }
+    & MealFragment
+  )> }
+);
+
+export type ProjectedMealsQueryVariables = Exact<{
+  projected?: Maybe<Array<Scalars['String']>>;
+  limit: Scalars['Int'];
+}>;
+
+
+export type ProjectedMealsQuery = (
+  { __typename?: 'Query' }
+  & { meals: Array<(
+    { __typename?: 'Meal' }
+    & MealFragment
+  )> }
+);
+
+export type MoreProjectedMealsQueryVariables = Exact<{
+  projected?: Maybe<Array<Scalars['String']>>;
+  limit: Scalars['Int'];
+  cursor: Scalars['String'];
+}>;
+
+
+export type MoreProjectedMealsQuery = (
   { __typename?: 'Query' }
   & { meals: Array<(
     { __typename?: 'Meal' }
@@ -2828,6 +3383,75 @@ export function useMoreTodayMealsLazyQuery(baseOptions?: ApolloReactHooks.LazyQu
 export type MoreTodayMealsQueryHookResult = ReturnType<typeof useMoreTodayMealsQuery>;
 export type MoreTodayMealsLazyQueryHookResult = ReturnType<typeof useMoreTodayMealsLazyQuery>;
 export type MoreTodayMealsQueryResult = ApolloReactCommon.QueryResult<MoreTodayMealsQuery, MoreTodayMealsQueryVariables>;
+export const ProjectedMealsDocument = gql`
+    query projectedMeals($projected: [String!], $limit: Int!) {
+  meals(where: {id: {in: $projected}}, first: $limit) {
+    ...MEAL
+  }
+}
+    ${MealFragmentDoc}`;
+
+/**
+ * __useProjectedMealsQuery__
+ *
+ * To run a query within a React component, call `useProjectedMealsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProjectedMealsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProjectedMealsQuery({
+ *   variables: {
+ *      projected: // value for 'projected'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useProjectedMealsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ProjectedMealsQuery, ProjectedMealsQueryVariables>) {
+        return ApolloReactHooks.useQuery<ProjectedMealsQuery, ProjectedMealsQueryVariables>(ProjectedMealsDocument, baseOptions);
+      }
+export function useProjectedMealsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ProjectedMealsQuery, ProjectedMealsQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<ProjectedMealsQuery, ProjectedMealsQueryVariables>(ProjectedMealsDocument, baseOptions);
+        }
+export type ProjectedMealsQueryHookResult = ReturnType<typeof useProjectedMealsQuery>;
+export type ProjectedMealsLazyQueryHookResult = ReturnType<typeof useProjectedMealsLazyQuery>;
+export type ProjectedMealsQueryResult = ApolloReactCommon.QueryResult<ProjectedMealsQuery, ProjectedMealsQueryVariables>;
+export const MoreProjectedMealsDocument = gql`
+    query moreProjectedMeals($projected: [String!], $limit: Int!, $cursor: String!) {
+  meals(where: {id: {in: $projected}}, first: $limit, after: {id: $cursor}) {
+    ...MEAL
+  }
+}
+    ${MealFragmentDoc}`;
+
+/**
+ * __useMoreProjectedMealsQuery__
+ *
+ * To run a query within a React component, call `useMoreProjectedMealsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMoreProjectedMealsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMoreProjectedMealsQuery({
+ *   variables: {
+ *      projected: // value for 'projected'
+ *      limit: // value for 'limit'
+ *      cursor: // value for 'cursor'
+ *   },
+ * });
+ */
+export function useMoreProjectedMealsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<MoreProjectedMealsQuery, MoreProjectedMealsQueryVariables>) {
+        return ApolloReactHooks.useQuery<MoreProjectedMealsQuery, MoreProjectedMealsQueryVariables>(MoreProjectedMealsDocument, baseOptions);
+      }
+export function useMoreProjectedMealsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<MoreProjectedMealsQuery, MoreProjectedMealsQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<MoreProjectedMealsQuery, MoreProjectedMealsQueryVariables>(MoreProjectedMealsDocument, baseOptions);
+        }
+export type MoreProjectedMealsQueryHookResult = ReturnType<typeof useMoreProjectedMealsQuery>;
+export type MoreProjectedMealsLazyQueryHookResult = ReturnType<typeof useMoreProjectedMealsLazyQuery>;
+export type MoreProjectedMealsQueryResult = ApolloReactCommon.QueryResult<MoreProjectedMealsQuery, MoreProjectedMealsQueryVariables>;
 export const TodayMenuDocument = gql`
     query todayMenu($yesterday: DateTime!, $tomorrow: DateTime!) {
   menus(where: {AND: [{menuDate: {gt: $yesterday}}, {menuDate: {lt: $tomorrow}}]}) {

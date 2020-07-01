@@ -64,15 +64,36 @@ model MealOrder {
 }
 
 model Menu {
-  createdAt DateTime @default(now())
-  id        String   @default(cuid()) @id
+  createdAt DateTime     @default(now())
+  id        String       @default(cuid()) @id
+  tags      String[]
   menuDate  DateTime
-  updatedAt DateTime @default(now())
+  updatedAt DateTime     @default(now())
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  meals     Meal[]   @relation("MealMenu", references: [id])
+  user      User         @relation(fields: [userId], references: [id])
+  meals     Meal[]       @relation("MealMenu", references: [id])
+  default   DefaultMenu?
+  @@unique([id, userId], name: "menuMine")
+  @@unique([menuDate, userId], name: "menuDateMine")
+}
 
-  @@unique([menuDate, userId], name: "menuMine")
+model DefaultMenu {
+  id        String   @default(cuid()) @id
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  menuId    String
+  menu      Menu     @relation(fields: [menuId, userId], references: [id, userId])
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model SavedMenus {
+  menu      Menu     @relation(fields: [menuId], references: [id])
+  menuId    String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+  @@id([menuId, userId])
 }
 
 model Order {
@@ -98,9 +119,7 @@ model User {
   googleId       String?         @unique
   lastName       String?
   tokenVersion   String          @default(cuid())
-  // Json type is optimal but will use String for now
-  // see https://github.com/graphql-nexus/nexus/issues/947
-  picture        String?
+  picture        Json?
   password       String?
   roles          Role[]
   updatedAt      DateTime        @default(now())
@@ -109,6 +128,8 @@ model User {
   meals          Meal[]
   menus          Menu[]
   orders         Order[]
+  defaultMenu    DefaultMenu?
+  savedMenus     SavedMenus[]
 }
 
 enum Role {

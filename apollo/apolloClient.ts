@@ -56,6 +56,16 @@ const typePolicies = {
       },
     },
   },
+  Query: {
+    fields: {
+      projectedMeals: {
+        keyArgs: []
+      },
+      moreProjectedMeals: {
+        keyArgs: []
+      },
+    }
+  }
 }
 
 function createApolloClient(serverAccessToken = ''): ApolloClient<NormalizedCacheObject | InMemoryCache> {
@@ -171,10 +181,23 @@ function createAuthLink(serverAccessToken = '') {
 }
 
 function createErrorLink() {
-  return onError(({ graphQLErrors, networkError, operation }) => {
-    console.log(graphQLErrors)
+  return onError(({ graphQLErrors, networkError, operation, response }) => {
+    // console.dir(graphQLErrors)
+    let errors
+    try {
+      errors = graphQLErrors
+        ?.map((err) => JSON.parse(err?.message))
+        ?.filter((message) => {
+          return typeof message == 'object'
+        })
+    } catch {}
+    if (errors) {
+      delete response?.errors
+      merge(response, { data: { errors } })
+      merge(networkError, { statusCode: 400, response: { status: 400 } })
+    }
     // console.log(networkError);
     // console.log('custom message', networkError?.result?.errors[0]);
-    console.log(operation)
+    // console.log(operation)
   })
 }
