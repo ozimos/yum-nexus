@@ -1,14 +1,16 @@
 import { gql } from '@apollo/client'
+import {MEAL} from './meal.query'
 
 export const CART_QUERY = gql`
   query CART {
     cart @client {
       id
       meals {
-        id
+      ...MEAL
       }
     }
   }
+  ${MEAL}
 `
 
 export const CART = gql`

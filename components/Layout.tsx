@@ -1,13 +1,18 @@
-import React from 'react'
+import React, { MouseEvent, useState } from 'react'
 import Head from 'next/head'
 import AppBar from '@material-ui/core/AppBar'
 import CameraIcon from '@material-ui/icons/PhotoCamera'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import Link from 'next/link'
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart'
+import grey from '@material-ui/core/colors/grey'
+import IconButton from '@material-ui/core/IconButton'
+import Drawer from '@material-ui/core/Drawer'
 import Toolbar from '@material-ui/core/Toolbar'
 import Copyright from './Copyright'
 import AuthBar from './AuthBar'
+import Cart from './Cart'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -20,18 +25,34 @@ const useStyles = makeStyles((theme) => ({
       flex: '0 0 auto',
     },
   },
+  quantityButton: {
+    // backgroundColor: theme.palette.button.main,
+    color: theme.palette.warning.main,
+    '&:hover': {
+      color: theme.palette.warning.light,
+      // backgroundColor: theme.palette.button.dark,
+    },
+  },
   main: {
     display: 'flex',
-    flexDirection: props => props.mainFlex,
+    flexDirection: (props: any) => props.mainFlex,
     justifyContent: 'center',
     alignItems: 'stretch',
     flex: '1 0 auto',
   },
   icon: {
-    marginRight: theme.spacing(2),
+    // marginRight: theme.spacing(2),
+    color: 'white',
+    '&:hover': {
+      color: grey[50],
+      // backgroundColor: theme.palette.button.dark,
+    },
   },
   spacer: {
     flex: '1 0 auto',
+  },
+  cartDrawer: {
+    width: 250,
   },
   footer: {
     backgroundColor: theme.palette.background.paper,
@@ -45,9 +66,21 @@ interface LayoutProps {
   home?: boolean
   title?: string
   mainFlex?: string
+  anchor?: 'bottom' | 'left' | 'right' | 'top' | undefined
 }
-export default function Layout({ children, home = false, title, mainFlex = 'row' }: LayoutProps) {
-  const classes = useStyles({mainFlex})
+export default function Layout({
+  children,
+  home = false,
+  title,
+  mainFlex = 'row',
+  anchor = 'right',
+}: LayoutProps) {
+  const classes = useStyles({ mainFlex })
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false)
+  const toggleDrawer = (drawerState: boolean) => (event: MouseEvent) => {
+    setDrawerOpen(drawerState)
+  }
+
   return (
     <div className={classes.root}>
       <Head>
@@ -56,9 +89,28 @@ export default function Layout({ children, home = false, title, mainFlex = 'row'
       <AppBar position="relative">
         <Toolbar>
           <Link href="/">
-          <CameraIcon className={classes.icon} />
+            <IconButton aria-label="site logo" className={classes.icon} size="small">
+              <CameraIcon />
+            </IconButton>
           </Link>
           <div className={classes.spacer}></div>
+          {!home && (
+            <>
+              <IconButton
+                aria-label="shopping cart"
+                className={classes.quantityButton}
+                size="small"
+                onClick={toggleDrawer(true)}
+              >
+                <ShoppingCartIcon />
+              </IconButton>
+              <Drawer anchor={anchor} open={drawerOpen} onClose={toggleDrawer(false)}>
+                <div className={classes.cartDrawer} role="presentation">
+                  <Cart />
+                </div>
+              </Drawer>
+            </>
+          )}
           <AuthBar />
         </Toolbar>
       </AppBar>

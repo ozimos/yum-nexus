@@ -2602,7 +2602,7 @@ export type CartQuery = (
     & Pick<Cart, 'id'>
     & { meals?: Maybe<Array<(
       { __typename?: 'Meal' }
-      & Pick<Meal, 'id'>
+      & MealFragment
     )>> }
   ) }
 );
@@ -3081,11 +3081,11 @@ export const CartDocument = gql`
   cart @client {
     id
     meals {
-      id
+      ...MEAL
     }
   }
 }
-    `;
+    ${MealFragmentDoc}`;
 
 /**
  * __useCartQuery__

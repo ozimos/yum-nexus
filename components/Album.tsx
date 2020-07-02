@@ -85,8 +85,7 @@ export default function Album() {
           Meals
         </Typography>
         <Typography variant="h5" align="center" color="textSecondary" paragraph>
-          Something short and leading about the collection below—its contents, the creator, etc. Make it short
-          and sweet, but not too short so folks don&apos;t simply skip over it entirely.
+          We have a wide selection of meals for you to order from. Browse our catalog
         </Typography>
         <div className={classes.heroButtons}>
           <Grid container spacing={2} justify="center">
