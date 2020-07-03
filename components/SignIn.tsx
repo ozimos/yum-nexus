@@ -38,9 +38,10 @@ interface ServerError {
 }
 export default function SignIn() {
   const classes = useStyles()
-  const validationResolver = useZodValidationResolver(validationSchema)
+  const resolver = useZodValidationResolver(validationSchema)
   const { register, handleSubmit, errors, setError } = useForm<Inputs>({
-    validationResolver,
+    // @ts-ignore
+    resolver,
   })
   const [general, setGeneral] = useState<string[]>([])
   const [login] = useLoginMutation({
@@ -59,7 +60,7 @@ export default function SignIn() {
         if (name === 'general') {
           setGeneral((prev) => [...prev, message])
         } else {
-          setError(name as 'email' | 'password', type, message)
+          setError(name as 'email' | 'password', {type, message})
         }
       }),
   })

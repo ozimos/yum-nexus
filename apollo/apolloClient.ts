@@ -17,7 +17,7 @@ const log = debuglog('app')
 
 let apolloClient: ApolloClient<NormalizedCacheObject | InMemoryCache> | null = null
 export const isServer = () => typeof window === 'undefined'
-export const serverURL = process.env.NEXT_PUBLIC_YUM_SERVER_URL
+export const serverURL = process.env.VERCEL_URL|| process.env.NEXT_PUBLIC_YUM_SERVER_URL || 'https://localhost:3000'
 
 export async function fetchServerAccessToken(context: Partial<NextPageContext>) {
   const bearerToken = context?.req?.headers?.authorization?.split(' ')
@@ -33,6 +33,7 @@ export async function fetchServerAccessToken(context: Partial<NextPageContext>) 
         headers: {
           cookie: `jid=${cookies.jid}`,
         },
+        credentials: 'same-origin',
       })
       const data = await response.json()
       serverAccessToken = data.accessToken
@@ -59,13 +60,13 @@ const typePolicies = {
   Query: {
     fields: {
       projectedMeals: {
-        keyArgs: []
+        keyArgs: [],
       },
       moreProjectedMeals: {
-        keyArgs: []
+        keyArgs: [],
       },
-    }
-  }
+    },
+  },
 }
 
 function createApolloClient(serverAccessToken = ''): ApolloClient<NormalizedCacheObject | InMemoryCache> {

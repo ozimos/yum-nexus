@@ -1,7 +1,7 @@
 import { schema } from 'nexus'
 import endOfToday from 'date-fns/endOfToday'
 import startOfToday from 'date-fns/startOfToday'
-import { CustomFieldResolver } from 'nexus-prisma/dist/typegen/static'
+import { CustomFieldResolver } from 'nexus-plugin-prisma/typegen'
 import { authGuard } from '../utils/helpers'
 
 const menuMealsResolver: CustomFieldResolver<'Query', 'menuMeals'> = async (

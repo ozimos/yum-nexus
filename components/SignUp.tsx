@@ -35,9 +35,10 @@ type Inputs = z.infer<typeof validationSchema>
 
 export default function SignUp() {
   const classes = useStyles()
-  const validationResolver = useZodValidationResolver(validationSchema)
+  const resolver = useZodValidationResolver(validationSchema)
   const { register, handleSubmit, errors, setError } = useForm<Inputs>({
-    validationResolver,
+    // @ts-ignore
+    resolver,
   })
   const [signup] = useSignupMutation({
     onCompleted: (signupData) => {
@@ -52,7 +53,8 @@ export default function SignUp() {
     },
     onError: (error) => {
       // @ts-ignore
-      setError(error.networkError?.result?.data?.errors || [])
+      error.networkError?.result?.data?.errors.forEach(({ name, type, message }) =>
+        setError(name, { type, message }))
     },
     errorPolicy: 'all',
   })

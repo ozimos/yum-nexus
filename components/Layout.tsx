@@ -10,9 +10,11 @@ import grey from '@material-ui/core/colors/grey'
 import IconButton from '@material-ui/core/IconButton'
 import Drawer from '@material-ui/core/Drawer'
 import Toolbar from '@material-ui/core/Toolbar'
+import Badge from '@material-ui/core/Badge'
 import Copyright from './Copyright'
 import AuthBar from './AuthBar'
 import Cart from './Cart'
+import { useCartQuery } from '../generated/graphql'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -80,7 +82,12 @@ export default function Layout({
   const toggleDrawer = (drawerState: boolean) => (event: MouseEvent) => {
     setDrawerOpen(drawerState)
   }
-
+  const { data } = useCartQuery()
+  let meals: any[] = []
+  if (data?.cart?.meals) {
+    ;({ meals } = data.cart)
+  }
+  const noOfMeals = meals.length
   return (
     <div className={classes.root}>
       <Head>
@@ -96,6 +103,7 @@ export default function Layout({
           <div className={classes.spacer}></div>
           {!home && (
             <>
+              <Badge badgeContent={noOfMeals} color="primary" max={10}>
               <IconButton
                 aria-label="shopping cart"
                 className={classes.quantityButton}
@@ -104,9 +112,10 @@ export default function Layout({
               >
                 <ShoppingCartIcon />
               </IconButton>
+              </Badge>
               <Drawer anchor={anchor} open={drawerOpen} onClose={toggleDrawer(false)}>
                 <div className={classes.cartDrawer} role="presentation">
-                  <Cart />
+                  <Cart meals={meals}/>
                 </div>
               </Drawer>
             </>
