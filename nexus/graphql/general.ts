@@ -16,6 +16,6 @@ use(
 
 settings.change({
   schema: {
-    generateGraphQLSDLFile: './api/public/schema.graphql',
+    generateGraphQLSDLFile: './nexus/public/schema.graphql',
   },
 })

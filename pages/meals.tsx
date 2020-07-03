@@ -8,7 +8,7 @@ import ME from '../graphql/me.query'
 
 // const app = require('nexus').default
 
-// require('../api/graphql')
+// require('../nexus/graphql')
 
 // app.assemble()
 const AllTodayMeals = () => (
@@ -24,7 +24,7 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
 
   await apolloClient.query({
     query: PROJECTED_MEALS,
-    variables: {limit: 6},
+    variables: { limit: 6 },
     // query: TODAY_MEALS,
     // variables: getTodayMenuVariables(),
   })
