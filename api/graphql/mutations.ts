@@ -45,7 +45,7 @@ schema.mutationType({
       resolve: async (_parent, { user }, ctx) => {
         if (user) {
           return await ctx.db.user.update({
-        // @ts-ignore
+            // @ts-ignore
             where: user,
             data: { tokenVersion: cuid() },
           })
@@ -132,12 +132,12 @@ schema.mutationType({
       },
       // @ts-ignore
       resolve: async (_parent, { token }, { db, res }) => {
-        const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
+        const client = new OAuth2Client(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID)
         let ticket
         try {
           ticket = await client.verifyIdToken({
             idToken: token,
-            audience: [process.env.GOOGLE_CLIENT_ID || ''], // Specify the CLIENT_ID of the app that accesses the backend
+            audience: [process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''], // Specify the CLIENT_ID of the app that accesses the backend
             // Or, if multiple clients access the backend:
             //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
           })
