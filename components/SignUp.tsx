@@ -41,7 +41,9 @@ export default function SignUp() {
   })
   const [signup] = useSignupMutation({
     onCompleted: (signupData) => {
+      // @ts-ignore
       if (signupData?.signup?.accessToken) {
+        // @ts-ignore
         const { accessToken } = signupData.signup
         setAccessToken(accessToken)
 
@@ -49,6 +51,7 @@ export default function SignUp() {
       }
     },
     onError: (error) => {
+      // @ts-ignore
       setError(error.networkError?.result?.data?.errors || [])
     },
     errorPolicy: 'all',

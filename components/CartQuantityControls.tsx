@@ -192,6 +192,7 @@ const CartQuantityControls = ({ id, collapsible = true, isInCart, cartQty }: Car
           {endAdornment}
         </>
       }
+      // @ts-ignore
       inputComponent={({ inputRef, ...props }) => <NumberFormat getInputRef={inputRef} {...props} />}
       inputProps={{
         onValueChange: handleValueChange,

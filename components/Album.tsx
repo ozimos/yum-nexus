@@ -64,10 +64,13 @@ export default function Album() {
         if (!fetchMoreResult) {
           return previousResult
         }
-        return Object.assign({}, previousResult, {
-          // Append the new posts results to the old one
-          meals: [...previousResult.meals, ...fetchMoreResult.meals],
-        })
+        if (previousResult?.meals) {
+          return Object.assign({}, previousResult, {
+            // Append the new posts results to the old one
+            meals: [...previousResult.meals, ...fetchMoreResult.meals],
+          })
+        }
+        return fetchMoreResult
       },
     })
   }
@@ -105,10 +108,14 @@ export default function Album() {
       {/* End hero unit */}
       <Container className={classes.cardGrid} maxWidth="md">
         <Grid container spacing={4}>
-          {data.meals.map(({ id, title, description, price, imageUrl, cartStatus }) => {
-            const props = { id, title, description, price, imageUrl, cartStatus }
-            return <Meal key={id} {...props} />
-          })}
+          {data?.meals ? (
+            data.meals.map(({ id, title, description, price, imageUrl, cartStatus }) => {
+              const props = { id, title, description, price, imageUrl, cartStatus }
+              return <Meal key={id} {...props} />
+            })
+          ) : (
+            <div>Loading</div>
+          )}
         </Grid>
         {areMoreMeals && (
           <Button size="small" color="primary" onClick={() => loadMoreMeals()} disabled={loadingMoreMeals}>

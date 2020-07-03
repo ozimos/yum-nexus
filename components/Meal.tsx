@@ -32,7 +32,7 @@ const Meal = ({
   price,
   imageUrl,
   cartStatus: { isInCart, cartQty },
-}: Partial<MealType>) => {
+}: any) => {
   const classes = useStyles()
 
   return (

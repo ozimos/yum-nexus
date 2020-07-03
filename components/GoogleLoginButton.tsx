@@ -28,9 +28,11 @@ export default function GoogleLoginButton({ successPath = '/meals' }: GoogleLogi
       }
     },
     onCompleted: (loginData) => {
-      const { accessToken } = loginData.loginWithGoogle
-      setAccessToken(accessToken)
-      Router.push(successPath)
+      if (loginData?.loginWithGoogle) {
+        const { accessToken } = loginData.loginWithGoogle
+        setAccessToken(accessToken || '')
+        Router.push(successPath)
+      }
     },
     update: (cache, { data }) => {
       if (!data?.loginWithGoogle?.user) {
@@ -64,7 +66,7 @@ export default function GoogleLoginButton({ successPath = '/meals' }: GoogleLogi
 
   return (
     <GoogleLogin
-      clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}
+      clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''}
       buttonText="Login"
       onSuccess={onGoogleSuccess}
       onFailure={onFailure}

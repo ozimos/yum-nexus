@@ -27,9 +27,11 @@ export default function FacebookLoginButton({ successPath = '/meals' }: Facebook
       }
     },
     onCompleted: (loginData) => {
-      const { accessToken } = loginData.loginWithFaceBook
-      setAccessToken(accessToken)
-      Router.push(successPath)
+      if(loginData?.loginWithFaceBook){
+        const { accessToken } = loginData.loginWithFaceBook
+        setAccessToken(accessToken || '')
+        Router.push(successPath)
+      }
     },
     update: (_, { data }) => {
       if (!data?.loginWithFaceBook?.user) {

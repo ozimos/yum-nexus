@@ -1,5 +1,5 @@
-// import { use, server } from 'nexus'
-// import { prisma } from 'nexus-plugin-prisma'
+import { use, server } from 'nexus'
+import { prisma } from 'nexus-plugin-prisma'
 
 // import passport from 'passport'
 // import { Strategy as FacebookStrategy } from 'passport-facebook'

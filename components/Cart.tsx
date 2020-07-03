@@ -33,14 +33,14 @@ const EmptyCartDiv = () => {
 export default function Cart() {
   const classes = useStyles()
   const { data } = useCartQuery()
-  let meals: MealType[] = []
+  let meals: any[] = []
   if (data?.cart?.meals) {
     ;({ meals } = data.cart)
   }
   const cartTotal = useMemo(() => {
     if (data?.cart?.meals) {
       const sum = data.cart.meals.reduce(function (a, b) {
-        return a + b.price * b.cartStatus?.cartQty
+        return a + b.price * (b.cartStatus?.cartQty || 0)
       }, 0)
       return sum
     }

@@ -89,7 +89,7 @@ export function extractTokenPayload(req: any) {
     return result
   }
 }
-export function sendRefreshToken(res: Response, user: CreateTokenInput) {
+export function sendRefreshToken(res: Response, user: CreateTokenInput | null) {
   let token = ''
   if (user && (user as CreateTokenInput)) {
     token = generateRefreshToken(user)

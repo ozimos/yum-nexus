@@ -3,12 +3,9 @@
     "target": "ES5",
     "esModuleInterop": true,
     "module": "esnext",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "ESNEXT"
-    ],
-    "strict": true,    
+    "lib": ["dom", "dom.iterable", "ESNEXT"],
+    "strict": true,
+    "noImplicitAny": false,
     "rootDir": ".",
 
     "moduleResolution": "node",
@@ -25,12 +22,6 @@
     "isolatedModules": true,
     "jsx": "preserve"
   },
-  "include": [
-    "api", "components", "pages", "lib", "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx", "pages/_app.js"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["api", "components", "pages", "lib", "next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/_app.js"],
+  "exclude": ["node_modules"]
 }

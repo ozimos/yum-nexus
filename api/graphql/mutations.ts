@@ -43,10 +43,13 @@ schema.mutationType({
       },
       // @ts-ignore
       resolve: async (_parent, { user }, ctx) => {
-        return await ctx.db.user.update({
-          where: user,
-          data: { tokenVersion: cuid() },
-        })
+        if (user) {
+          return await ctx.db.user.update({
+        // @ts-ignore
+            where: user,
+            data: { tokenVersion: cuid() },
+          })
+        }
       },
     })
 
@@ -57,7 +60,7 @@ schema.mutationType({
         password: schema.stringArg({ required: true }),
       },
       resolve: async (_parent, { email, password: inputPassword }, ctx) => {
-        let user = null
+        let user
         try {
           user = await ctx.db.user.findOne({
             where: {
@@ -205,7 +208,7 @@ schema.mutationType({
   },
 })
 
-async function createAuthPayloadFromSocial(db, res, profile, existingUser) {
+async function createAuthPayloadFromSocial(db, res, profile, existingUser: any) {
   try {
     let user
     try {

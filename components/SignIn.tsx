@@ -54,6 +54,7 @@ export default function SignIn() {
     },
     errorPolicy: 'all',
     onError: (error) =>
+    // @ts-ignore
       error.networkError?.result?.data?.errors.forEach(({ name, message, type }: ServerError) => {
         if (name === 'general') {
           setGeneral((prev) => [...prev, message])

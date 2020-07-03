@@ -6,7 +6,7 @@ export function createTestContext(): TestContext {
   beforeAll(async () => {
     Object.assign(ctx, await originalCreateTestContext())
 
-    await ctx.app.server.start()
+    await ctx.app.start()
     // @ts-ignore
     // await ctx.app.db.client.user.create({
     //   data: {
@@ -20,7 +20,7 @@ export function createTestContext(): TestContext {
   })
 
   afterAll(async () => {
-    await ctx.app.server.stop()
+    await ctx.app.stop()
     // @ts-ignore
     // await ctx.app.db.client.disconnect()
   })
