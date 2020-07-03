@@ -23,7 +23,7 @@
     "jsx": "preserve"
   },
   "include": [
-    "api",
+    "nexus",
     "components",
     "pages",
     "lib",
