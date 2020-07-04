@@ -20,6 +20,9 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.button.dark,
     },
   },
+  deleteButton: {
+    marginLeft: theme.spacing(1),
+  },
   root: {
     '& input::-webkit-outer-spin-button,input::-webkit-inner-spin-button': {
       '-webkit-appearance': 'none',
@@ -149,7 +152,7 @@ const CartQuantityControls = ({ id, collapsible = true, isInCart, cartQty }: Car
       )}
       {debouncedIsInCart && (
         <IconButton
-          className={classes.quantityButton}
+          className={clsx(classes.quantityButton, classes.deleteButton)}
           color="primary"
           aria-label="add one to shopping cart"
           size="small"

@@ -61,6 +61,11 @@ const useStyles = makeStyles((theme) => ({
     // padding: theme.spacing(6),
     padding: theme.spacing(3, 2),
   },
+  badge: {
+    '& span.MuiBadge-colorPrimary': {
+      backgroundColor: theme.palette.error.main,
+    },
+  },
 }))
 export const siteTitle = 'Yum meals'
 interface LayoutProps {
@@ -103,19 +108,19 @@ export default function Layout({
           <div className={classes.spacer}></div>
           {!home && (
             <>
-              <Badge badgeContent={noOfMeals} color="primary" max={10}>
-              <IconButton
-                aria-label="shopping cart"
-                className={classes.quantityButton}
-                size="small"
-                onClick={toggleDrawer(true)}
-              >
-                <ShoppingCartIcon />
-              </IconButton>
+              <Badge badgeContent={noOfMeals} color="primary" max={10} className={classes.badge}>
+                <IconButton
+                  aria-label="shopping cart"
+                  className={classes.quantityButton}
+                  size="small"
+                  onClick={toggleDrawer(true)}
+                >
+                  <ShoppingCartIcon />
+                </IconButton>
               </Badge>
               <Drawer anchor={anchor} open={drawerOpen} onClose={toggleDrawer(false)}>
                 <div className={classes.cartDrawer} role="presentation">
-                  <Cart meals={meals}/>
+                  <Cart meals={meals} />
                 </div>
               </Drawer>
             </>
