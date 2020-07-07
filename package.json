@@ -60,8 +60,8 @@
     "drop": "dotenv -e prisma/.env  -- node prisma/drop",
     "reset": "yarn drop && yarn migrate",
     "test": "dotenv -e prisma/.env -e .env -e .env.test -- jest",
-    "deploy:preview": "now",
-    "deploy:prod": "now --prod"
+    "deploy:preview": "vercel",
+    "deploy:prod": "vercel --prod"
   },
   "prettier": "@prisma-labs/prettier-config",
   "devDependencies": {

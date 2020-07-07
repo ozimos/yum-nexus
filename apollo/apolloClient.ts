@@ -17,7 +17,14 @@ const log = debuglog('app')
 
 let apolloClient: ApolloClient<NormalizedCacheObject | InMemoryCache> | null = null
 export const isServer = () => typeof window === 'undefined'
-export const serverURL = process.env.VERCEL_URL|| process.env.NEXT_PUBLIC_YUM_SERVER_URL || 'https://localhost:3000'
+
+const graphPath = '/api/graphql'
+const refreshTokenPath = '/api/refresh_token'
+const fallbackURL = `${process.env.NEXT_PUBLIC_YUM_SERVER_URL}${graphPath}`
+const getServerURL = (path: string) =>
+  process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}${path}` : fallbackURL
+const getClientURL = (path: string) => `${window.location.protocol}://${window.location.host}${path}` || fallbackURL
+const getRemoteURL = (path: string) => isServer() ? getServerURL(path) : getClientURL(path)
 
 export async function fetchServerAccessToken(context: Partial<NextPageContext>) {
   const bearerToken = context?.req?.headers?.authorization?.split(' ')
@@ -28,7 +35,7 @@ export async function fetchServerAccessToken(context: Partial<NextPageContext>) 
   const cookies = cookie.parse(context.req?.headers?.cookie || '')
   try {
     if (cookies.jid) {
-      const response = await fetch(`${serverURL}/api/refresh_token`, {
+      const response = await fetch(getRemoteURL(refreshTokenPath), {
         method: 'POST',
         headers: {
           cookie: `jid=${cookies.jid}`,
@@ -129,7 +136,7 @@ export function useApollo(initialState: any, serverAccessToken = '') {
 
 function createHttpLink() {
   return new HttpLink({
-    uri: `${serverURL}/api/graphql`,
+    uri: getRemoteURL(graphPath),
     credentials: 'same-origin',
     fetch,
   })
@@ -155,9 +162,9 @@ function createRefreshLink() {
       }
     },
     fetchAccessToken: () =>
-      fetch(`${serverURL}/api/refresh_token`, {
+      fetch(getRemoteURL(refreshTokenPath), {
         method: 'POST',
-        credentials: 'include',
+        credentials: 'same-origin',
       }),
     handleFetch: (accessToken) => {
       setAccessToken(accessToken)
