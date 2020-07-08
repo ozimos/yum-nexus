@@ -5,17 +5,18 @@ import Typography from '@material-ui/core/Typography'
 import Link from 'next/link'
 import Container from '@material-ui/core/Container'
 import { makeStyles } from '@material-ui/core/styles'
+import merge from 'lodash/merge'
 import { TODAY_MEALS } from '../graphql/meal.query'
 import ME from '../graphql/me.query'
 import { getTodayMenuVariables } from '../components/Album'
 import Layout from '../components/Layout'
+import convertToCacheFormat from '../apollo/convertToCache'
 
 const useStyles = makeStyles((theme) => ({
   container: {
     display: 'flex',
     width: '100%',
-    backgroundImage:
-      'url(https://source.unsplash.com/random)',
+    backgroundImage: 'url(https://source.unsplash.com/random)',
     backgroundSize: '100% 100%',
     fontSize: 0,
     lineHeight: 0,
@@ -81,21 +82,32 @@ export function IndexPage() {
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
   const serverAccessToken = await fetchServerAccessToken(context)
-  const apolloClient = initializeApollo(null, serverAccessToken)
+  // const apolloClient = initializeApollo(null, serverAccessToken)
 
-  await apolloClient.query({
-    query: TODAY_MEALS,
-    variables: getTodayMenuVariables(),
-  })
+  // await apolloClient.query({
+  //   query: TODAY_MEALS,
+  //   variables: getTodayMenuVariables(),
+  // })
+
+  // if (serverAccessToken) {
+  //   await apolloClient.query({
+  //     query: ME,
+  //   })
+  // }
+
+  const serverExec = require('../nexus/serverExec').default
+  const input = { queryDocument: TODAY_MEALS, variables: getTodayMenuVariables() }
+  const TODAY_MEALS_result = await serverExec(input, context)
+  let ME_result = {}
+
   if (serverAccessToken) {
-    await apolloClient.query({
-      query: ME,
-    })
+    ME_result = await serverExec({ queryDocument: ME }, context)
   }
 
   return {
     props: {
-      initialApolloState: apolloClient.cache.extract(),
+      initialApolloState: convertToCacheFormat(merge(TODAY_MEALS_result, ME_result)),
+      // initialApolloState: apolloClient.cache.extract(),
       unstable_revalidate: 1,
       serverAccessToken,
     },
