@@ -6516,6 +6516,11 @@ http-errors@~1.7.2:
     statuses ">= 1.5.0 < 2"
     toidentifier "1.0.0"
 
+http-parser-js@^0.5.2:
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/http-parser-js/-/http-parser-js-0.5.2.tgz#da2e31d237b393aae72ace43882dd7e270a8ff77"
+  integrity sha512-opCO9ASqg5Wy2FNo7A0sxy71yGbbkJJXLdgMK04Tcypw9jr2MgWbyubb0+WdmDmGnFflO7fRbqbaihh/ENDlRQ==
+
 http-proxy-agent@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/http-proxy-agent/-/http-proxy-agent-2.1.0.tgz#e4821beef5b2142a2026bd73926fe537631c5405"
@@ -8627,7 +8632,7 @@ next@^9.4.4:
     webpack "4.43.0"
     webpack-sources "1.4.3"
 
-nexus-plugin-prisma@^0.16.0:
+nexus-plugin-prisma@^0.16.1:
   version "0.16.1"
   resolved "https://registry.yarnpkg.com/nexus-plugin-prisma/-/nexus-plugin-prisma-0.16.1.tgz#5d688c48cbfd845ccc991bba54df62bc163cc69b"
   integrity sha512-ss9imkmSQcJJ+TEwbvwxgktHUeobmEhBh9qgB6S2tsX1bmv7fUxVip9JKPiU2sPqs9Tkt/LtwjWzriVp1OXdoA==
@@ -11978,7 +11983,7 @@ ts-morph@^7.1.0:
     "@ts-morph/common" "~0.5.1"
     code-block-writer "^10.1.0"
 
-ts-node@^8.10.1:
+ts-node@^8.10.1, ts-node@^8.10.2:
   version "8.10.2"
   resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-8.10.2.tgz#eee03764633b1234ddd37f8db9ec10b75ec7fb8d"
   integrity sha512-ISJJGgkIpDdBhWVu3jufsWpK3Rzo7bdiIXJjQc0ynKxVOVcg2oIrf2H2cejminGrptVc6q6/uynAHNCuWGbpVA==

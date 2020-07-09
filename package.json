@@ -26,7 +26,7 @@
     "lodash": "^4.17.15",
     "next": "^9.4.4",
     "nexus": "^0.25.0",
-    "nexus-plugin-prisma": "^0.16.0",
+    "nexus-plugin-prisma": "^0.16.1",
     "nexus-plugin-shield": "^0.1.5",
     "node-fetch": "^2.6.0",
     "passport": "^0.4.1",
@@ -108,6 +108,7 @@
     "nanoid": "^3.1.9",
     "pg": "^8.2.1",
     "prettier": "^2.0.5",
+    "ts-node": "^8.10.2",
     "typescript": "3.9.6"
   }
 }

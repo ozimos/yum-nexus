@@ -26,7 +26,7 @@ export const getTodayMenuVariables = (limit = 6) => ({
 const useStyles = makeStyles((theme) => ({
   heroContent: {
     backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing(8, 0, 6),
+    padding: theme.spacing(8, 0, 0),
   },
   heroButtons: {
     marginTop: theme.spacing(4),
@@ -106,7 +106,7 @@ export default function Album() {
         </div>
       </div>
       {/* End hero unit */}
-      <Container className={classes.cardGrid} maxWidth="md">
+      <Container className={classes.cardGrid} maxWidth="xl">
         <Grid container spacing={4}>
           {data?.meals ? (
             data.meals.map(({ id, title, description, price, imageUrl, cartStatus }) => {

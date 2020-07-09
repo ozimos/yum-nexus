@@ -3,7 +3,6 @@ import { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import { initializeApollo, fetchServerAccessToken } from '../apollo/apolloClient'
 import Typography from '@material-ui/core/Typography'
 import Link from 'next/link'
-import Container from '@material-ui/core/Container'
 import { makeStyles } from '@material-ui/core/styles'
 import merge from 'lodash/merge'
 import { TODAY_MEALS } from '../graphql/meal.query'
@@ -60,7 +59,7 @@ export function IndexPage() {
 
   return (
     <Layout>
-      <Container className={classes.container}>
+      <div className={classes.container}>
         <div className={classes.contentBox}>
           <div className={classes.contentHead}>
             <Typography variant="h4" color="textSecondary" align="center">
@@ -75,39 +74,40 @@ export function IndexPage() {
             </Link>
           </div>
         </div>
-      </Container>
+      </div>
     </Layout>
   )
 }
 
 export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
   const serverAccessToken = await fetchServerAccessToken(context)
-  // const apolloClient = initializeApollo(null, serverAccessToken)
+  const apolloClient = initializeApollo(null, serverAccessToken, context)
 
-  // await apolloClient.query({
-  //   query: TODAY_MEALS,
-  //   variables: getTodayMenuVariables(),
-  // })
-
-  // if (serverAccessToken) {
-  //   await apolloClient.query({
-  //     query: ME,
-  //   })
-  // }
-
-  const serverExec = require('../nexus/serverExec').default
-  const input = { queryDocument: TODAY_MEALS, variables: getTodayMenuVariables() }
-  const TODAY_MEALS_result = await serverExec(input, context)
-  let ME_result = {}
+  await apolloClient.query({
+    query: TODAY_MEALS,
+    variables: getTodayMenuVariables(),
+  })
 
   if (serverAccessToken) {
-    ME_result = await serverExec({ queryDocument: ME }, context)
+    await apolloClient.query({
+      query: ME,
+    })
   }
+  const initialApolloState = apolloClient.cache.extract()
+
+  // const serverExec = require('../nexus/serverExec').default
+  // const input = { queryDocument: TODAY_MEALS, variables: getTodayMenuVariables() }
+  // const TODAY_MEALS_result = await serverExec(input, context)
+  // let ME_result = {}
+
+  // if (serverAccessToken) {
+  //   ME_result = await serverExec({ queryDocument: ME }, context)
+  // }
+  // const initialApolloState = convertToCacheFormat(merge(TODAY_MEALS_result, ME_result))
 
   return {
     props: {
-      initialApolloState: convertToCacheFormat(merge(TODAY_MEALS_result, ME_result)),
-      // initialApolloState: apolloClient.cache.extract(),
+      initialApolloState,
       unstable_revalidate: 1,
       serverAccessToken,
     },
