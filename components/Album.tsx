@@ -18,8 +18,8 @@ import {
 import Meal from './Meal'
 
 export const getTodayMenuVariables = (limit = 6) => ({
-  startOfToday: startOfToday(),
-  endOfToday: endOfToday(),
+  startOfToday: startOfToday().toISOString(),
+  endOfToday: endOfToday().toISOString(),
   limit,
 })
 

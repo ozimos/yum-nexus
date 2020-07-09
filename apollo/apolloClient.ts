@@ -83,7 +83,8 @@ function createApolloClient(
       createAuthLink(serverAccessToken),
       createRefreshLink(),
       createErrorLink(),
-    ].concat(createIsomorphLink(context))),
+      createIsomorphLink(context)
+    ]),
     cache,
     resolvers,
     typeDefs,

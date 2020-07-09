@@ -1,7 +1,7 @@
 import { NextPageContext } from 'next'
-import { ApolloLink, Operation, FetchResult, Observable, HttpLink, NextLink, gql} from '@apollo/client'
+import { ApolloLink, Operation, FetchResult, Observable, HttpLink, NextLink, gql } from '@apollo/client'
 import { ClientRequest, ServerResponse } from 'http'
-import { hasDirectives, removeDirectivesFromDocument } from '@apollo/client/utilities'
+import { removeDirectivesFromDocument } from '@apollo/client/utilities'
 import { print } from 'graphql/language/printer'
 import { DocumentNode } from 'graphql'
 // import MockRes from 'mock-res'
@@ -16,6 +16,11 @@ export namespace NexusHandler {
      * The nexus graphQL handler to generate responses from.
      */
     handler: any
+
+    /**
+     * The client side directives to remove from the graphql query.
+     */
+    directivesConfig: string[]
 
     /**
      * A request object.
@@ -33,17 +38,37 @@ export class NexusHandlerLink extends ApolloLink {
   public handler: NexusHandler.NexusHandlerFunction | any
   public req: any
   public res: ServerResponse | any
+  public directivesConfig: string[] = []
+  public removedCache = new Map()
 
-  constructor({ handler, req, res }: NexusHandler.Options) {
+  constructor({ handler, req, res, directivesConfig }: NexusHandler.Options) {
     super()
 
     this.handler = handler
+    this.directivesConfig = directivesConfig
     this.req = req
     this.res = res
   }
 
-  public request({ query, variables }: Operation): Observable<FetchResult> | null {
-    this.req.body = { query: query?.loc?.source?.body, variables }
+  public removeDirectives(query: DocumentNode): string | undefined {
+    const cached = this.removedCache.get(query)
+    if (cached) return cached
+    let start, end, startToken, endToken, locationOffset
+    const docClone = removeDirectivesFromDocument(
+      this.directivesConfig.map((o) => ({ name: o, remove: true })),
+      query
+    ) || {
+      kind: 'Document',
+      definitions: [],
+      loc: { source: { body: '', locationOffset, name: '' }, start, end, startToken, endToken },
+    }
+    const cleanedQuery = print(docClone)
+    this.removedCache.set(query, cleanedQuery)
+    return cleanedQuery
+  }
+  public request({ query: originalQuery, variables }: Operation): Observable<FetchResult> | null {
+    const query = this.removeDirectives(originalQuery) || ''
+    this.req.body = { query, variables }
     return new Observable<FetchResult>((observer) => {
       Promise.resolve(this.handler(this.req, this.res))
         .then(() => {
@@ -57,7 +82,6 @@ export class NexusHandlerLink extends ApolloLink {
             ).toString()
           )
           // const result = this.res._getJSON()
-          console.dir(result)
           if (!observer.closed) {
             observer.next(result)
             observer.complete()
@@ -69,43 +93,6 @@ export class NexusHandlerLink extends ApolloLink {
           }
         })
     })
-  }
-}
-
-export class RemoveDirectiveLink extends ApolloLink {
-  directivesConfig: string[] = []
-  removedCache = new Map()
-
-  constructor(directivesConfig: string[]) {
-    super()
-    this.directivesConfig = directivesConfig
-  }
-
-  removeDirectivesFromDocument(query: DocumentNode): DocumentNode {
-    const cached = this.removedCache.get(query)
-    if (cached) return cached
-    let start, end, startToken, endToken, locationOffset
-    const docClone = removeDirectivesFromDocument(
-      this.directivesConfig.map((o) => ({ name: o, remove: true })),
-      query
-    ) || {
-      kind: 'Document',
-      definitions: [],
-      loc: { source: { body: '', locationOffset, name: '' }, start, end, startToken, endToken },
-    }
-    const cleanedQuery = gql(print(docClone));
-    this.removedCache.set(query, cleanedQuery)
-    return cleanedQuery
-  }
-
-  public request(operation: Operation, forward: NextLink): Observable<FetchResult> | null {
-    const { query } = operation
-
-    if (hasDirectives(this.directivesConfig, query)) {
-      operation.query = this.removeDirectivesFromDocument(query)
-    }
-
-    return forward ? forward(operation) : null
   }
 }
 
@@ -128,14 +115,13 @@ export default function createIsomorphLink(context: Partial<NextPageContext> | u
 
     req.cookies = cookies
     req.res = res
-    return new NexusHandlerLink({ req, res, handler: app.server.handlers.graphql })
+    const directivesConfig = ['client', 'export']
+    const handler = app.server.handlers.graphql
+    return new NexusHandlerLink({ req, res, handler, directivesConfig })
   } else {
-    return [
-      new RemoveDirectiveLink(['client', 'export']),
-      new HttpLink({
-        uri: isServer() ? getServerURL(graphPath) : getClientURL(graphPath),
-        credentials: 'same-origin',
-      }),
-    ]
+    return new HttpLink({
+      uri: isServer() ? getServerURL(graphPath) : getClientURL(graphPath),
+      credentials: 'same-origin',
+    })
   }
 }
