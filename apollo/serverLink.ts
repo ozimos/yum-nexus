@@ -5,6 +5,7 @@ import { removeDirectivesFromDocument } from '@apollo/client/utilities'
 import { print } from 'graphql/language/printer'
 import { DocumentNode } from 'graphql'
 // import MockRes from 'mock-res'
+import handler from '../nexus/serverlessHandler'
 import cookie from 'cookie'
 import { isServer, getServerURL, getClientURL, graphPath } from './common'
 
@@ -103,11 +104,6 @@ export class NexusHandlerLink extends ApolloLink {
 export default function createIsomorphLink(context: Partial<NextPageContext> | undefined) {
   if (isServer() && context) {
 
-    const app = require('nexus').default
-    require('../nexus/graphql')
-
-    app.assemble()
-
     const req: any = {
       method: 'POST',
       headers: context?.req?.headers,
@@ -119,7 +115,6 @@ export default function createIsomorphLink(context: Partial<NextPageContext> | u
     req.cookies = cookies
     req.res = res
     const directivesConfig = ['client', 'export']
-    const handler = app.server.handlers.graphql
     return new NexusHandlerLink({ req, res, handler, directivesConfig })
   } else {
     return new HttpLink({
