@@ -98,13 +98,6 @@ export class NexusHandlerLink extends ApolloLink {
 
 export default function createIsomorphLink(context: Partial<NextPageContext> | undefined) {
   if (isServer() && context) {
-    // if (process.env.NODE_ENV === 'development') require('nexus').default.reset()
-
-    const app = require('nexus').default
-    require('../nexus/graphql')
-
-    app.assemble()
-
     const req: any = {
       method: 'POST',
       headers: context?.req?.headers,
@@ -116,7 +109,7 @@ export default function createIsomorphLink(context: Partial<NextPageContext> | u
     req.cookies = cookies
     req.res = res
     const directivesConfig = ['client', 'export']
-    const handler = app.server.handlers.graphql
+    const handler = require('../nexus/serverlessHandler')
     return new NexusHandlerLink({ req, res, handler, directivesConfig })
   } else {
     return new HttpLink({

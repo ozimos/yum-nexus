@@ -41,11 +41,7 @@ export default async function serverExec(
   } else if (input.rawQuery) {
     query = input.rawQuery
   }
-  // if (process.env.NODE_ENV === 'development') require('nexus').default.reset()
-  const app = require('nexus').default
-  require('./graphql')
 
-  app.assemble()
   const req: any = {
     method: 'POST',
     headers: context?.req?.headers,
@@ -54,14 +50,16 @@ export default async function serverExec(
       variables: input.variables || {},
     },
   }
+
   // const res = new MockRes()
   const res = new ServerResponse({ ...req })
   const cookies = cookie.parse(context.req?.headers?.cookie || '')
   req.cookies = cookies
   req.res = res
-  const response = await app.server.handlers.graphql(req, res)
-  // const result = res._getJSON()
+  const serverlessHandler = require('./serverlessHandler')
+  const response = await serverlessHandler(req, res)
 
+  // const result = res._getJSON()
   const result = JSON.parse(
     Buffer.concat(
       // @ts-ignore

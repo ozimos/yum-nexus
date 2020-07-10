@@ -47,8 +47,8 @@ export default function Album() {
     notifyOnNetworkStatusChange: true,
   })
   useEffect(() => {
-    if (data?.meals?.length) {
-      setCursor(data?.meals.slice(-1)[0].id)
+    if (data?.menuMeals?.length) {
+      setCursor(data?.menuMeals.slice(-1)[0].id)
     } else {
       setCursor('')
     }
@@ -64,10 +64,10 @@ export default function Album() {
         if (!fetchMoreResult) {
           return previousResult
         }
-        if (previousResult?.meals) {
+        if (previousResult?.menuMeals) {
           return Object.assign({}, previousResult, {
             // Append the new posts results to the old one
-            meals: [...previousResult.meals, ...fetchMoreResult.meals],
+            menuMeals: [...previousResult.menuMeals, ...fetchMoreResult.menuMeals],
           })
         }
         return fetchMoreResult
@@ -108,8 +108,8 @@ export default function Album() {
       {/* End hero unit */}
       <Container className={classes.cardGrid} maxWidth="xl">
         <Grid container spacing={4}>
-          {data?.meals ? (
-            data.meals.map(({ id, title, description, price, imageUrl, cartStatus }) => {
+          {data?.menuMeals ? (
+            data.menuMeals.map(({ id, title, description, price, imageUrl, cartStatus }) => {
               const props = { id, title, description, price, imageUrl, cartStatus }
               return <Meal key={id} {...props} />
             })
