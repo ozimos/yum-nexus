@@ -105,6 +105,7 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
   // }
   // const initialApolloState = convertToCacheFormat(merge(TODAY_MEALS_result, ME_result))
 
+  console.dir(initialApolloState)
   return {
     props: {
       initialApolloState,

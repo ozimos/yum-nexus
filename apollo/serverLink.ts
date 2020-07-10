@@ -68,6 +68,7 @@ export class NexusHandlerLink extends ApolloLink {
   }
   public request({ query: originalQuery, variables }: Operation): Observable<FetchResult> | null {
     const query = this.removeDirectives(originalQuery) || ''
+    console.log('query', query)
     this.req.body = { query, variables }
     return new Observable<FetchResult>((observer) => {
       Promise.resolve(this.handler(this.req, this.res))
@@ -82,6 +83,7 @@ export class NexusHandlerLink extends ApolloLink {
             ).toString()
           )
           // const result = this.res._getJSON()
+          console.dir(result)
           if (!observer.closed) {
             observer.next(result)
             observer.complete()
@@ -98,7 +100,6 @@ export class NexusHandlerLink extends ApolloLink {
 
 export default function createIsomorphLink(context: Partial<NextPageContext> | undefined) {
   if (isServer() && context) {
-    // if (process.env.NODE_ENV === 'development') require('nexus').default.reset()
 
     const app = require('nexus').default
     require('../nexus/graphql')
