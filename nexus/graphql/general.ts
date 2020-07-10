@@ -13,9 +13,3 @@ use(
     },
   })
 )
-
-settings.change({
-  schema: {
-    generateGraphQLSDLFile: './nexus/public/schema.graphql',
-  },
-})

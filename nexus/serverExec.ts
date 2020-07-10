@@ -4,6 +4,7 @@ import { DocumentNode } from 'graphql'
 import { print } from 'graphql/language/printer'
 import { hasDirectives, removeDirectivesFromDocument } from '@apollo/client/utilities'
 import cookie from 'cookie'
+// import MockRes from 'mock-res'
 
 function removeDirectives(
   query: DocumentNode,
@@ -34,14 +35,13 @@ export default async function serverExec(
   context: NextPageContext,
   stripDirectives?: string[]
 ) {
-  if (process.env.NODE_ENV === 'development') require('nexus').default.reset()
   let query = ''
   if (input.queryDocument) {
     query = removeDirectives(input.queryDocument, stripDirectives) || ''
   } else if (input.rawQuery) {
     query = input.rawQuery
   }
-  //   const MockRes = require('mock-res').default
+  // if (process.env.NODE_ENV === 'development') require('nexus').default.reset()
   const app = require('nexus').default
   require('./graphql')
 
