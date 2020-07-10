@@ -3,7 +3,6 @@ import endOfToday from 'date-fns/endOfToday'
 import startOfToday from 'date-fns/startOfToday'
 import { CustomFieldResolver } from 'nexus-plugin-prisma/typegen'
 import { authGuard } from '../utils/helpers'
-import { getDatabaseConnection } from '../../prisma/base'
 const menuMealsResolver: CustomFieldResolver<'Query', 'menuMeals'> = async (
   root,
   args,
@@ -11,12 +10,7 @@ const menuMealsResolver: CustomFieldResolver<'Query', 'menuMeals'> = async (
   info,
   originalResolver
 ) => {
-  console.log('databaseUrl', process.env.DATABASE_URL)
-  const { schema } = getDatabaseConnection()
-  console.log('schema', schema)
-  let meals
-  try {
-    meals = await ctx.db.queryRaw<Array<{ mealId: string }>>`
+  const meals = await ctx.db.queryRaw<Array<{ mealId: string }>>`
   SELECT "A" AS "mealId" FROM "_MealMenu" 
 LEFT JOIN 
 (SELECT CASE WHEN menus.id = NULL
@@ -28,10 +22,7 @@ FULL OUTER JOIN "Menu" ON "Menu"."userId" = "DefaultMenu"."userId"
 WHERE "Menu"."menuDate" BETWEEN ${startOfToday()} AND ${endOfToday()}) 
 AS menus)
 AS ids ON "_MealMenu"."B" = ids."finalId" ORDER BY "mealId"`
-  } catch (error) {
-    console.dir(error)
-    throw error
-  }
+
   info.variableValues.projected = meals.map(({ mealId }) => mealId)
   return originalResolver(root, args, ctx, info)
 }

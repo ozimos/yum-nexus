@@ -3,7 +3,6 @@ import { NextPageContext } from 'next'
 import { DocumentNode } from 'graphql'
 import { print } from 'graphql/language/printer'
 import { hasDirectives, removeDirectivesFromDocument } from '@apollo/client/utilities'
-import serverlessHandler from './serverlessHandler'
 import cookie from 'cookie'
 // import MockRes from 'mock-res'
 
@@ -57,6 +56,7 @@ export default async function serverExec(
   const cookies = cookie.parse(context.req?.headers?.cookie || '')
   req.cookies = cookies
   req.res = res
+  const serverlessHandler = require('./serverlessHandler')
   const response = await serverlessHandler(req, res)
 
   // const result = res._getJSON()

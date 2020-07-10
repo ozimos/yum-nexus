@@ -7,4 +7,4 @@ require('./graphql')
 try {
   app.assemble()
 } catch {}
-export default app.server.handlers.graphql
+module.exports = app.server.handlers.graphql
