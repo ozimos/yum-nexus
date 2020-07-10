@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { ApolloClient, HttpLink, InMemoryCache, NormalizedCacheObject, from } from '@apollo/client'
+import { ApolloClient, InMemoryCache, NormalizedCacheObject, from } from '@apollo/client'
 import { TokenRefreshLink } from 'apollo-link-token-refresh'
 import { debuglog } from 'util'
 import { NextPageContext } from 'next'
@@ -12,12 +12,14 @@ import { getAccessToken, setAccessToken } from '../lib/accessToken'
 import { resolvers } from './resolvers'
 import typeDefs from './typeDefs'
 import { CART_QUERY } from '../graphql/cart.query'
+import createIsomorphLink from './serverLink'
+import { isServer, getRemoteURL } from './common'
 
 const log = debuglog('app')
 
 let apolloClient: ApolloClient<NormalizedCacheObject | InMemoryCache> | null = null
-export const isServer = () => typeof window === 'undefined'
-export const serverURL = process.env.NEXT_PUBLIC_YUM_SERVER_URL
+
+const refreshTokenPath = '/api/refresh_token'
 
 export async function fetchServerAccessToken(context: Partial<NextPageContext>) {
   const bearerToken = context?.req?.headers?.authorization?.split(' ')
@@ -28,11 +30,12 @@ export async function fetchServerAccessToken(context: Partial<NextPageContext>) 
   const cookies = cookie.parse(context.req?.headers?.cookie || '')
   try {
     if (cookies.jid) {
-      const response = await fetch(`${serverURL}/api/refresh_token`, {
+      const response = await fetch(getRemoteURL(refreshTokenPath), {
         method: 'POST',
         headers: {
           cookie: `jid=${cookies.jid}`,
         },
+        credentials: 'same-origin',
       })
       const data = await response.json()
       serverAccessToken = data.accessToken
@@ -59,21 +62,29 @@ const typePolicies = {
   Query: {
     fields: {
       projectedMeals: {
-        keyArgs: []
+        keyArgs: [],
       },
       moreProjectedMeals: {
-        keyArgs: []
+        keyArgs: [],
       },
-    }
-  }
+    },
+  },
 }
 
-function createApolloClient(serverAccessToken = ''): ApolloClient<NormalizedCacheObject | InMemoryCache> {
+function createApolloClient(
+  serverAccessToken = '',
+  context?: Partial<NextPageContext> | undefined
+): ApolloClient<NormalizedCacheObject | InMemoryCache> {
   const cache = new InMemoryCache({ typePolicies })
   const client = new ApolloClient({
     ssrMode: isServer(),
     // @ts-ignore
-    link: from([createAuthLink(serverAccessToken), createRefreshLink(), createErrorLink(), createHttpLink()]),
+    link: from([
+      createAuthLink(serverAccessToken),
+      createRefreshLink(),
+      createErrorLink(),
+      createIsomorphLink(context)
+    ]),
     cache,
     resolvers,
     typeDefs,
@@ -99,9 +110,10 @@ function createApolloClient(serverAccessToken = ''): ApolloClient<NormalizedCach
 
 export function initializeApollo(
   initialState: NormalizedCacheObject | InMemoryCache | null = null,
-  serverAccessToken = ''
+  serverAccessToken = '',
+  context?: Partial<NextPageContext> | undefined
 ) {
-  const _apolloClient = apolloClient ?? createApolloClient(serverAccessToken)
+  const _apolloClient = apolloClient ?? createApolloClient(serverAccessToken, context)
 
   // If your page has Next.js data fetching methods that use Apollo Client, the initial state
   // gets hydrated here
@@ -126,14 +138,6 @@ export function useApollo(initialState: any, serverAccessToken = '') {
   return store
 }
 
-function createHttpLink() {
-  return new HttpLink({
-    uri: `${serverURL}/api/graphql`,
-    credentials: 'same-origin',
-    fetch,
-  })
-}
-
 function createRefreshLink() {
   return new TokenRefreshLink({
     accessTokenField: 'accessToken',
@@ -154,9 +158,9 @@ function createRefreshLink() {
       }
     },
     fetchAccessToken: () =>
-      fetch(`${serverURL}/api/refresh_token`, {
+      fetch(getRemoteURL(refreshTokenPath), {
         method: 'POST',
-        credentials: 'include',
+        credentials: 'same-origin',
       }),
     handleFetch: (accessToken) => {
       setAccessToken(accessToken)

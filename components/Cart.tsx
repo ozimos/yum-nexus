@@ -4,7 +4,6 @@ import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import { makeStyles } from '@material-ui/core/styles'
 import CartItem from './CartItem'
-import { useCartQuery, Meal as MealType } from '../generated/graphql'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,22 +29,17 @@ const EmptyCartDiv = () => {
     </div>
   )
 }
-export default function Cart() {
+export default function Cart({meals}) {
   const classes = useStyles()
-  const { data } = useCartQuery()
-  let meals: any[] = []
-  if (data?.cart?.meals) {
-    ;({ meals } = data.cart)
-  }
   const cartTotal = useMemo(() => {
-    if (data?.cart?.meals) {
-      const sum = data.cart.meals.reduce(function (a, b) {
+    if (meals.length) {
+      const sum = meals.reduce(function (a, b) {
         return a + b.price * (b.cartStatus?.cartQty || 0)
       }, 0)
       return sum
     }
     return 0
-  }, [data])
+  }, [meals])
   const isCartEmpty = meals?.length < 1
   return (
     <div className="">

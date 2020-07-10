@@ -59,9 +59,10 @@ type Inputs = z.infer<typeof validationSchema>
 
 export default function SignInSide() {
   const classes = useStyles()
-  const validationResolver = useZodValidationResolver(validationSchema)
+  const resolver = useZodValidationResolver(validationSchema)
   const { register, handleSubmit, errors } = useForm<Inputs>({
-    validationResolver,
+    // @ts-ignore
+    resolver,
   })
   const [login] = useLoginMutation({
     onCompleted: (loginData) => {

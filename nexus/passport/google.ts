@@ -4,7 +4,7 @@ import { OAuth2Client } from 'google-auth-library'
 // export const googleCallback = socialCallback('googleId')
 
 // export const googleOptions = () => ({
-//   clientID: process.env.GOOGLE_CLIENT_ID,
+//   clientID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
 //   clientSecret: process.env.GOOGLE_APP_SECRET,
 //   callbackURL: `http://localhost:${process.env.PORT}/auth/google/callback`,
 //   profileFields: ['id', 'email', 'first_name', 'last_name'],
@@ -12,7 +12,7 @@ import { OAuth2Client } from 'google-auth-library'
 
 // export async function googleFrontEndSignIn(req, res, next) {
 //   const { token } = req.body
-//   const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
+//   const client = new OAuth2Client(process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID)
 //   const callback = (error, user) => {
 //     if (error) {
 //       return res.status(400).json({ message: error.message })
@@ -26,7 +26,7 @@ import { OAuth2Client } from 'google-auth-library'
 //   try {
 //     const ticket = await client.verifyIdToken({
 //       idToken: token,
-//       audience: [process.env.GOOGLE_CLIENT_ID || ''], // Specify the CLIENT_ID of the app that accesses the backend
+//       audience: [process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ''], // Specify the CLIENT_ID of the app that accesses the backend
 //       // Or, if multiple clients access the backend:
 //       //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
 //     })

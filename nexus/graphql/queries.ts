@@ -1,7 +1,7 @@
 import { schema } from 'nexus'
 import endOfToday from 'date-fns/endOfToday'
 import startOfToday from 'date-fns/startOfToday'
-import { CustomFieldResolver } from 'nexus-prisma/dist/typegen/static'
+import { CustomFieldResolver } from 'nexus-plugin-prisma/typegen'
 import { authGuard } from '../utils/helpers'
 
 const menuMealsResolver: CustomFieldResolver<'Query', 'menuMeals'> = async (
@@ -19,7 +19,7 @@ ELSE menus.id
 END AS "finalId" FROM 
 (SELECT "DefaultMenu"."menuId", "Menu".id FROM "DefaultMenu" 
 FULL OUTER JOIN "Menu" ON "Menu"."userId" = "DefaultMenu"."userId" 
-WHERE "Menu"."menuDate" BETWEEN ${startOfToday()} AND ${endOfToday()}) 
+WHERE "Menu"."menuDate" BETWEEN ${startOfToday().toISOString()} AND ${endOfToday().toISOString()}) 
 AS menus)
 AS ids ON "_MealMenu"."B" = ids."finalId" ORDER BY "mealId"`
   info.variableValues.projected = meals.map(({ mealId }) => mealId)

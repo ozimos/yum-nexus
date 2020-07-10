@@ -955,7 +955,7 @@
       {
         "kind": "SCALAR",
         "name": "DateTime",
-        "description": "Use JavaScript Date object for date/time fields.",
+        "description": "A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the\n`date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO\n8601 standard for representation of dates and times using the Gregorian calendar.",
         "fields": null,
         "inputFields": null,
         "interfaces": null,

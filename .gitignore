@@ -47,3 +47,4 @@ prisma/.env
 # Build Files
 .nexus
 .tmp_build
+.vercel

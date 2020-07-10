@@ -1,5 +1,5 @@
 overwrite: true
-schema: "./api/public/schema.graphql"
+schema: "./api.graphql"
 generates:
   ./generated/graphql.tsx:
     schema: "./apollo/typeDefs.ts"

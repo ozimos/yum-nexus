@@ -1,8 +1,9 @@
+import * as z from 'zod'
 import { useCallback } from 'react'
 
-export const useZodValidationResolver = (validationSchema: any) =>
-  useCallback(
-    (data: unknown) => {
+export function useZodValidationResolver<T>(validationSchema: z.Schema<T>) {
+  return useCallback(
+    (data: T) => {
       try {
         const values = validationSchema.parse(data)
 
@@ -28,3 +29,4 @@ export const useZodValidationResolver = (validationSchema: any) =>
     },
     [validationSchema]
   )
+}

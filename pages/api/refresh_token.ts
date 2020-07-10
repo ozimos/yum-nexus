@@ -1,10 +1,10 @@
 import { NextApiRequest } from 'next'
 import { verify } from 'jsonwebtoken'
 import { PrismaClient } from '@prisma/client'
-import { cors, runMiddleware } from '../../api/utils/api-tools'
-import { generateAccessToken, sendRefreshToken, TokenPayload } from '../../api/utils/helpers'
-import { NoTokenError } from '../../api/utils/errors'
-import { REFRESH_TOKEN_SECRET } from '../../api/utils/constants'
+import { cors, runMiddleware } from '../../nexus/utils/api-tools'
+import { generateAccessToken, sendRefreshToken, TokenPayload } from '../../nexus/utils/helpers'
+import { NoTokenError } from '../../nexus/utils/errors'
+import { REFRESH_TOKEN_SECRET } from '../../nexus/utils/constants'
 
 const prismaClient = new PrismaClient()
 
