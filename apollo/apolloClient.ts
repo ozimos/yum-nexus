@@ -53,7 +53,7 @@ const typePolicies = {
   Cart: {
     fields: {
       meals: {
-        merge(existing = [], incoming: any[]) {
+        merge(_, incoming: any[]) {
           return incoming
         },
       },
@@ -61,11 +61,11 @@ const typePolicies = {
   },
   Query: {
     fields: {
-      projectedMeals: {
+      menuMeals: {
         keyArgs: [],
       },
-      moreProjectedMeals: {
-        keyArgs: [],
+      meals: {
+        keyArgs: ['where'],
       },
     },
   },

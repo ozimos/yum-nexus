@@ -69,6 +69,8 @@ export class NexusHandlerLink extends ApolloLink {
   public request({ query: originalQuery, variables }: Operation): Observable<FetchResult> | null {
     const query = this.removeDirectives(originalQuery) || ''
     console.log('query', query)
+    console.log('DATABASE_URL', process.env.DATABASE_URL)
+    console.log('NEXT_PUBLIC_FACEBOOK_CLIENT_ID', process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID)
     this.req.body = { query, variables }
     return new Observable<FetchResult>((observer) => {
       Promise.resolve(this.handler(this.req, this.res))

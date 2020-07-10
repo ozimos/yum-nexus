@@ -2763,7 +2763,7 @@ export type ProjectedMealsQueryVariables = Exact<{
 
 export type ProjectedMealsQuery = (
   { __typename?: 'Query' }
-  & { meals: Array<(
+  & { menuMeals: Array<(
     { __typename?: 'Meal' }
     & MealFragment
   )> }
@@ -2778,7 +2778,7 @@ export type MoreProjectedMealsQueryVariables = Exact<{
 
 export type MoreProjectedMealsQuery = (
   { __typename?: 'Query' }
-  & { meals: Array<(
+  & { menuMeals: Array<(
     { __typename?: 'Meal' }
     & MealFragment
   )> }
@@ -3389,7 +3389,7 @@ export type MoreTodayMealsLazyQueryHookResult = ReturnType<typeof useMoreTodayMe
 export type MoreTodayMealsQueryResult = ApolloReactCommon.QueryResult<MoreTodayMealsQuery, MoreTodayMealsQueryVariables>;
 export const ProjectedMealsDocument = gql`
     query projectedMeals($projected: [String!], $limit: Int!) {
-  meals(where: {id: {in: $projected}}, first: $limit) {
+  menuMeals(where: {id: {in: $projected}}, first: $limit) {
     ...MEAL
   }
 }
@@ -3423,7 +3423,7 @@ export type ProjectedMealsLazyQueryHookResult = ReturnType<typeof useProjectedMe
 export type ProjectedMealsQueryResult = ApolloReactCommon.QueryResult<ProjectedMealsQuery, ProjectedMealsQueryVariables>;
 export const MoreProjectedMealsDocument = gql`
     query moreProjectedMeals($projected: [String!], $limit: Int!, $cursor: String!) {
-  meals(where: {id: {in: $projected}}, first: $limit, after: {id: $cursor}) {
+  menuMeals(where: {id: {in: $projected}}, first: $limit, after: {id: $cursor}) {
     ...MEAL
   }
 }

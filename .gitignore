@@ -29,13 +29,11 @@ lerna-debug.log*
 .env.development.local
 .env.test.local
 .env.production.local
+prisma/.env
+.envrc
 
 # Prisma
 failed-inferMigrationSteps*
-
-# Environment Variables
-prisma/.env
-.envrc
 
 # Elastic Beanstalk Files
 .ebignored
