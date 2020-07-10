@@ -26,7 +26,6 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
     })
   }
   const initialApolloState = apolloClient.cache.extract()
-  console.dir(initialApolloState)
 
   return {
     props: {

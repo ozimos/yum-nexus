@@ -39,11 +39,10 @@ export default async function serverExec(
   let query = ''
   if (input.queryDocument) {
     query = removeDirectives(input.queryDocument, stripDirectives) || ''
-    console.log('query', query)
   } else if (input.rawQuery) {
     query = input.rawQuery
   }
-  
+
   const req: any = {
     method: 'POST',
     headers: context?.req?.headers,
@@ -71,6 +70,5 @@ export default async function serverExec(
         .map(({ data }) => data)
     ).toString()
   )
-  console.dir(result)
   return result.data
 }
