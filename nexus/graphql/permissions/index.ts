@@ -1,4 +1,4 @@
-import { shield, or } from 'nexus-plugin-shield'
+import { shield, or, allow } from 'nexus-plugin-shield'
 import rules from './rules'
 
 import { Role } from '../../utils/constants'
@@ -23,5 +23,5 @@ export default shield({
       deleteOneMeal: defaultEditRule,
     },
   },
-  options: { allowExternalErrors: true, debug: true },
+  options: { allowExternalErrors: true, debug: true, fallbackRule: allow },
 })

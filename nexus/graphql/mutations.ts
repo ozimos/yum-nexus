@@ -173,7 +173,7 @@ schema.mutationType({
         let payload
         try {
           const response = await fetch(
-            `/v7.0/me?fields=id,first_name,last_name,email,picture&access_token=${token}`
+            `https://graph.facebook.com/v7.0/me?fields=${encodeURIComponent('id,first_name,last_name,email,picture')}&access_token=${token}`
           )
           payload = response.json()
         } catch (e) {
