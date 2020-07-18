@@ -29,7 +29,10 @@ const validationSchema = z
     password: z.string(),
     confirmPassword: z.string(),
   })
-  .refine((data) => data.password === data.confirmPassword, 'Both password and confirmation must match')
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Both password and confirmation must match',
+    path: ['confirmPassword'],
+  })
 
 type Inputs = z.infer<typeof validationSchema>
 
@@ -54,7 +57,8 @@ export default function SignUp() {
     onError: (error) => {
       // @ts-ignore
       error.networkError?.result?.data?.errors.forEach(({ name, type, message }) =>
-        setError(name, { type, message }))
+        setError(name, { type, message })
+      )
     },
     errorPolicy: 'all',
   })

@@ -46,7 +46,7 @@
   },
   "scripts": {
     "format": "npx prettier --write './**/*.{js,ts,md}'",
-    "dev": "next",
+    "dev": "NODE_OPTIONS='--inspect' NODE_DEBUG=app next",
     "build": "nexus build && next build",
     "start": "next start",
     "nexus:reflection": "nexus dev --reflection --entrypoint pages/api/graphql.ts",

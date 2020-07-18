@@ -6,7 +6,7 @@ import { print } from 'graphql/language/printer'
 import { DocumentNode } from 'graphql'
 // import MockRes from 'mock-res'
 import cookie from 'cookie'
-import { isServer, getServerURL, getClientURL, graphPath } from './common'
+import { isServer, graphQLURL } from './common'
 
 export namespace NexusHandler {
   export type NexusHandlerFunction = (req: ClientRequest, res: ServerResponse) => Record<string, any>
@@ -113,7 +113,7 @@ export default function createIsomorphLink(context: Partial<NextPageContext> | u
     return new NexusHandlerLink({ req, res, handler, directivesConfig })
   } else {
     return new HttpLink({
-      uri: isServer() ? getServerURL(graphPath) : getClientURL(graphPath),
+      uri: graphQLURL,
       credentials: 'same-origin',
     })
   }
