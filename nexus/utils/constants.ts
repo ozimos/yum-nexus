@@ -16,4 +16,4 @@ export enum Role {
   CATERER = 'CATERER',
 }
 
-export const whitelist = ['http://localhost:3000', 'https://localhost:3000']
+export const whitelist = [/localhost:3000$/, /yum-nexus[\w-]?\.vercel\.app/]
