@@ -28,7 +28,7 @@
     "nexus": "^0.25.0",
     "nexus-plugin-prisma": "^0.16.1",
     "nexus-plugin-shield": "^0.2.0",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^2.6.7",
     "passport": "^0.4.1",
     "passport-facebook": "^3.0.0",
     "passport-google-oauth20": "^2.0.0",
